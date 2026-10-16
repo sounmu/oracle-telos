@@ -164,6 +164,42 @@ export interface KoreanSearchRequest {
   readonly queries: readonly string[];
 }
 
+/** common/different는 원문 인용이 확인된 경우에만 남는다. 그 외는 unconfirmed. */
+export type ComparisonRelation = "common" | "different" | "unconfirmed";
+
+export interface ComparisonRow {
+  readonly element: string;
+  /** 사용자 입력에서 확인한 내용. null이면 미기재 */
+  readonly mine: string | null;
+  /** 특허 원문에서 확인한 내용. null이면 확인되지 않음 */
+  readonly theirs: string | null;
+  readonly relation: ComparisonRelation;
+  /** 공통점·차이 설명 또는 추가로 확인할 질문 */
+  readonly note: string;
+  /** 원문에 그대로 있는 것을 확인한 인용 */
+  readonly evidence: string | null;
+}
+
+export type ProximityLevel = "cool" | "warm" | "hot" | "insufficient";
+
+/** 기술 근접도. 비교표에서 계산하며 법적 위험도나 침해 확률이 아니다. */
+export interface Proximity {
+  readonly level: ProximityLevel;
+  readonly reason: string;
+  readonly commonElements: string[];
+}
+
+export interface PatentComparison {
+  readonly patentId: string;
+  /** 관련 이유 한 줄 */
+  readonly summary: string;
+  readonly rows: ComparisonRow[];
+  readonly proximity: Proximity;
+  readonly claimsReviewed: number;
+  readonly claimsTotal: number;
+  readonly sourceUrl: string;
+}
+
 export interface SearchCoverage {
   readonly queries: string[];
   /** 검색어 묶음으로 확보한 중복 없는 후보 수 */
