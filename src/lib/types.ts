@@ -41,6 +41,7 @@ export interface SearchHit {
 export type AgentEvent =
   | { type: "status"; message: string }
   | { type: "tool"; name: string; input: Record<string, unknown> }
+  | { type: "points_added"; points: PatentPoint[] }
   | { type: "matches"; query: string; hits: SearchHit[] }
   | { type: "references"; hits: ResearchHit[] }
   | { type: "text"; delta: string }

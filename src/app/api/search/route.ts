@@ -2,7 +2,7 @@ import { embedTexts } from "@/lib/embeddings";
 import { getPatentIndex, MISSING_DATA_MESSAGE, toHit } from "@/lib/patents";
 import { topK } from "@/lib/similarity";
 import { z } from "zod";
-import { patentFromDocument, readResearchIndex, searchResearch } from "@/lib/korea/index";
+import { searchKoreanPatents } from "@/lib/korea/search";
 import { SourceError } from "@/lib/korea/http";
 
 const searchInput = z.object({
@@ -12,7 +12,10 @@ const searchInput = z.object({
   decision: z.enum(["ACCEPTED", "REJECTED", "PENDING", "UNKNOWN"]).optional(),
 });
 
-/** POST { query: string, k?: number, decision?: Decision } → { hits: SearchHit[] } */
+/**
+ * POST { query, k?, dataset?, decision? } → { hits: SearchHit[] }
+ * dataset=korea면 KIPRIS 실시간 조회 결과를 캐시하고 { hits, addedPoints, warnings }를 돌려준다.
+ */
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -27,18 +30,13 @@ export async function POST(request: Request) {
   const { query, k, decision, dataset } = parsed.data;
   try {
     if (dataset === "korea") {
-      const index = await readResearchIndex();
-      if (!index?.points.length) {
-        return Response.json({ error: "한국 특허 색인이 없습니다. KIPRIS_API_KEY를 설정하고 pnpm sync:korea --source kipris --query \"반려동물\"을 실행하세요." }, { status: 503 });
+      try {
+        return Response.json(await searchKoreanPatents(query, k, decision, { signal: request.signal }));
+      } catch (error) {
+        // 키·색인이 모두 없거나 재색인이 필요한 상태: 서버 오류가 아니라 설정이 필요하다.
+        if (error instanceof SourceError) return Response.json({ error: error.message }, { status: 503 });
+        throw error;
       }
-      const results = await searchResearch(query, ["kipris"], k, undefined, decision);
-      return Response.json({
-        hits: results.flatMap((hit) => {
-          const document = index.documents.find((document) => document.id === hit.id);
-          if (!document || document.source !== "kipris") return [];
-          return [toHit(patentFromDocument(document, index), hit.score)];
-        }),
-      });
     }
     const index = await getPatentIndex();
     if (!index) return Response.json({ error: MISSING_DATA_MESSAGE }, { status: 503 });

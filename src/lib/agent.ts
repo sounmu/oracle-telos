@@ -8,6 +8,7 @@ import { topK } from "./similarity";
 import { DECISION_LABELS } from "./colors";
 import type { AgentEvent, PatentDataset, SearchHit } from "./types";
 import { patentFromDocument, readResearchIndex, searchResearch } from "./korea/index";
+import { searchKoreanPatents } from "./korea/search";
 import { getKiprisPatent } from "./korea/kipris";
 import { requireKey, SourceError } from "./korea/http";
 
@@ -45,14 +46,14 @@ const TOOLS: OpenAI.Responses.Tool[] = [
     type: "function",
     name: "search_patents",
     description:
-      "Search the selected patent dataset. Use Korean queries for Korean patents and English queries for the US sample. Returns evidence, not patentability probabilities.",
+      "Search the selected patent dataset and return { results, warnings }. For the Korean dataset the query also runs a live KIPRIS keyword search, so the query MUST be 2-4 core Korean technical keywords separated by spaces (예: '드론 배터리 교체'), never a sentence. Use English queries for the US sample. Similarity is evidence, not a patentability or infringement probability. Mention warnings (e.g. live lookup failed, only the local cache was searched) when they limit the result.",
     strict: true,
     parameters: {
       type: "object",
       properties: {
         query: {
           type: "string",
-          description: "A short description of the technology in the dataset's language",
+          description: "Korean dataset: 2-4 Korean technical keywords separated by spaces, not a sentence. US sample: a short English technology description.",
         },
         k: { type: "integer", description: "How many results to return (1-15, usually 8)" },
         decision: {
@@ -130,8 +131,9 @@ export async function runPatentAgent({
 }: AgentRunOptions): Promise<void> {
   const index = dataset === "sample" ? await getPatentIndex() : null;
   const research = dataset === "korea" || includeContext ? await readResearchIndex() : null;
-  if ((dataset === "sample" && !index) || (dataset === "korea" && !research?.points.length)) {
-    emit({ type: "error", message: dataset === "sample" ? MISSING_DATA_MESSAGE : "한국 특허 색인이 없습니다. KIPRIS_API_KEY 설정 후 pnpm sync:korea --source kipris --query \"반려동물\"을 실행하세요." });
+  const liveKorea = Boolean(process.env.KIPRIS_API_KEY?.trim());
+  if ((dataset === "sample" && !index) || (dataset === "korea" && !research?.points.length && !liveKorea)) {
+    emit({ type: "error", message: dataset === "sample" ? MISSING_DATA_MESSAGE : "한국 특허 색인이 없고 KIPRIS_API_KEY도 없습니다. .env에 KIPRIS_API_KEY를 넣으면 검색할 때 실시간으로 조회합니다." });
     return;
   }
 
@@ -160,13 +162,13 @@ export async function runPatentAgent({
       const { query, k, decision } = parsed.data;
       emit({ type: "tool", name, input: { query, k, decision } });
       let hits: SearchHit[];
-      if (dataset === "korea" && research) {
-        const found = await searchResearch(query, ["kipris"], k, undefined, decision ?? undefined);
-        hits = found.flatMap((hit) => {
-          const document = research.documents.find((document) => document.id === hit.id);
-          if (!document || document.source !== "kipris") return [];
-          return [toHit(patentFromDocument(document, research), hit.score)];
-        });
+      let warnings: string[] = [];
+      if (dataset === "korea") {
+        const found = await searchKoreanPatents(query, k, decision ?? undefined, { signal });
+        // 하이라이트는 지도에 있는 점에만 그려지므로 matches보다 먼저 보낸다.
+        if (found.addedPoints.length > 0) emit({ type: "points_added", points: found.addedPoints });
+        hits = found.hits;
+        warnings = found.warnings;
       } else if (index) {
         const [vec] = await embedTexts([query]);
         const scored = topK(vec, index.vectors, index.meta.dim, k, (i) =>
@@ -177,8 +179,9 @@ export async function runPatentAgent({
         return JSON.stringify({ error: "선택한 특허 색인이 없습니다." });
       }
       emit({ type: "matches", query, hits });
-      return JSON.stringify(
-        hits.map((h) => ({
+      return JSON.stringify({
+        warnings,
+        results: hits.map((h) => ({
           id: h.id,
           applicationNumber: h.id.replace(/^kipris:/, ""),
           title: h.title,
@@ -189,20 +192,22 @@ export async function runPatentAgent({
           filed: h.filed,
           abstract: h.abstract,
         })),
-      );
+      });
     }
     if (name === "get_patent") {
       const parsed = GetPatentInput.safeParse(args);
       if (!parsed.success) return JSON.stringify({ error: parsed.error.message });
       const { id, refresh } = parsed.data;
       emit({ type: "tool", name, input: { id } });
-      const document = research?.documents.find((document) => document.id === id);
+      // 검색 중 실시간으로 캐시된 특허도 찾도록 최신 색인을 다시 읽는다.
+      const latest = dataset === "korea" ? await readResearchIndex() : null;
+      const document = latest?.documents.find((document) => document.id === id);
       let p = index?.byId.get(id);
-      if (document?.source === "kipris" && research && dataset === "korea") {
+      if (document?.source === "kipris" && latest) {
         const selected = refresh
           ? await getKiprisPatent(document.patent.applicationNumber, requireKey("KIPRIS_API_KEY"), signal)
           : document;
-        p = patentFromDocument(selected, research);
+        p = patentFromDocument(selected, latest);
       }
       if (!p) return JSON.stringify({ error: `No patent with id ${id}` });
       return JSON.stringify({
@@ -253,7 +258,7 @@ export async function runPatentAgent({
     const stream = client.responses.stream(
       {
         model: AGENT_MODEL,
-        instructions: `${SYSTEM_PROMPT}\n선택한 데이터: ${dataset === "korea" ? "KIPRIS 한국 특허 색인. 한국어 질의를 사용합니다." : "USPTO 2016년 1월 미국 출원 샘플. 영어 질의를 사용합니다."}\n오늘: ${new Date().toISOString().slice(0, 10)}. 참고 자료: ${includeContext ? "사용자가 요청함" : "요청하지 않음"}. 사용자가 지정한 참고자료 기준일: ${asOf ?? "없음"}.`,
+        instructions: `${SYSTEM_PROMPT}\n선택한 데이터: ${dataset === "korea" ? "KIPRIS 한국 특허 (검색 시 실시간 조회 + 로컬 캐시). search_patents의 query는 문장이 아니라 한국어 핵심 기술 키워드 2~4개로 씁니다." : "USPTO 2016년 1월 미국 출원 샘플. 영어 질의를 사용합니다."}\n오늘: ${new Date().toISOString().slice(0, 10)}. 참고 자료: ${includeContext ? "사용자가 요청함" : "요청하지 않음"}. 사용자가 지정한 참고자료 기준일: ${asOf ?? "없음"}.`,
         input,
         tools: includeContext ? [...TOOLS, ...REFERENCE_TOOLS] : TOOLS,
         reasoning: { effort: REASONING_EFFORT },

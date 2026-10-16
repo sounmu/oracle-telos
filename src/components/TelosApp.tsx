@@ -25,7 +25,7 @@ const MAP_OVERLAY_INSET = 184;
 
 // 미국 샘플을 한국 데이터처럼 보이게 하는 라벨은 금지한다
 const DATASET_LABELS: Record<PatentDataset, { tab: string; title: string; note: string }> = {
-  korea: { tab: "한국 KIPRIS", title: "KIPRIS 한국 특허", note: "KIPRIS 동기화 색인" },
+  korea: { tab: "한국 KIPRIS", title: "KIPRIS 한국 특허", note: "검색할 때 KIPRIS를 조회해 색인에 더합니다" },
   sample: {
     tab: "미국 USPTO 샘플",
     title: "USPTO 2016.01 출원 샘플",
@@ -80,6 +80,8 @@ export default function TelosApp() {
   const kipris = status?.sources.find((s) => s.source === "kipris") ?? null;
   const label = DATASET_LABELS[dataset];
   const empty = load === "ready" && points.length === 0;
+  // 키가 있으면 빈 색인에서도 검색이 실시간 결과로 지도를 채운다.
+  const liveSearch = dataset === "korea" && kipris?.configured === true;
 
   // 진행 중 요청은 effect cleanup이, SearchPanel의 요청은 key={dataset} 재마운트가 중단한다
   function resetForLoad() {
@@ -121,6 +123,14 @@ export default function TelosApp() {
       const next = replace || !prev ? new Map<string, number>() : new Map(prev);
       for (const h of hits) next.set(h.id, Math.max(next.get(h.id) ?? 0, h.score));
       return next.size > 0 ? next : null;
+    });
+  }
+
+  function handlePointsAdded(incoming: PatentPoint[]) {
+    setPoints((prev) => {
+      const merged = new Map(prev.map((p) => [p.id, p]));
+      for (const p of incoming) merged.set(p.id, p);
+      return [...merged.values()];
     });
   }
 
@@ -245,6 +255,12 @@ export default function TelosApp() {
         {empty && dataset === "korea" && (
           <Center>
             <p className="mb-2 font-medium">한국 특허 색인이 아직 없습니다.</p>
+            {liveSearch && (
+              <p className="mb-3 text-xs text-muted">
+                오른쪽에서 검색하면 KIPRIS를 실시간으로 조회해 지도를 채웁니다. 기본 지도를 미리
+                만들려면 아래 순서를 따르세요.
+              </p>
+            )}
             <ol className="mx-auto mb-3 max-w-sm list-decimal space-y-1 pl-5 text-left text-xs text-muted">
               <li>
                 <Code>.env</Code>에 <Code>KIPRIS_API_KEY</Code>를 설정합니다 (현재{" "}
@@ -296,10 +312,11 @@ export default function TelosApp() {
           key={dataset}
           dataset={dataset}
           status={status}
-          disabled={load !== "ready" || points.length === 0}
+          disabled={load !== "ready" || (points.length === 0 && !liveSearch)}
           idea={idea}
           onIdeaChange={setIdea}
           onMatches={handleMatches}
+          onPointsAdded={handlePointsAdded}
           onPick={pick}
           selectedId={selectedId}
         />

@@ -6,6 +6,7 @@ import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import type {
   AgentEvent,
   PatentDataset,
+  PatentPoint,
   ResearchHit,
   ResearchStatus,
   SearchHit,
@@ -24,6 +25,7 @@ interface Props {
   idea: string;
   onIdeaChange: (idea: string) => void;
   onMatches: (hits: SearchHit[], replace: boolean) => void;
+  onPointsAdded: (points: PatentPoint[]) => void;
   onPick: (id: string) => void;
   selectedId: string | null;
 }
@@ -38,7 +40,7 @@ const EXAMPLES = [
 ];
 
 const DATASET_NOTES: Record<PatentDataset, string> = {
-  korea: "KIPRIS 한국 특허 색인에서 찾습니다.",
+  korea: "KIPRIS를 실시간 조회해 로컬 색인에 더한 뒤 찾습니다.",
   sample: "USPTO 2016.01 미국 샘플에서 찾습니다. 특허 원문은 영어입니다.",
 };
 
@@ -69,6 +71,7 @@ const TOOL_LABELS: Record<string, { label: string; arg: "query" | "id" }> = {
 const AGENT_EVENT_TYPES = new Set<AgentEvent["type"]>([
   "status",
   "tool",
+  "points_added",
   "matches",
   "references",
   "text",
@@ -83,6 +86,7 @@ export default function SearchPanel({
   idea,
   onIdeaChange,
   onMatches,
+  onPointsAdded,
   onPick,
   selectedId,
 }: Props) {
@@ -203,8 +207,9 @@ export default function SearchPanel({
       if (!res.ok || !isSearchResponse(body)) {
         throw new Error(readErrorMessage(body) ?? `HTTP ${res.status}`);
       }
+      if (body.addedPoints?.length) onPointsAdded(body.addedPoints);
       mergeHits(body.hits);
-      setStatusLine("");
+      setStatusLine(body.warnings?.join(" ") ?? "");
       setPhase("done");
     } catch (err) {
       if (ac.signal.aborted) return;
@@ -301,6 +306,9 @@ export default function SearchPanel({
         ]);
         return null;
       }
+      case "points_added":
+        onPointsAdded(event.points);
+        return null;
       case "matches":
         mergeHits(event.hits);
         return null;
@@ -537,7 +545,9 @@ function parseEvent(raw: string): AgentEvent | null {
   return parsed as AgentEvent;
 }
 
-function isSearchResponse(v: unknown): v is { hits: SearchHit[] } {
+function isSearchResponse(
+  v: unknown,
+): v is { hits: SearchHit[]; addedPoints?: PatentPoint[]; warnings?: string[] } {
   return typeof v === "object" && v !== null && Array.isArray((v as { hits?: unknown }).hits);
 }
 
