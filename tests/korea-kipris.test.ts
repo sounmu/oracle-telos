@@ -153,6 +153,8 @@ test("collects a singleton search hit with full bibliography, claims, CPC and of
   assert.equal(search.searchParams.get("applicationDate"), "20200101~20201231");
   assert.equal(search.searchParams.get("patent"), "true");
   assert.equal(search.searchParams.get("numOfRows"), "10");
+  assert.equal(search.searchParams.get("sortSpec"), "AD");
+  assert.equal(search.searchParams.get("descSort"), "true");
   const cpc = log.find((url) => url.pathname.endsWith("/patentCpcInfo"));
   assert.ok(cpc);
   assert.equal(cpc.searchParams.get("accessKey"), KEY);

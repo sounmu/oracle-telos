@@ -33,7 +33,7 @@ API 키가 없어도 지도와 "유사 특허만 찾기"(로컬 임베딩 검색
 
 ```bash
 # 먼저 한 분야의 한국 특허로 지도와 비교 검색 연결
-pnpm sync:korea --source kipris --query "반려동물" --limit 20
+pnpm sync:korea --source kipris --query "반려동물" --limit 100 # 출원일 최신순, 기본 100건
 
 # 선택적 참고자료. 법령명/본문을 검색해 현행 법령의 조문을 수집
 pnpm sync:korea --source law --query "동물보호법" --limit 200

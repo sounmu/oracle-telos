@@ -129,6 +129,8 @@ async function searchApplicationNumbers(
       utility: "false",
       pageNo: String(pageNo),
       numOfRows: String(pageSize),
+      sortSpec: "AD",
+      descSort: "true",
     };
     if (dateRange) params.applicationDate = dateRange;
     const body = record(

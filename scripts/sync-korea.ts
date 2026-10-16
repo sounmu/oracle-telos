@@ -22,7 +22,7 @@ loadEnvConfig(process.cwd());
 const flags = z.object({
   source: z.enum(["kipris", "law", "dart", "all"]).default("kipris"),
   query: z.string().trim().min(1).default("반려동물"),
-  limit: z.coerce.number().int().min(1).max(1000).default(20),
+  limit: z.coerce.number().int().min(1).max(1000).optional(),
   since: z.iso.date().optional(),
   until: z.iso.date().optional(),
   "corp-code": z.array(z.string().regex(/^\d{8}$/)).optional(),
@@ -48,14 +48,15 @@ async function main(): Promise<void> {
   const options = flags.parse(parsed.values);
   if (options.help) {
     console.log(`한국 데이터 수집·색인 (기존 미국 샘플은 변경하지 않음)
-  pnpm sync:korea --source kipris --query "반려동물" --limit 20
+  pnpm sync:korea --source kipris --query "반려동물" --limit 100
   pnpm sync:korea --source law --query "동물보호법" --limit 200
   pnpm sync:korea --source dart --corp-code <DART 8자리 고유번호> --since YYYY-MM-DD --until YYYY-MM-DD --limit 30
   pnpm sync:korea --reindex
   pnpm sync:korea --remove <문서ID> [--remove <문서ID>]
 
 키: KIPRIS_API_KEY / LAW_OC / DART_API_KEY (.env)
---limit: 수집할 특허/법령 조문/공시 절의 최대 개수 (기본 20)
+--limit: 수집할 특허/법령 조문/공시 절의 최대 개수 (KIPRIS 기본 100, 나머지 기본 20)
+KIPRIS는 출원일 최신순으로 수집합니다.
 --since/--until: KIPRIS 출원일, 법령 시행일, DART 접수일 범위
 한국 색인은 data/korea/index.json에 비공개 저장합니다.
 동일 명령을 다시 실행하면 문서를 병합하고 변경된 본문만 임베딩합니다.`);
@@ -88,7 +89,7 @@ async function main(): Promise<void> {
       const sources: ResearchSource[] = options.source === "all" ? ["kipris", "law", "dart"] : [options.source];
       const collectOptions: CollectOptions = {
         query: options.query,
-        limit: options.limit,
+        limit: options.limit ?? 20,
         since: options.since,
         until: options.until,
         corpCodes: options["corp-code"],
@@ -99,7 +100,10 @@ async function main(): Promise<void> {
           let result: CollectionResult;
           switch (source) {
             case "kipris":
-              result = await collectKipris(collectOptions, requireKey("KIPRIS_API_KEY"));
+              result = await collectKipris(
+                { ...collectOptions, limit: options.limit ?? 100 },
+                requireKey("KIPRIS_API_KEY"),
+              );
               break;
             case "law":
               result = await collectLaws(collectOptions, requireKey("LAW_OC"));
