@@ -65,6 +65,50 @@ pnpm sync:korea --help
 
 키가 없거나 KIPRIS가 실패·시간 초과하면 로컬 색인만 검색하고 경고를 함께 돌려준다. 색인 파일을 쓸 수 없는 환경(읽기 전용 FS)에서는 프로세스 메모리에만 캐시하고 경고 로그를 남긴다. 근사 좌표가 쌓여 지도가 어색해지면 `pnpm sync:korea --reindex`로 전체를 다시 배치한다. KIPRIS 검색은 키워드 매칭이므로 에이전트는 문장이 아니라 핵심 기술 키워드 2~4개로 검색한다. 빠른 검색은 입력 문장을 그대로 보내므로 짧은 키워드로 입력할수록 실시간 결과가 잘 나온다.
 
+### 관계선 API 명세와 확인 호출 (2026-10-17)
+
+관계선 구현을 위해 계정주가 [KIPRIS Plus 특허·실용 공개·등록공보 공식 명세](https://plus.kipris.or.kr/portal/data/apiClas/DBII_000000000000001/view.do)의 `REST → 서지정보`에서 아래 항목을 확인했다. **명세 확인과 실제 호출 검증을 구분하며, 지도 관계선 연동은 아직 구현하지 않았다.**
+
+공통 요청 경로는 `https://plus.kipris.or.kr/openapi/rest/patUtiModInfoSearchSevice/{operation}`이다. `Sevice` 철자는 명세 그대로 사용한다. 입력은 `applicationNumber`(출원번호), 인증 변수는 `accessKey`이며 응답은 XML이다. 인증키는 기존 `KIPRIS_API_KEY` 환경변수에서 읽고 문서·로그에 기록하지 않는다. 검색 API의 `ServiceKey`와 혼동하지 않는다.
+
+| 서지정보 항목 | 오퍼레이션 | 출력 그룹 및 필드 | 확인 상태 |
+|---|---|---|---|
+| 8. 패밀리정보 | `patentFamilyInfo` | `patentFamilyInfo`: `applicationNumber`, `countryCode`, `countryName`, `familyKind`, `familyNumber`, `literatureKind`, `literatureNumber`, `openingNumber` | 계정주 제공 명세 확인, 호출 미검증 |
+| 13. 우선권정보 | `patentPriorityInfo` | `items → priorityInfo`: `priorityApplicationCountry`, `priorityApplicationDate`, `priorityApplicationNumber` | 계정주 제공 명세 확인, 호출 미검증 |
+| 15. 선행기술조사문헌 | `patentPriorArtDocumentsInfo` | `items → priorArtDocumentsInfo`: `documentsNumber`, `examinerQuotationFlag` | 승인받은 1회 호출 성공 |
+| 17. 패밀리출원정보 | `patentFamilyInfoV1` | `items → familyInfoV1`: `familyApplicationNumber` | 계정주 제공 명세 확인, 호출 미검증 |
+
+선행기술조사문헌 API는 2026-10-17(KST), 계정주 승인 후 샘플 출원번호 `1020037015908`로 HTTPS 요청을 **1회** 실행했다. 재시도나 다른 관계 API 호출은 하지 않았다. HTTP `200`, Content-Type `text/xml;charset=utf-8`, `resultCode=00`, `resultMsg=success`를 확인했다.
+
+```text
+GET https://plus.kipris.or.kr/openapi/rest/patUtiModInfoSearchSevice/patentPriorArtDocumentsInfo?applicationNumber=1020037015908&accessKey=<인증키>
+```
+
+실제 응답은 다음과 같다(공백·줄바꿈만 정리).
+
+```xml
+<response>
+  <header>
+    <resultCode>00</resultCode>
+    <resultMsg>success</resultMsg>
+  </header>
+  <body>
+    <items>
+      <priorArtDocumentsInfo>
+        <documentsNumber>US03960611 A1</documentsNumber>
+        <examinerQuotationFlag>Y</examinerQuotationFlag>
+      </priorArtDocumentsInfo>
+      <priorArtDocumentsInfo>
+        <documentsNumber>US04501615 A1</documentsNumber>
+        <examinerQuotationFlag>Y</examinerQuotationFlag>
+      </priorArtDocumentsInfo>
+    </items>
+  </body>
+</response>
+```
+
+두 결과 모두 심사관 인용 여부가 `Y`인 미국 문헌이다. 이 데이터로 표현할 관계는 **해당 출원 → 인용된 선행문헌**이며, 후속 연구·거절 사유로 단정하지 않는다. 패밀리·우선권 관계도 인용 관계와 별도로 표시해야 한다. `documentsNumber`는 국가코드·문헌번호·문헌종류를 포함하므로 출원번호 기반 지도 ID와 직접 같다고 볼 수 없다. 연동 전 번호 정규화와 문헌번호→출원번호 매칭이 필요하며, 이번 호출만으로 지도 내 연결 대상의 존재나 매칭 성공을 확인한 것은 아니다.
+
 ### 저장·검색·갱신
 
 - 한국 원문과 색인은 `data/korea/index.json`에 함께 저장하며 `.gitignore`로 제외한다. 파일을 원자적으로 교체해 검색 중 부분 쓰기를 읽지 않게 한다.
