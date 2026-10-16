@@ -49,12 +49,12 @@ data/
   korea/queries.json        ← 질의 캐시: 정규화한 질의 → KIPRIS 출원번호 (비공개, 7일 유효)
 src/
   app/
-    page.tsx                ← 메인: <TelosApp/> (지도 + 우측 검색 패널)
+    page.tsx                ← 메인: <TelosApp/> (왼쪽 찾기·결과·비교 열 + 오른쪽 기술 지도)
     api/search/route.ts     ← POST {query, k, dataset?, decision?} → top-k (한국은 하이브리드, addedPoints·warnings 포함)
     api/agent/route.ts      ← POST {idea} → GPT 에이전트 (SSE, AgentEvent 스트림)
     api/compare/route.ts    ← POST {idea, id} → 기술 요소별 비교표 + 기술 근접도 (PatentComparison)
     api/patent/[id]/route.ts ← GET → 전체 레코드 (첫 청구항 포함)
-    api/patents/route.ts     ← 한국/미국 샘플 지도 및 출처 준비 상태
+    api/patents/route.ts     ← 한국/미국 샘플 지도, 출처 준비 상태, OpenAI 키 유무(aiConfigured)
     api/research/           ← 선택적 법령·공시 검색과 문서 상세
   lib/
     patents.ts              ← 서버에서 data/ 로드 (싱글턴, 프로세스당 1회)
@@ -64,15 +64,22 @@ src/
     types.ts                ← Patent, PatentPoint, AgentEvent 등 공용 타입
     colors.ts               ← 결정별 색/라벨 (클라이언트·서버 공용)
     proximity.ts            ← 기술 근접도 단계 규칙·문구·색 (클라이언트·서버 공용)
+    cases.ts                ← 분쟁 사례 정적 데이터 24건 (클라이언트·서버 공용, 분쟁 사례 API가 생기면 대체)
+    caseMap.ts              ← locateCases: 사례 키워드가 2개 이상 겹친 지도 점 묶음 → 핀 기준 점 (키워드 일치만, 임베딩 아님)
+    demo.ts                 ← ?demo=1 시연 모드의 예시 응답 (키 없이 화면 흐름 확인용)
     korea/                  ← 수집기, XML 경계, 스키마, 버전 색인·검색 (서버 전용)
       search.ts             ← searchKoreanPatents: 검색어 묶음 → KIPRIS 후보 → 제목·초록 선별 → 상위 상세 → 색인 캐시 → 재정렬
       compare.ts            ← 비교 초안의 원문 인용 검증(finalizeComparison)
   components/
-    TelosApp.tsx            ← 상태 소유자: 점 목록, 필터, 하이라이트, 선택, 포커스
-    PatentMap.tsx           ← Canvas 산점도 (zoom/pan/hover/click/highlight)
-    SearchPanel.tsx         ← 아이디어 입력 + 에이전트 SSE 스트리밍 + 빠른 검색
-    PatentDetail.tsx        ← 클릭한 특허 상세 (청구항 토글, 내 기술과 비교)
-    Comparison.tsx          ← 기술 근접도 캐릭터·배지와 기술 요소별 비교 카드
+    TelosApp.tsx            ← 상태 소유자: 점 목록, 필터, 하이라이트, 선택, 포커스, 분쟁 사례 핀, 폰 목록/지도 전환
+    PatentMap.tsx           ← Canvas 산점도 (zoom/pan/hover/click/highlight, 분쟁 사례 핀)
+    SearchPanel.tsx         ← 기술 입력 + 찾아보기·AI 분석까지 + 결과(관련 특허/분쟁 사례 탭)
+    ProximitySummary.tsx    ← 결과 맨 위 근접도 온도 요약
+    PatentDetail.tsx        ← 클릭한 특허 상세 (내 기술과 비교, 청구항, 관련 분쟁, 상담용 요약 복사)
+    Comparison.tsx          ← 기술 근접도 온도계 캐릭터·배지와 기술 요소별 비교 카드
+    DisputeCases.tsx        ← 분쟁 사례 카드와 matchCases(키워드 일치)
+    CasePanel.tsx           ← 지도에서 고른 분쟁 사례 + 키워드가 겹친 특허 목록
+    DemoFetch.tsx           ← ?demo=1이면 한국 API 요청을 demo.ts 응답으로 대신
     ResearchReferences.tsx  ← 선택적 참고 자료와 원문·버전 표시
 tests/                     ← 합성 출처 응답, 버전/검색, 하이브리드 캐시, API 회귀 테스트 (kipris-fixtures.ts는 공용 합성 XML)
 .claude/launch.json         ← 데스크톱 앱 브라우저 미리보기용 dev 서버 설정
@@ -141,7 +148,7 @@ pnpm lint
 5. 새 라이브러리는 꼭 필요할 때만. 추가하면 이 문서 §2를 갱신한다.
 6. 구조·규칙이 바뀌면 **이 문서를 같이 고친다.** 문서와 코드가 다르면 코드가 아니라 문서가 틀린 것으로 간주하고 바로 수정한다.
 7. 커밋은 의미 단위로 작게. 메시지는 한국어·영어 무관, 한 줄 요약 + 필요 시 본문.
-8. 데모 UI는 다크 테마 기본, 데스크톱 우선. 모바일 대응은 후순위.
+8. 데모 UI는 밝은 테마(토스형 카드, Pretendard) 하나. 데스크톱은 왼쪽 찾기·결과·비교 열 + 오른쪽 지도, 폰은 아래 버튼으로 목록과 전체 화면 지도를 오간다. 화면에는 한국 KIPRIS 데이터셋만 보이고 미국 샘플은 `TelosApp.tsx`의 `DATASETS`에서 뺐다(API·데이터는 유지). 토큰·패턴은 `DESIGN.md`를 따른다.
 
 ## 8. 하지 말 것
 
