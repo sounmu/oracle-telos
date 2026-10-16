@@ -255,6 +255,12 @@ export default function SearchPanel({ disabled, onMatches, onPick, selectedId }:
           </div>
         )}
 
+        {answer && (
+          <div className="prose-telos border-b border-border px-4 py-4 text-sm">
+            <ReactMarkdown>{answer}</ReactMarkdown>
+          </div>
+        )}
+
         {hits.length > 0 && (
           <div className="border-b border-border px-4 py-3">
             <div className="mb-2 text-xs font-medium text-muted">
@@ -284,12 +290,6 @@ export default function SearchPanel({ disabled, onMatches, onPick, selectedId }:
                 </li>
               ))}
             </ul>
-          </div>
-        )}
-
-        {answer && (
-          <div className="prose-telos px-4 py-4 text-sm">
-            <ReactMarkdown>{answer}</ReactMarkdown>
           </div>
         )}
 
