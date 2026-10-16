@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { runPatentAgent } from "@/lib/agent";
 import type { AgentEvent } from "@/lib/types";
 
@@ -45,21 +45,20 @@ export async function POST(request: Request) {
 }
 
 function describeError(err: unknown): string {
-  if (err instanceof Anthropic.AuthenticationError) {
-    return "Claude API 키가 없거나 잘못되었습니다. .env의 ANTHROPIC_API_KEY를 확인하세요.";
+  if (err instanceof OpenAI.AuthenticationError) {
+    return "OpenAI API 키가 잘못되었습니다. .env의 OPENAI_API_KEY를 확인하세요.";
   }
-  if (err instanceof Anthropic.RateLimitError) {
-    return "Claude API 요청 한도에 걸렸습니다. 잠시 후 다시 시도하세요.";
+  if (err instanceof OpenAI.NotFoundError) {
+    return `모델을 찾을 수 없습니다. .env의 OPENAI_MODEL을 확인하세요. (${err.message})`;
   }
-  if (err instanceof Anthropic.APIError) {
-    return `Claude API 오류 (${err.status}): ${err.message}`;
+  if (err instanceof OpenAI.RateLimitError) {
+    return "OpenAI API 요청 한도에 걸렸습니다. 잠시 후 다시 시도하세요.";
+  }
+  if (err instanceof OpenAI.APIError) {
+    return `OpenAI API 오류 (${err.status}): ${err.message}`;
   }
   if (err instanceof Error) {
     if (err.name === "AbortError") return "요청이 취소되었습니다.";
-    // SDK는 자격 증명이 전혀 없을 때 APIError가 아닌 일반 Error를 던진다
-    if (err.message.includes("Could not resolve authentication method")) {
-      return "Claude API 키가 설정되지 않았습니다. .env에 ANTHROPIC_API_KEY를 넣고 개발 서버를 재시작하세요. (키 없이도 '유사 특허만 찾기'는 동작합니다)";
-    }
     return err.message;
   }
   return "알 수 없는 오류";

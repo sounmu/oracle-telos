@@ -1,13 +1,16 @@
-// 서버 전용. Claude 에이전트: 아이디어 → 특허 검색 도구 호출 → 비교 분석 (스트리밍)
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
+// 서버 전용. GPT 에이전트: 아이디어 → 특허 검색 도구 호출 → 비교 분석 (스트리밍)
+// OpenAI Responses API + function calling. 루프는 직접 돌린다 (previous_response_id로 이어감).
+import OpenAI from "openai";
 import { z } from "zod";
 import { embedTexts } from "./embeddings";
 import { getPatentIndex, MISSING_DATA_MESSAGE, toHit, truncate } from "./patents";
 import { topK } from "./similarity";
 import type { AgentEvent, SearchHit } from "./types";
 
-export const AGENT_MODEL = "claude-opus-5-5";
+export const AGENT_MODEL = process.env.OPENAI_MODEL ?? "gpt-5.5";
+const REASONING_EFFORT = (process.env.OPENAI_REASONING_EFFORT ??
+  "low") as NonNullable<OpenAI.Reasoning["effort"]>;
+const MAX_ITERATIONS = 10;
 
 const SYSTEM_PROMPT = `당신은 "Telos"의 특허 분석 에이전트입니다. 창업 지망생이 구상 중인 아이디어를 설명하면, 기존 특허 데이터베이스(USPTO 2016년 1월 출원 샘플, 영어)에서 유사 특허를 찾아 비교하고 아이템의 방향성을 잡도록 돕습니다.
 
@@ -34,6 +37,56 @@ const SYSTEM_PROMPT = `당신은 "Telos"의 특허 분석 에이전트입니다.
 주의: 이 분석은 참고용이며 법률 자문이 아님을 마지막에 한 줄로 밝히세요. 데이터베이스가 샘플이라 실제 선행기술은 더 많을 수 있다는 점도 함께.
 근거 없는 특허를 지어내지 마세요. 도구가 돌려준 특허만 언급합니다.`;
 
+// strict 모드: 모든 키가 required여야 하므로 선택 값은 nullable로 둔다.
+const SearchInput = z.object({
+  query: z.string().min(3),
+  k: z.number().int().min(1).max(15),
+  decision: z.enum(["ACCEPTED", "REJECTED", "PENDING"]).nullable(),
+});
+const GetPatentInput = z.object({ id: z.string() });
+
+const TOOLS: OpenAI.Responses.Tool[] = [
+  {
+    type: "function",
+    name: "search_patents",
+    description:
+      "Semantic search over the patent database. Returns the most similar patents to the query with their examination decision (ACCEPTED / REJECTED / PENDING). Query in English for best results.",
+    strict: true,
+    parameters: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "A short English description of the technology to search for",
+        },
+        k: { type: "integer", description: "How many results to return (1-15, usually 8)" },
+        decision: {
+          type: ["string", "null"],
+          enum: ["ACCEPTED", "REJECTED", "PENDING", null],
+          description: "Restrict to one examination decision, or null for all",
+        },
+      },
+      required: ["query", "k", "decision"],
+      additionalProperties: false,
+    },
+  },
+  {
+    type: "function",
+    name: "get_patent",
+    description:
+      "Fetch the full abstract, CPC labels and the first independent claim of one patent by its application number (id from search_patents).",
+    strict: true,
+    parameters: {
+      type: "object",
+      properties: {
+        id: { type: "string", description: "Application number returned by search_patents" },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+  },
+];
+
 export interface AgentRunOptions {
   idea: string;
   emit: (event: AgentEvent) => void;
@@ -47,32 +100,35 @@ export async function runPatentAgent({ idea, emit, signal }: AgentRunOptions): P
     return;
   }
 
-  // 자격 증명은 환경(ANTHROPIC_API_KEY 등)에서 읽는다. 없으면 첫 요청 시 일반 Error가 던져지고
-  // route handler의 describeError가 한국어 안내로 바꾼다.
-  const client = new Anthropic();
+  let client: OpenAI;
+  try {
+    client = new OpenAI(); // OPENAI_API_KEY 환경변수에서 읽는다. 없으면 여기서 던진다.
+  } catch {
+    emit({
+      type: "error",
+      message:
+        "OpenAI API 키가 설정되지 않았습니다. .env에 OPENAI_API_KEY를 넣고 개발 서버를 재시작하세요. (키 없이도 '유사 특허만 찾기'는 동작합니다)",
+    });
+    return;
+  }
 
-  const searchPatents = betaZodTool({
-    name: "search_patents",
-    description:
-      "Semantic search over the patent database. Returns the most similar patents to the query with their examination decision (ACCEPTED / REJECTED / PENDING). Query in English for best results.",
-    inputSchema: z.object({
-      query: z
-        .string()
-        .min(3)
-        .describe("A short English description of the technology to search for"),
-      k: z.number().int().min(1).max(15).default(8).describe("How many results to return"),
-      decision: z
-        .enum(["ACCEPTED", "REJECTED", "PENDING"])
-        .optional()
-        .describe("Optionally restrict to one examination decision"),
-    }),
-    run: async ({ query, k, decision }) => {
-      emit({ type: "tool", name: "search_patents", input: { query, k, decision } });
+  async function runTool(name: string, rawArgs: string): Promise<string> {
+    let args: unknown;
+    try {
+      args = JSON.parse(rawArgs);
+    } catch {
+      return JSON.stringify({ error: "arguments is not valid JSON" });
+    }
+    if (name === "search_patents") {
+      const parsed = SearchInput.safeParse(args);
+      if (!parsed.success) return JSON.stringify({ error: parsed.error.message });
+      const { query, k, decision } = parsed.data;
+      emit({ type: "tool", name, input: { query, k, decision } });
       const [vec] = await embedTexts([query]);
-      const scored = topK(vec, index.vectors, index.meta.dim, k, (i) =>
-        decision ? index.patents[i].decision === decision : true,
+      const scored = topK(vec, index!.vectors, index!.meta.dim, k, (i) =>
+        decision ? index!.patents[i].decision === decision : true,
       );
-      const hits: SearchHit[] = scored.map((s) => toHit(index.patents[s.index], s.score));
+      const hits: SearchHit[] = scored.map((s) => toHit(index!.patents[s.index], s.score));
       emit({ type: "matches", query, hits });
       return JSON.stringify(
         hits.map((h) => ({
@@ -85,19 +141,13 @@ export async function runPatentAgent({ idea, emit, signal }: AgentRunOptions): P
           abstract: h.abstract,
         })),
       );
-    },
-  });
-
-  const getPatent = betaZodTool({
-    name: "get_patent",
-    description:
-      "Fetch the full abstract, CPC labels and the first independent claim of one patent by its application number (id from search_patents).",
-    inputSchema: z.object({
-      id: z.string().describe("Application number returned by search_patents"),
-    }),
-    run: async ({ id }) => {
-      emit({ type: "tool", name: "get_patent", input: { id } });
-      const p = index.byId.get(id);
+    }
+    if (name === "get_patent") {
+      const parsed = GetPatentInput.safeParse(args);
+      if (!parsed.success) return JSON.stringify({ error: parsed.error.message });
+      const { id } = parsed.data;
+      emit({ type: "tool", name, input: { id } });
+      const p = index!.byId.get(id);
       if (!p) return JSON.stringify({ error: `No patent with id ${id}` });
       return JSON.stringify({
         id: p.id,
@@ -108,49 +158,69 @@ export async function runPatentAgent({ idea, emit, signal }: AgentRunOptions): P
         abstract: truncate(p.abstract, 1500),
         firstClaim: truncate(p.firstClaim, 1500),
       });
-    },
-  });
-
-  const runner = client.beta.messages.toolRunner(
-    {
-      model: AGENT_MODEL,
-      max_tokens: 16000,
-      stream: true,
-      max_iterations: 10,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: "medium" },
-      system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
-      tools: [searchPatents, getPatent],
-      messages: [{ role: "user", content: idea }],
-    },
-    { signal },
-  );
+    }
+    return JSON.stringify({ error: `Unknown tool ${name}` });
+  }
 
   emit({ type: "status", message: "아이디어를 분석하고 있어요…" });
 
-  for await (const stream of runner) {
+  let input: OpenAI.Responses.ResponseInput = [{ role: "user", content: idea }];
+  let previousResponseId: string | undefined;
+
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    const stream = client.responses.stream(
+      {
+        model: AGENT_MODEL,
+        instructions: SYSTEM_PROMPT,
+        input,
+        tools: TOOLS,
+        reasoning: { effort: REASONING_EFFORT },
+        previous_response_id: previousResponseId,
+        store: true,
+      },
+      { signal },
+    );
+
     let emittedText = false;
-    stream.on("text", (delta) => {
-      emittedText = true;
-      emit({ type: "text", delta });
-    });
-    const message = await stream.finalMessage();
-    if (emittedText && message.stop_reason === "tool_use") {
-      emit({ type: "text", delta: "\n\n" });
+    for await (const event of stream) {
+      if (event.type === "response.output_text.delta") {
+        emittedText = true;
+        emit({ type: "text", delta: event.delta });
+      }
     }
-    if (message.stop_reason === "refusal") {
+    const response = await stream.finalResponse();
+    previousResponseId = response.id;
+
+    if (response.status === "incomplete") {
       emit({
         type: "error",
-        message: "이 요청은 모델이 처리하지 않았습니다. 아이디어를 다르게 표현해 보세요.",
+        message: `응답이 중단되었습니다 (${response.incomplete_details?.reason ?? "unknown"}). 다시 시도해 주세요.`,
       });
       return;
     }
-    if (message.stop_reason === "max_tokens") {
-      emit({ type: "error", message: "응답이 길이 제한에 걸렸습니다. 다시 시도해 주세요." });
+
+    // finalResponse()는 ParsedResponse를 돌려주므로 평이한 타입으로 좁힌다
+    const calls = response.output.flatMap((item) =>
+      item.type === "function_call"
+        ? [item as unknown as OpenAI.Responses.ResponseFunctionToolCall]
+        : [],
+    );
+    if (calls.length === 0) {
+      emit({ type: "done" });
       return;
     }
+    if (emittedText) emit({ type: "text", delta: "\n\n" });
+
+    const outputs: OpenAI.Responses.ResponseInputItem.FunctionCallOutput[] = [];
+    for (const call of calls) {
+      outputs.push({
+        type: "function_call_output",
+        call_id: call.call_id,
+        output: await runTool(call.name, call.arguments),
+      });
+    }
+    input = outputs;
   }
 
-  emit({ type: "done" });
+  emit({ type: "error", message: "도구 호출이 너무 많아 분석을 중단했습니다. 다시 시도해 주세요." });
 }

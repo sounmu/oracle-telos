@@ -296,7 +296,7 @@ export default function SearchPanel({ disabled, onMatches, onPick, selectedId }:
         {phase === "idle" && !answer && hits.length === 0 && (
           <div className="px-4 py-6 text-xs leading-relaxed text-muted">
             <p>
-              <b className="text-foreground">AI 분석</b>: Claude 에이전트가 영어로 특허를 여러 번
+              <b className="text-foreground">AI 분석</b>: GPT 에이전트가 영어로 특허를 여러 번
               검색하고 청구항까지 읽은 뒤 유사점·차이점·거절 사례·방향을 정리합니다.
             </p>
             <p className="mt-2">
