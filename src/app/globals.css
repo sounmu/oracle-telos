@@ -1,12 +1,17 @@
 @import "tailwindcss";
 
+/* 밝은 테마. 토스형 카드 UI: 연회색 바탕 + 흰 카드 + 파란 주 동작 */
 :root {
-  --background: #0b0f17;
-  --foreground: #e5e7eb;
-  --panel: #111827;
-  --border: #1f2937;
-  --muted: #9ca3af;
-  --accent: #818cf8;
+  --background: #f2f4f6;
+  --foreground: #191f28;
+  --panel: #ffffff;
+  --border: #e5e8eb;
+  --muted: #6b7684;
+  --accent: #3182f6;
+  --accent-strong: #1b64da;
+  --accent-soft: #e8f3ff;
+  --ink-2: #4e5968;
+  --surface: #f9fafb;
 }
 
 @theme inline {
@@ -16,7 +21,11 @@
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-ink-2: var(--ink-2);
+  --color-surface: var(--surface);
+  --font-sans: "Pretendard Variable", Pretendard, var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -31,44 +40,66 @@ body {
   text-wrap: pretty;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo",
-    "Noto Sans KR", sans-serif;
+  font-family: "Pretendard Variable", Pretendard, var(--font-geist-sans), ui-sans-serif, system-ui,
+    -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-/* 키보드 포커스 링. 텍스트 입력은 기존 focus:border-accent 규칙을 그대로 쓴다 */
-:where(a, button, summary, [role="button"], input[type="checkbox"], input[type="radio"]):focus-visible {
-  outline: 2px solid var(--accent);
+/* 키보드 포커스 링. 텍스트 입력은 focus:border-accent 규칙을 그대로 쓴다 */
+:where(a, button, summary, [role="button"], [role="tab"], input[type="checkbox"], input[type="radio"]):focus-visible {
+  outline: 3px solid rgb(49 130 246 / 0.45);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-pulse {
+  .animate-pulse,
+  .animate-spin {
     animation: none;
   }
 }
 
+/* 한 줄 칩 목록: 폰에서는 가로로 넘긴다 */
+.scroll-row {
+  scrollbar-width: none;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* 펼침 요약의 기본 삼각형 제거 */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
 /* 에이전트 답변 마크다운 */
 .prose-telos h2 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #c7d2fe;
-  margin: 1.1rem 0 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 1.2rem 0 0.4rem;
 }
 .prose-telos h2:first-child {
   margin-top: 0;
 }
 .prose-telos p {
-  margin: 0.35rem 0;
-  line-height: 1.6;
+  margin: 0.4rem 0;
+  line-height: 1.7;
 }
 .prose-telos ul,
 .prose-telos ol {
   padding-left: 1.1rem;
-  margin: 0.35rem 0;
+  margin: 0.4rem 0;
 }
 .prose-telos li {
-  margin: 0.25rem 0;
-  line-height: 1.55;
+  margin: 0.3rem 0;
+  line-height: 1.6;
 }
 .prose-telos ul li {
   list-style: disc;
@@ -77,17 +108,17 @@ body {
   list-style: decimal;
 }
 .prose-telos strong {
-  color: #f3f4f6;
+  color: var(--foreground);
 }
 .prose-telos code {
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.8em;
-  background: var(--border);
+  font-size: 0.85em;
+  background: var(--background);
   padding: 0.05rem 0.3rem;
   border-radius: 0.25rem;
 }
 .prose-telos a {
-  color: var(--accent);
+  color: var(--accent-strong);
   text-decoration: underline;
   overflow-wrap: anywhere;
 }

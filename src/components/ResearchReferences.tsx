@@ -98,7 +98,7 @@ export default function ResearchReferences({ state, status }: Props) {
       {state.error && (
         <div
           role="alert"
-          className="mb-2 rounded-lg border border-red-400/40 bg-red-400/10 px-3 py-2 text-xs text-red-200"
+          className="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
         >
           참고 자료 검색 실패: {state.error}
           {state.hits.length > 0 && " (이미 받은 결과는 아래에 유지합니다)"}
@@ -216,7 +216,7 @@ function ReferenceItem({ hit }: { hit: ResearchHit }) {
         <div className="mt-2 rounded-md bg-background/60 p-2">
           {loading && <p className="text-[11px] text-muted">상세를 불러오는 중…</p>}
           {error && (
-            <p role="alert" className="text-[11px] text-red-200">
+            <p role="alert" className="text-[11px] text-red-700">
               상세를 불러오지 못했습니다: {error}
             </p>
           )}

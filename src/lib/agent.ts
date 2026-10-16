@@ -279,7 +279,7 @@ export async function runPatentAgent({
     emit({
       type: "error",
       message:
-        "OpenAI API 키가 설정되지 않았습니다. .env에 OPENAI_API_KEY를 넣고 개발 서버를 재시작하세요. (키 없이도 '유사 특허만 찾기'는 동작합니다)",
+        "OpenAI API 키가 설정되지 않았습니다. .env에 OPENAI_API_KEY를 넣고 개발 서버를 재시작하세요. (키 없이도 '찾아보기'는 동작합니다)",
     });
     return;
   }

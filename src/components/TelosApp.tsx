@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PatentMap from "./PatentMap";
 import SearchPanel from "./SearchPanel";
 import PatentDetail from "./PatentDetail";
+import { ProximityBadge } from "./Comparison";
 import { formatDate, readErrorMessage } from "./ResearchReferences";
-import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
+import { DECISION_COLORS, DECISION_LABELS, DECISION_TAG_STYLES } from "@/lib/colors";
 import {
   DECISIONS,
   type ComparisonState,
@@ -19,11 +20,15 @@ import {
 } from "@/lib/types";
 
 type LoadState = "loading" | "ready" | "error";
+/** 폰(md 미만)에서 왼쪽 열과 지도 중 무엇을 보여 줄지. md 이상에서는 둘 다 보인다 */
+type MobileView = "list" | "map";
 
-const DATASETS: PatentDataset[] = ["korea", "sample"];
+// MVP는 국내 데이터만 보여 준다. 미국 USPTO 샘플(sample)은 화면에서만 뺐고 API·데이터 파이프라인은 그대로 둔다.
+// 다시 보이려면 여기에 "sample"을 더하면 데이터셋 토글이 돌아온다
+const DATASETS: PatentDataset[] = ["korea"];
 
-// 지도 위 헤더·데이터셋 선택·범례(하이라이트 해제 포함) 오버레이의 최대 높이. 점이 그 아래에 놓이게 한다
-const MAP_OVERLAY_INSET = 184;
+// 지도 위 제목·범례(하이라이트 해제 포함) 오버레이의 최대 높이. 점이 그 아래에 놓이게 한다
+const MAP_OVERLAY_INSET = 104;
 
 // 미국 샘플을 한국 데이터처럼 보이게 하는 라벨은 금지한다
 const DATASET_LABELS: Record<PatentDataset, { tab: string; title: string; note: string }> = {
@@ -41,6 +46,8 @@ export default function TelosApp() {
   const [points, setPoints] = useState<PatentPoint[]>([]);
   const [builtAt, setBuiltAt] = useState<string | null>(null);
   const [status, setStatus] = useState<ResearchStatus | null>(null);
+  // null은 아직 모름. 키가 없다고 확인된 경우에만 AI 기능을 끈다
+  const [aiConfigured, setAiConfigured] = useState<boolean | null>(null);
   const [load, setLoad] = useState<LoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [idea, setIdea] = useState("");
@@ -48,11 +55,13 @@ export default function TelosApp() {
   const [highlights, setHighlights] = useState<Map<string, number> | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
+  const [mobileView, setMobileView] = useState<MobileView>("list");
   // 비교는 마지막으로 검색한 기술 설명 기준이다. 새 검색·데이터셋 전환 시 진행 중 요청과 함께 버린다.
   const [comparisonIdea, setComparisonIdea] = useState("");
   const [comparisons, setComparisons] = useState<Map<string, ComparisonState>>(() => new Map());
   const compareAbortRef = useRef<AbortController | null>(null);
   const requestedRef = useRef(new Set<string>());
+  const leftRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => compareAbortRef.current?.abort(), []);
 
@@ -67,6 +76,7 @@ export default function TelosApp() {
         setPoints(data.points);
         setBuiltAt(data.builtAt);
         setStatus(data.status);
+        setAiConfigured(data.aiConfigured);
         setLoad("ready");
       })
       .catch((err: unknown) => {
@@ -92,6 +102,7 @@ export default function TelosApp() {
   const detailIdea = comparisonIdea || idea.trim();
   // 키가 있으면 빈 색인에서도 검색이 실시간 결과로 지도를 채운다.
   const liveSearch = dataset === "korea" && kipris?.configured === true;
+  const aiReady = aiConfigured !== false;
 
   // 진행 중 요청은 effect cleanup이, SearchPanel의 요청은 key={dataset} 재마운트가 중단한다
   function resetForLoad() {
@@ -100,6 +111,7 @@ export default function TelosApp() {
     setPoints([]);
     setBuiltAt(null);
     setStatus(null);
+    setAiConfigured(null);
     setVisible(new Set(DECISIONS));
     setHighlights(null);
     setSelectedId(null);
@@ -187,9 +199,27 @@ export default function TelosApp() {
     });
   }
 
+  // 상세는 왼쪽 열에 열리므로 열(폰은 문서)의 맨 위로 올린다
+  function scrollToTop() {
+    leftRef.current?.scrollTo({ top: 0 });
+    if (window.matchMedia("(max-width: 767px)").matches) window.scrollTo({ top: 0 });
+  }
+
   function pick(id: string) {
     setSelectedId(id);
     setFocus({ id, nonce: Date.now() });
+    scrollToTop();
+  }
+
+  function select(id: string | null) {
+    setSelectedId(id);
+    if (id) scrollToTop();
+  }
+
+  // 폰 지도 화면의 미리보기 카드에서 상세(비교)로 넘어간다
+  function openSelected() {
+    setMobileView("list");
+    scrollToTop();
   }
 
   const subtitle =
@@ -207,7 +237,93 @@ export default function TelosApp() {
 
   return (
     <main className="flex min-h-full w-full flex-col md:h-full md:flex-row">
-      <section className="relative h-[44dvh] min-h-60 w-full min-w-0 shrink-0 md:h-auto md:min-h-0 md:flex-1">
+      {/* 왼쪽 열: 입력 → 결과 → 비교. md 이상에서는 이 열만 스크롤한다 */}
+      <div
+        ref={leftRef}
+        className={`${mobileView === "map" ? "hidden" : "flex"} w-full flex-col md:flex md:h-full md:w-[520px] md:shrink-0 md:overflow-y-auto lg:w-[640px] xl:w-[720px] 2xl:w-[800px]`}
+      >
+        <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-md">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-1 pt-3 md:px-6">
+            <button
+              type="button"
+              onClick={() => setSelectedId(null)}
+              className="min-h-10 text-xl font-extrabold tracking-tight"
+            >
+              Telos
+            </button>
+            <span className="hidden text-sm text-muted sm:inline">AI 특허 탐색기</span>
+            {DATASETS.length > 1 && (
+              <div
+                role="group"
+                aria-label="특허 데이터셋 선택"
+                className="ml-auto inline-flex rounded-xl bg-panel p-1"
+              >
+                {DATASETS.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    aria-pressed={dataset === d}
+                    onClick={() => selectDataset(d)}
+                    className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition ${
+                      dataset === d ? "bg-foreground text-white" : "text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {DATASET_LABELS[d].tab}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <p className="px-4 pb-2 text-[13px] leading-relaxed text-muted md:px-6">
+            {subtitle} · {note}
+          </p>
+        </header>
+
+        <div className="flex-1 px-4 pb-28 md:px-6 md:pb-8">
+          {/* 상세를 여는 동안에도 검색 상태(결과·답변·진행 중 요청)를 유지하려고 숨기기만 한다 */}
+          <div className={selected ? "hidden" : ""}>
+            <SearchPanel
+              key={dataset}
+              dataset={dataset}
+              status={status}
+              disabled={load !== "ready" || (points.length === 0 && !liveSearch)}
+              aiReady={aiReady}
+              idea={idea}
+              onIdeaChange={setIdea}
+              onMatches={handleMatches}
+              onPointsAdded={handlePointsAdded}
+              comparisons={comparisons}
+              onSearchStart={startComparisons}
+              onCompare={compare}
+              onPick={pick}
+              selectedId={selectedId}
+            />
+          </div>
+          {selected && (
+            <PatentDetail
+              key={selected.id}
+              point={selected}
+              dataset={dataset}
+              score={highlights?.get(selected.id)}
+              onClose={() => setSelectedId(null)}
+              comparison={comparisons.get(selected.id)}
+              canCompare={detailIdea.length >= 5 && aiReady}
+              aiReady={aiReady}
+              idea={detailIdea}
+              onCompare={() => {
+                if (detailIdea !== comparisonIdea) startComparisons(detailIdea);
+                compare(selected.id, detailIdea);
+              }}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* 오른쪽: 기술 지도 (폰에서는 아래 버튼으로 전환하는 전체 화면) */}
+      <section
+        aria-label="기술 지도"
+        className={`${mobileView === "map" ? "fixed inset-0 z-30" : "hidden"} overflow-hidden bg-panel md:relative md:inset-auto md:z-auto md:my-4 md:ml-0 md:mr-4 md:block md:flex-1 md:rounded-3xl`}
+      >
         {load === "ready" && points.length > 0 && (
           <PatentMap
             points={points}
@@ -216,47 +332,23 @@ export default function TelosApp() {
             highlights={highlights}
             selectedId={selectedId}
             focus={focus}
-            onSelect={setSelectedId}
+            onSelect={select}
           />
         )}
 
-        <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-col gap-2 md:left-4 md:top-4 md:gap-3">
-          {/* 지도 점이 제목 아래로 지나가도 글자가 읽히도록 반투명 배경을 둔다 */}
-          <div className="rounded-md bg-background/70 backdrop-blur-sm">
-            <h1 className="text-lg font-bold tracking-tight md:text-xl">
-              Telos <span className="text-sm font-normal text-muted">AI 특허 탐색기</span>
-            </h1>
-            <p className="text-xs text-muted">{subtitle}</p>
-            <p className="text-[11px] text-muted/80">{note}</p>
-          </div>
-
-          <div
-            role="group"
-            aria-label="특허 데이터셋 선택"
-            className="pointer-events-auto inline-flex w-fit rounded-full border border-border bg-panel/90 p-0.5 text-xs backdrop-blur-sm"
-          >
-            {DATASETS.map((d) => (
-              <button
-                key={d}
-                type="button"
-                aria-pressed={dataset === d}
-                onClick={() => selectDataset(d)}
-                className={`rounded-full px-2.5 py-1 transition ${
-                  dataset === d
-                    ? "bg-accent font-semibold text-background"
-                    : "text-muted hover:text-foreground"
-                }`}
-              >
-                {DATASET_LABELS[d].tab}
-              </button>
-            ))}
+        <div className="pointer-events-none absolute inset-x-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-10 flex flex-col gap-2 md:inset-x-4 md:top-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-panel/90 px-3 py-1.5 text-sm font-bold shadow-sm backdrop-blur-sm">기술 지도</span>
+            <span className="rounded-full bg-panel/90 px-3 py-1.5 text-[13px] text-muted shadow-sm backdrop-blur-sm">
+              가까울수록 비슷한 기술 · 점을 누르면 비교
+            </span>
           </div>
 
           {activeDecisions.length > 0 && (
             <div
               role="group"
               aria-label="심사 결과 필터"
-              className="pointer-events-auto flex flex-wrap gap-1.5"
+              className="scroll-row pointer-events-auto -mx-3 flex gap-1.5 overflow-x-auto px-3 pb-2 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
             >
               {activeDecisions.map((d) => {
                 const on = visible.has(d);
@@ -266,10 +358,8 @@ export default function TelosApp() {
                     type="button"
                     aria-pressed={on}
                     onClick={() => toggleDecision(d)}
-                    className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${
-                      on
-                        ? "border-border bg-panel/90 backdrop-blur-sm hover:border-accent/60"
-                        : "border-transparent bg-panel/40 text-muted line-through backdrop-blur-sm hover:text-foreground"
+                    className={`flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold shadow-sm backdrop-blur-sm transition ${
+                      on ? "bg-panel/95 text-foreground hover:bg-panel" : "bg-panel/60 text-muted line-through hover:text-foreground"
                     }`}
                   >
                     <span
@@ -284,7 +374,7 @@ export default function TelosApp() {
                 <button
                   type="button"
                   onClick={() => setHighlights(null)}
-                  className="rounded-full border border-border bg-panel/90 px-2.5 py-1 text-xs text-muted backdrop-blur-sm hover:text-foreground"
+                  className="min-h-9 shrink-0 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm backdrop-blur-sm hover:text-foreground"
                 >
                   하이라이트 해제 ({highlights.size})
                 </button>
@@ -293,12 +383,12 @@ export default function TelosApp() {
           )}
         </div>
 
-        {load === "loading" && <Center>특허 지도를 불러오는 중…</Center>}
+        {load === "loading" && <Center>특허 지도를 불러오는 중이에요</Center>}
 
         {load === "error" && (
           <Center>
-            <p className="mb-2 font-medium">데이터를 불러오지 못했습니다.</p>
-            {loadError && <p className="mb-3 text-xs text-muted">{loadError}</p>}
+            <p className="mb-2 text-[17px] font-bold">데이터를 불러오지 못했어요</p>
+            {loadError && <p className="mb-3 text-sm text-muted">{loadError}</p>}
             <button type="button" onClick={retry} className={SECONDARY_BUTTON}>
               다시 시도
             </button>
@@ -307,21 +397,18 @@ export default function TelosApp() {
 
         {empty && dataset === "korea" && (
           <Center>
-            <p className="mb-2 font-medium">한국 특허 색인이 아직 없습니다.</p>
+            <p className="mb-2 text-[17px] font-bold">한국 특허 색인이 아직 없어요</p>
             {liveSearch && (
-              <p className="mb-3 text-xs text-muted">
-                오른쪽에서 검색하면 KIPRIS를 실시간으로 조회해 지도를 채웁니다. 기본 지도를 미리
-                만들려면 아래 순서를 따르세요.
+              <p className="mb-3 text-sm text-ink-2">
+                왼쪽에서 찾으면 KIPRIS를 실시간으로 조회해 지도를 채워요. 기본 지도를 미리 만들려면 아래 순서를 따르세요.
               </p>
             )}
-            <ol className="mx-auto mb-3 max-w-sm list-decimal space-y-1 pl-5 text-left text-xs text-muted">
+            <ol className="mx-auto mb-4 max-w-sm list-decimal space-y-1 pl-5 text-left text-sm text-ink-2">
               <li>
-                <Code>.env</Code>에 <Code>KIPRIS_API_KEY</Code>를 설정합니다 (현재{" "}
-                {kipris?.configured ? "설정됨" : "미설정"}).
+                <Code>.env</Code>에 <Code>KIPRIS_API_KEY</Code>를 설정합니다 (현재 {kipris?.configured ? "설정됨" : "미설정"}).
               </li>
               <li>
-                <Code>pnpm sync:korea --source kipris --query &quot;반려동물&quot;</Code>을
-                실행합니다.
+                <Code>pnpm sync:korea --source kipris --query &quot;반려동물&quot;</Code>을 실행합니다.
               </li>
               <li>아래 버튼으로 다시 불러옵니다.</li>
             </ol>
@@ -329,60 +416,70 @@ export default function TelosApp() {
               <button type="button" onClick={retry} className={SECONDARY_BUTTON}>
                 다시 불러오기
               </button>
-              <button
-                type="button"
-                onClick={() => selectDataset("sample")}
-                className={SECONDARY_BUTTON}
-              >
-                미국 USPTO 샘플로 보기
-              </button>
             </div>
           </Center>
         )}
-
-        {empty && dataset === "sample" && (
-          <Center>
-            <p className="mb-2 font-medium">미국 샘플 데이터가 아직 없습니다.</p>
-            <p className="text-muted">
-              터미널에서 <Code>pnpm build:data</Code> 를 실행한 뒤 새로고침하세요.
-            </p>
-          </Center>
-        )}
-
-        {selected && (
-          <PatentDetail
-            key={selected.id}
-            point={selected}
-            dataset={dataset}
-            score={highlights?.get(selected.id)}
-            onClose={() => setSelectedId(null)}
-            comparison={comparisons.get(selected.id)}
-            canCompare={detailIdea.length >= 5}
-            onCompare={() => {
-              if (detailIdea !== comparisonIdea) startComparisons(detailIdea);
-              compare(selected.id, detailIdea);
-            }}
-          />
-        )}
       </section>
 
-      <aside className="flex w-full flex-1 flex-col border-t border-border bg-panel md:min-h-0 md:w-[380px] md:flex-none md:border-l md:border-t-0 lg:w-[440px]">
-        <SearchPanel
-          key={dataset}
-          dataset={dataset}
-          status={status}
-          disabled={load !== "ready" || (points.length === 0 && !liveSearch)}
-          idea={idea}
-          onIdeaChange={setIdea}
-          onMatches={handleMatches}
-          onPointsAdded={handlePointsAdded}
-          comparisons={comparisons}
-          onSearchStart={startComparisons}
-          onCompare={compare}
-          onPick={pick}
-          selectedId={selectedId}
-        />
-      </aside>
+      {/* 폰 전용: 지도에서 고른 특허 미리보기 */}
+      {mobileView === "map" && selected && (
+        <div className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 rounded-3xl bg-panel p-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)] md:hidden">
+          <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
+            <span
+              className="rounded-md px-2 py-0.5 font-bold"
+              style={{ background: DECISION_TAG_STYLES[selected.decision].bg, color: DECISION_TAG_STYLES[selected.decision].ink }}
+            >
+              {DECISION_LABELS[selected.decision]}
+            </span>
+            {selected.filed && <span>{selected.filed}</span>}
+            <span className="ml-auto">
+              <ProximityBadge state={comparisons.get(selected.id)} />
+            </span>
+          </div>
+          <p className="mt-1.5 line-clamp-2 text-[17px] font-bold leading-snug">{selected.title}</p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={openSelected}
+              className="min-h-12 flex-1 rounded-2xl bg-accent px-4 text-[15px] font-bold text-white hover:bg-accent-strong"
+            >
+              {dataset === "korea" ? "내 기술과 비교 보기" : "자세히 보기"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedId(null)}
+              className="min-h-12 rounded-2xl bg-background px-4 text-[15px] font-semibold text-ink-2 hover:bg-border"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 폰 전용: 목록 ↔ 지도 전환. 지도에서 미리보기 카드가 떠 있으면 카드 버튼을 쓴다 */}
+      {load === "ready" && points.length > 0 && !(mobileView === "map" && selected) && (
+        <button
+          type="button"
+          onClick={() => (mobileView === "map" ? openSelected() : setMobileView("map"))}
+          className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 z-40 flex min-h-12 -translate-x-1/2 items-center gap-2 rounded-full bg-foreground px-5 text-[15px] font-bold text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] md:hidden"
+        >
+          {mobileView === "map" ? (
+            <>
+              <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 5.5h12M4 10h12M4 14.5h12" />
+              </svg>
+              목록 보기
+            </>
+          ) : (
+            <>
+              <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                <path d="M2.5 5l5-2 5 2 5-2v12l-5 2-5-2-5 2z M7.5 3v12 M12.5 5v12" />
+              </svg>
+              {selected ? "지도에서 위치 보기" : highlights ? `지도에서 ${highlights.size}건 보기` : "지도 보기"}
+            </>
+          )}
+        </button>
+      )}
     </main>
   );
 }
@@ -394,16 +491,16 @@ function isComparison(v: unknown): v is PatentComparison {
 }
 
 const SECONDARY_BUTTON =
-  "rounded-lg border border-border bg-panel/90 px-3 py-1.5 text-xs hover:border-accent";
+  "min-h-10 rounded-xl bg-background px-4 text-sm font-semibold text-ink-2 hover:bg-border";
 
 function Code({ children }: { children: React.ReactNode }) {
-  return <code className="rounded bg-white/10 px-1.5 py-0.5 text-[11px]">{children}</code>;
+  return <code className="rounded bg-background px-1.5 py-0.5 text-[13px]">{children}</code>;
 }
 
 function Center({ children }: { children: React.ReactNode }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center p-4 pt-28 text-center text-sm md:p-8">
-      <div>{children}</div>
+      <div className="max-w-md rounded-3xl bg-panel/95 p-6 shadow-sm">{children}</div>
     </div>
   );
 }

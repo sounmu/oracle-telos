@@ -291,4 +291,30 @@ export interface PatentMapResponse {
   readonly points: PatentPoint[];
   readonly builtAt: string | null;
   readonly status: ResearchStatus;
+  /** 서버에 OPENAI_API_KEY가 있는지. 없으면 AI 분석과 기술 요소 비교를 끈다 */
+  readonly aiConfigured: boolean;
+}
+
+/** 분쟁 사례 (src/lib/cases.ts). 조사 자료에서 뽑은 정적 데이터이며, 분쟁 사례 API가 생기면 같은 형태로 내려준다 */
+export interface DisputeCase {
+  readonly id: string;
+  readonly kind: "tech" | "idea";
+  readonly title: string;
+  readonly plaintiff: string;
+  readonly defendant: string;
+  readonly domain: string;
+  readonly tech: string;
+  /** 사용자 입력·기술 요소·특허 제목과 맞춰 볼 검색어 */
+  readonly keywords: readonly string[];
+  readonly relation: string;
+  readonly procedures: readonly string[];
+  readonly period: { readonly start: string; readonly end: string };
+  readonly steps: readonly { readonly date: string; readonly text: string }[];
+  readonly result: string;
+  /** 판단 이유. 공개 자료가 없으면 그렇다고 적는다 */
+  readonly reason: string;
+  readonly techImpact: string;
+  readonly bizImpact: string;
+  readonly ids: { readonly patents: readonly string[]; readonly cases: readonly string[] };
+  readonly sources: readonly { readonly label: string; readonly url: string }[];
 }
