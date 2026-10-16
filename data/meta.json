@@ -1,0 +1,7 @@
+{
+  "model": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+  "dim": 384,
+  "count": 3000,
+  "builtAt": "2026-10-16T06:29:48.740Z",
+  "source": "https://huggingface.co/datasets/HUPD/hupd/resolve/main/data/sample-jan-2016.tar.gz"
+}
