@@ -1,3 +1,4 @@
+import { mockEnabled } from "@/lib/mockApi";
 import { z } from "zod";
 import { researchStatus, searchResearch } from "@/lib/korea/index";
 import { SourceError } from "@/lib/korea/http";
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
   }
   const parsed = input.safeParse(body);
   if (!parsed.success) return Response.json({ error: "검색 조건과 기준일을 확인하세요." }, { status: 400 });
+  if (mockEnabled()) return Response.json({ hits: [], status: await researchStatus() });
   try {
     const { query, sources, k, asOf } = parsed.data;
     // 출처별 후보를 확보해 한 출처가 다른 출처의 결과를 밀어내지 않게 한다.

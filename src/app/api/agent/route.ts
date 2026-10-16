@@ -1,3 +1,4 @@
+import { mockAgentEvents, mockEnabled } from "@/lib/mockApi";
 import OpenAI from "openai";
 import { runPatentAgent } from "@/lib/agent";
 import type { AgentEvent } from "@/lib/types";
@@ -23,6 +24,8 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return Response.json({ error: "아이디어와 검색 조건을 확인해 주세요. 아이디어는 5~4,000자로 입력하세요." }, { status: 400 });
   }
+
+  if (mockEnabled()) return mockAgentResponse();
 
   const encoder = new TextEncoder();
   const cancellation = new AbortController();
@@ -78,4 +81,22 @@ function describeError(err: unknown): string {
     return err.message;
   }
   return "알 수 없는 오류";
+}
+
+/** 목업 모드: 실제 에이전트 대신 고정 이벤트를 짧은 간격으로 흘려보낸다 */
+async function mockAgentResponse(): Promise<Response> {
+  const events = await mockAgentEvents();
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      for (const event of events) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+        await new Promise((resolve) => setTimeout(resolve, 120));
+      }
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform" },
+  });
 }
