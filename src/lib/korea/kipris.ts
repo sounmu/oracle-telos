@@ -268,7 +268,7 @@ async function fetchDetails(
   key: string,
   signal: AbortSignal | undefined,
   fetcher: typeof fetch,
-): Promise<LiveSearchResult> {
+): Promise<Omit<LiveSearchResult, "numbers">> {
   const documents: KoreanPatentDocument[] = [];
   const warnings: string[] = [];
   for (
@@ -313,18 +313,19 @@ export async function collectKipris(
   return fetchDetails(numbers, key, options.signal, fetcher);
 }
 
-/** 키워드로 검색해 색인에 없는 출원번호만 상세를 받는다 (질의당 최대 LIVE_DETAIL_LIMIT건). */
+/**
+ * 키워드로 검색해 색인에 없는 출원번호만 상세를 받는다 (질의당 최대 LIVE_DETAIL_LIMIT건).
+ * numbers(질의 캐시)가 주어지면 검색 호출을 건너뛴다.
+ */
 export async function searchKiprisLive(
-  { query, limit = LIVE_SEARCH_LIMIT, knownIds, signal }: LiveSearchOptions,
+  { query, limit = LIVE_SEARCH_LIMIT, knownIds, numbers: cached, signal }: LiveSearchOptions,
   key: string,
   fetcher: typeof fetch = fetch,
 ): Promise<LiveSearchResult> {
-  if (!query.trim() || limit < 1) return { documents: [], warnings: [] };
-  const numbers = await searchApplicationNumbers(
-    { query, limit, signal },
-    key,
-    fetcher,
-  );
+  if (!query.trim() || limit < 1) return { numbers: [], documents: [], warnings: [] };
+  const numbers = cached
+    ? [...cached]
+    : await searchApplicationNumbers({ query, limit, signal }, key, fetcher);
   const unseen = numbers.filter((number) => !knownIds.has(number));
   const result = await fetchDetails(
     unseen.slice(0, LIVE_DETAIL_LIMIT),
@@ -332,8 +333,9 @@ export async function searchKiprisLive(
     signal,
     fetcher,
   );
-  if (unseen.length <= LIVE_DETAIL_LIMIT) return result;
+  if (unseen.length <= LIVE_DETAIL_LIMIT) return { numbers, ...result };
   return {
+    numbers,
     documents: result.documents,
     warnings: [
       ...result.warnings,

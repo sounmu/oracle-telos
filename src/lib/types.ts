@@ -136,12 +136,22 @@ export interface LiveSearchOptions {
   readonly query: string;
   readonly limit?: number;
   readonly knownIds: ReadonlySet<string>;
+  /** 질의 캐시에 저장된 검색 결과. 있으면 검색 호출을 건너뛴다. */
+  readonly numbers?: readonly string[];
   readonly signal?: AbortSignal;
 }
 
 export interface LiveSearchResult {
+  /** 검색(또는 캐시)에서 얻은 출원번호 전체 */
+  readonly numbers: string[];
   readonly documents: KoreanPatentDocument[];
   readonly warnings: string[];
+}
+
+/** data/korea/queries.json: 정규화한 질의 → KIPRIS 검색 결과 */
+export interface QueryCacheEntry {
+  readonly numbers: string[];
+  readonly fetchedAt: string;
 }
 
 export type EmbedTexts = (texts: string[]) => Promise<Float32Array[]>;
@@ -154,6 +164,7 @@ export interface KoreanSearchOptions {
   readonly model?: string;
   readonly dim?: number;
   readonly timeoutMs?: number;
+  readonly now?: () => number;
   readonly signal?: AbortSignal;
 }
 

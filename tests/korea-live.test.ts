@@ -95,7 +95,7 @@ test("a live patent lands near its most similar existing points and only new chu
   }
 });
 
-test("a cold start builds the index from live results and a repeated query fetches no details", async (t) => {
+test("a cold start builds the index from live results and a repeated query calls KIPRIS zero times", async (t) => {
   await useResearchDir(t);
   const log: URL[] = [];
   const fetcher = fakeFetch((operation, url) => {
@@ -112,10 +112,20 @@ test("a cold start builds the index from live results and a repeated query fetch
   assert.deepEqual(first.addedPoints.map((point) => point.id).sort(), ["kipris:1020240000001", "kipris:1020240000002"]);
   assert.equal(first.hits.length, 2);
 
-  const second = await searchKoreanPatents("드론 배터리 교체", 10, undefined, options);
-  assert.equal(details(), 2);
+  const callsAfterFirst = log.length;
+  const second = await searchKoreanPatents(" 드론  배터리 교체", 10, undefined, options);
+  assert.equal(log.length, callsAfterFirst);
   assert.deepEqual(second.addedPoints, []);
   assert.deepEqual(second.hits.map((hit) => hit.id).sort(), first.hits.map((hit) => hit.id).sort());
+
+  const stored = JSON.parse(await fs.readFile(path.join(process.env.TELOS_RESEARCH_DIR ?? "", "queries.json"), "utf8"));
+  assert.deepEqual(stored["드론 배터리 교체"].numbers, ["1020240000001", "1020240000002"]);
+
+  const searches = () => log.filter((url) => url.pathname.endsWith("/getAdvancedSearch")).length;
+  const eightDaysLater = Date.now() + 8 * 24 * 60 * 60 * 1000;
+  await searchKoreanPatents("드론 배터리 교체", 10, undefined, { ...options, now: () => eightDaysLater });
+  assert.equal(searches(), 2);
+  assert.equal(details(), 2);
 });
 
 test("KIPRIS failure or timeout still returns local results with a warning", async (t) => {

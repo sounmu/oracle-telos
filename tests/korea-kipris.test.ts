@@ -278,7 +278,19 @@ test("live search skips known application numbers and caps new detail lookups pe
     }, repeatLog),
   );
   assert.equal(repeatLog.length, 1);
-  assert.deepEqual(repeat, { documents: [], warnings: [] });
+  assert.deepEqual(repeat, { numbers: numbers(20), documents: [], warnings: [] });
+
+  const cachedLog: URL[] = [];
+  const cached = await searchKiprisLive(
+    { query: "드론 배터리 교체", knownIds: new Set([number(0)]), numbers: [number(0), number(1)] },
+    KEY,
+    fakeFetch((operation, url) => {
+      assert.notEqual(operation, "getAdvancedSearch");
+      return operation === "patentCpcInfo" ? cpcXml([]) : detailXml(url.searchParams.get("applicationNumber") ?? "");
+    }, cachedLog),
+  );
+  assert.deepEqual(cached.documents.map((document) => patentOf(document).sourceId), [number(1)]);
+  assert.equal(cachedLog.length, 2);
 });
 
 test("live search keeps details fetched before the time limit", async () => {

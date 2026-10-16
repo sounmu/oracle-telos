@@ -44,18 +44,23 @@ export async function readResearchIndex(): Promise<ResearchIndex | null> {
   }
 }
 
-export async function writeResearchIndex(index: ResearchIndex): Promise<void> {
-  const file = researchPath();
+/** 비공개 JSON을 임시 파일 + rename으로 원자적으로 교체해 읽는 쪽이 부분 쓰기를 보지 않게 한다. */
+export async function writePrivateJson(file: string, value: unknown): Promise<void> {
   await fs.mkdir(path.dirname(file), { recursive: true });
   const temporary = `${file}.${randomUUID()}.tmp`;
   try {
-    await fs.writeFile(temporary, JSON.stringify(index), { mode: 0o600 });
+    await fs.writeFile(temporary, JSON.stringify(value), { mode: 0o600 });
     await fs.rename(temporary, file);
-    cached = { path: file, mtime: (await fs.stat(file)).mtimeMs, index };
-    if (memory?.path === file) memory = null;
   } finally {
     await fs.rm(temporary, { force: true });
   }
+}
+
+export async function writeResearchIndex(index: ResearchIndex): Promise<void> {
+  const file = researchPath();
+  await writePrivateJson(file, index);
+  cached = { path: file, mtime: (await fs.stat(file)).mtimeMs, index };
+  if (memory?.path === file) memory = null;
 }
 
 /** 새 법령 버전의 시행 시점에 이전 버전 전체를 닫아 삭제된 조문도 남지 않게 한다. */
