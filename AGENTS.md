@@ -52,6 +52,7 @@ src/
     page.tsx                ← 메인: <TelosApp/> (지도 + 우측 검색 패널)
     api/search/route.ts     ← POST {query, k, dataset?, decision?} → top-k (한국은 하이브리드, addedPoints·warnings 포함)
     api/agent/route.ts      ← POST {idea} → GPT 에이전트 (SSE, AgentEvent 스트림)
+    api/compare/route.ts    ← POST {idea, id} → 기술 요소별 비교표 + 기술 근접도 (PatentComparison)
     api/patent/[id]/route.ts ← GET → 전체 레코드 (첫 청구항 포함)
     api/patents/route.ts     ← 한국/미국 샘플 지도 및 출처 준비 상태
     api/research/           ← 선택적 법령·공시 검색과 문서 상세
@@ -59,16 +60,19 @@ src/
     patents.ts              ← 서버에서 data/ 로드 (싱글턴, 프로세스당 1회)
     embeddings.ts           ← transformers.js 파이프라인 싱글턴 + embedTexts()
     similarity.ts           ← 코사인 유사도 / top-k
-    agent.ts                ← OpenAI 도구 정의 + 시스템 프롬프트 + runPatentAgent()
+    agent.ts                ← OpenAI 도구 정의 + 시스템 프롬프트 + runPatentAgent(), planPatentSearch(), comparePatent()
     types.ts                ← Patent, PatentPoint, AgentEvent 등 공용 타입
     colors.ts               ← 결정별 색/라벨 (클라이언트·서버 공용)
+    proximity.ts            ← 기술 근접도 단계 규칙·문구·색 (클라이언트·서버 공용)
     korea/                  ← 수집기, XML 경계, 스키마, 버전 색인·검색 (서버 전용)
-      search.ts             ← searchKoreanPatents: 실시간 KIPRIS → 색인 캐시 → 재정렬
+      search.ts             ← searchKoreanPatents: 검색어 묶음 → KIPRIS 후보 → 제목·초록 선별 → 상위 상세 → 색인 캐시 → 재정렬
+      compare.ts            ← 비교 초안의 원문 인용 검증(finalizeComparison)
   components/
     TelosApp.tsx            ← 상태 소유자: 점 목록, 필터, 하이라이트, 선택, 포커스
     PatentMap.tsx           ← Canvas 산점도 (zoom/pan/hover/click/highlight)
     SearchPanel.tsx         ← 아이디어 입력 + 에이전트 SSE 스트리밍 + 빠른 검색
-    PatentDetail.tsx        ← 클릭한 특허 상세 (청구항 토글)
+    PatentDetail.tsx        ← 클릭한 특허 상세 (청구항 토글, 내 기술과 비교)
+    Comparison.tsx          ← 기술 근접도 캐릭터·배지와 기술 요소별 비교 카드
     ResearchReferences.tsx  ← 선택적 참고 자료와 원문·버전 표시
 tests/                     ← 합성 출처 응답, 버전/검색, 하이브리드 캐시, API 회귀 테스트 (kipris-fixtures.ts는 공용 합성 XML)
 .claude/launch.json         ← 데스크톱 앱 브라우저 미리보기용 dev 서버 설정
@@ -92,7 +96,11 @@ tests/                     ← 합성 출처 응답, 버전/검색, 하이브리
 - 초기 한국 수집은 제한된 범위다. 매번 동일 조건으로 재수집해 병합하고, 완전한 변경·삭제 피드 또는 전국 데이터 커버리지를 주장하지 않는다. ZIP은 압축 해제 크기를 제한한다.
 - KIPRIS 수집은 출원일 최신순(`sortSpec=AD`, `descSort=true`)이며 기본 최대 100건이다. `--limit`으로 변경할 수 있고, 법령·공시의 기본 제한은 20건이다.
 - **검색 시 실시간 캐시** (`searchKoreanPatents`): `KIPRIS_API_KEY`가 있으면 `searchKiprisLive`가 출원번호 최대 20건을 받고, 색인에 없는 번호만 상세를 받는다. 상세는 1건당 2회 호출이므로 **질의당 최대 20건(`LIVE_DETAIL_LIMIT`, 호출 최대 40회)**으로 제한한다. 전체 20초 제한이며, 상세 수신 중 시간이 다하면 받은 만큼만 캐시하고 경고를 남긴다(다음 검색이 나머지를 받는다).
-- 검색 결과는 `data/korea/queries.json`에 질의 단위로 캐시한다(NFKC·소문자·공백 정규화, **7일 유효**). 유효한 캐시가 있으면 `getAdvancedSearch`를 호출하지 않고, 그 번호 중 색인에 없는 것만 상세를 받는다. 따라서 같은 질의를 7일 안에 다시 실행하면 KIPRIS 호출은 0회다. 파일에 쓸 수 없으면 프로세스 메모리에만 남긴다.
+- 검색 요청은 `{ description, queries }`다. 빠른 검색은 `planPatentSearch`가 기술 설명을 기술 요소 3~5개와 KIPRIS 검색어 2~4개로 나누고(OPENAI_API_KEY가 없거나 실패하면 입력 문장 하나), 에이전트 도구는 자기 키워드를 그대로 쓴다. 검색어마다 후보를 받아 출원번호로 중복 제거하고, 상세 조회 전에 검색 목록의 제목·초록을 기술 설명과 임베딩 유사도로 정렬해 색인에 없는 상위 `LIVE_DETAIL_LIMIT`건만 상세를 받는다. 최종 순위는 기술 설명(의미)과 검색어 묶음(키워드)으로 매기며, 확보한 후보 안의 순위다. 결과의 `coverage`에 검색어·후보 수·상세 수를 담는다.
+- 검색 목록은 `data/korea/queries.json`에 검색어 단위로 캐시한다(NFKC·소문자·공백 정규화, **7일 유효**, 제목·초록·출원인 포함). 유효한 캐시가 있으면 `getAdvancedSearch`를 호출하지 않는다. 따라서 같은 검색어를 7일 안에 다시 실행하고 후보가 모두 색인에 있으면 KIPRIS 호출은 0회다. 파일에 쓸 수 없으면 프로세스 메모리에만 남긴다.
+- KIPRIS 실패는 인증·호출 한도·네트워크·시간 초과로 나눠 warning으로 안내한다(`describeKiprisFailure`).
+- **기술 요소별 비교**(`comparePatent`, `POST /api/compare`)는 검색과 같은 기술 요소를 쓰고, 모델에는 제목·초록·청구항 처음 5개(각 1,500자)만 보낸다. 모델이 낸 인용이 그 원문에 그대로 있을 때만 공통/차이로 인정하고, 아니면 '확인되지 않음'으로 내린다. 내 기술에 없는 요소는 '미기재'.
+- **기술 근접도**(`proximityOf`)는 임베딩 점수가 아니라 근거가 확인된 비교 행의 공통 비율로 정한다: 확인된 행 2개 미만이면 자료 부족, 공통 ⅓ 미만 서늘, ⅔ 미만 따뜻, 그 이상 뜨거움. 법적 위험도·침해 확률이 아니며, 색은 특허 상태 색(초록·빨강·회색)과 겹치지 않게 둔다. 화면은 검색 후 상위 3건을 자동 비교한다.
 - `upsertLivePatents`는 새 청크만 임베딩하고(`buildResearchIndex`와 해시 재사용 로직 공유) UMAP을 다시 돌리지 않는다. 새 점 좌표 = 코사인 top-5 기존 점 좌표의 유사도 가중 평균. 기존 점이 3개 이하면 기존 배치 규칙(UMAP/두 축)을 전체에 다시 적용한다. **전체 재배치는 `pnpm sync:korea --reindex`에서만** 한다.
 - 색인 쓰기는 프로세스 내 Promise 체인으로 직렬화한다. 파일 쓰기가 실패하면(읽기 전용 FS) 메모리 캐시로 유지하고 경고만 남긴다. 키가 없거나 실패·시간 초과면 로컬 색인만 검색하고 warning을 함께 돌려준다. 색인 파일이 없어도 실시간 결과로 새 색인을 만든다.
 
@@ -102,6 +110,7 @@ tests/                     ← 합성 출처 응답, 버전/검색, 하이브리
 - **모델은 `OPENAI_MODEL` 환경변수**(기본 `gpt-5.5`), 추론 강도는 `OPENAI_REASONING_EFFORT`(기본 `low`). 둘 다 `src/lib/agent.ts` 상단에서만 읽는다. 코드에 모델명을 흩뿌리지 않는다.
 - 클라이언트는 `new OpenAI()` 인자 없이 생성 → `OPENAI_API_KEY` 환경변수에서 읽는다. 키를 코드에 넣지 않는다. 키가 없으면 생성자가 던지므로 try/catch로 안내 메시지를 보낸다.
 - 도구는 `strict: true` function tool. strict 모드는 모든 프로퍼티가 `required`여야 하므로 선택 값은 `nullable`(`type: ["string","null"]`)로 선언한다. 도구 인자는 JSON.parse 후 zod로 검증하고 실패하면 `{error}`를 돌려준다.
+- `planPatentSearch`와 `comparePatent`는 루프 없는 단일 호출이다. 같은 `client.responses.stream`을 쓰고 `text.format`을 strict `json_schema`로 두며, 결과는 zod로 검증한다. 두 결과 모두 프로세스 메모리에 캐시한다(같은 기술 설명 → 같은 기술 요소).
 - 에이전트 루프는 `runPatentAgent`의 for 루프 하나뿐이다: 스트림에서 `response.output_text.delta`를 그대로 전달 → `finalResponse()`의 `function_call` 항목을 실행 → `function_call_output`만 `input`으로, `previous_response_id`로 대화를 이어간다. `instructions`는 이어지지 않으므로 매 요청에 다시 보낸다. 최대 10회.
 - 기본 도구는 `search_patents`, `get_patent(id, refresh|null)`. 한국 `search_patents`는 `searchKoreanPatents`(실시간 KIPRIS + 로컬 캐시)를 쓰며, query는 문장이 아니라 **한국어 핵심 기술 키워드 2~4개**다. 도구 출력은 `{ results, warnings }`이고, 새로 캐시된 점은 `matches`보다 먼저 `points_added` 이벤트로 보내 지도에 병합한다(클라이언트는 id 기준 중복 없이 병합). `includeContext=true`일 때만 `search_laws`, `get_law_article`, `search_disclosures`, `get_disclosure`를 추가한다. 한국 상세는 청구항 처음 최대 5개를 각 1,500자 이하로 제공하고 전체 확인으로 표현하지 않는다.
 - `response.status === "incomplete"`(출력 길이 초과 등)는 에러 이벤트로 바꿔 보낸다.
