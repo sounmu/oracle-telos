@@ -29,6 +29,103 @@ interface Node {
 
 const PAD = 48;
 
+// 배경 격자: Figma·tldraw처럼 줌을 따라 움직이고, 화면상 간격이 일정 범위에 머물도록
+// 2배 단위로 단계를 바꾼다. 단계가 바뀌는 순간 선이 튀지 않게 새로 생기는 선은 서서히 나타난다.
+// 주선 교차점에는 작은 + 표식을 두고(Vercel·Linear 랜딩의 도면 느낌),
+// 전체는 지도 중심에서 가장자리로 갈수록 옅어지는 타원 비네트로 감싼다.
+const GRID_MIN_PX = 22; // 보조선 화면 간격 하한 (상한은 2배)
+const GRID_MAJOR_EVERY = 8; // 보조선 8칸마다 주선
+const GRID_MINOR = 0.06; // 선 불투명도
+const GRID_MAJOR = 0.12;
+const GRID_CROSS = 0.32; // 교차점 표식 불투명도
+const GRID_CROSS_PX = 4; // 표식 팔 길이
+const GRID_INK = "#191f28";
+
+function drawGrid(
+  ctx: CanvasRenderingContext2D,
+  t: ZoomTransform,
+  w: number,
+  h: number,
+  top: number,
+) {
+  const step = 2 ** Math.ceil(Math.log2(GRID_MIN_PX / t.k)); // 기본 좌표 단위
+  const px = step * t.k; // [GRID_MIN_PX, 2·GRID_MIN_PX)
+  const fade = (px - GRID_MIN_PX) / GRID_MIN_PX; // 0 → 1
+
+  const alphaOf = (i: number) => {
+    if (i % (GRID_MAJOR_EVERY * 2) === 0) return GRID_MAJOR;
+    if (i % GRID_MAJOR_EVERY === 0) return GRID_MINOR + (GRID_MAJOR - GRID_MINOR) * fade;
+    if (i % 2 === 0) return GRID_MINOR;
+    return GRID_MINOR * fade;
+  };
+  /** 주선이면 0~1 강도(새로 주선이 되는 선은 fade), 아니면 0 */
+  const majorOf = (i: number) =>
+    i % (GRID_MAJOR_EVERY * 2) === 0 ? 1 : i % GRID_MAJOR_EVERY === 0 ? fade : 0;
+
+  const axis = (from: number, to: number, apply: (v: number) => number) => {
+    const out: { pos: number; alpha: number; major: number }[] = [];
+    for (let i = Math.floor(from / step); i <= Math.ceil(to / step); i++) {
+      const n = Math.abs(i);
+      out.push({ pos: Math.round(apply(i * step)) + 0.5, alpha: alphaOf(n), major: majorOf(n) });
+    }
+    return out;
+  };
+  const xs = axis(t.invertX(0), t.invertX(w), (v) => t.applyX(v));
+  const ys = axis(t.invertY(0), t.invertY(h), (v) => t.applyY(v));
+
+  ctx.strokeStyle = GRID_INK;
+  ctx.lineWidth = 1;
+  for (const { pos, alpha } of xs) {
+    if (alpha < 0.004) continue;
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.moveTo(pos, 0);
+    ctx.lineTo(pos, h);
+    ctx.stroke();
+  }
+  for (const { pos, alpha } of ys) {
+    if (alpha < 0.004) continue;
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.moveTo(0, pos);
+    ctx.lineTo(w, pos);
+    ctx.stroke();
+  }
+
+  // 주선 교차점 + 표식
+  for (const x of xs) {
+    if (!x.major) continue;
+    for (const y of ys) {
+      if (!y.major) continue;
+      ctx.globalAlpha = GRID_CROSS * Math.min(x.major, y.major);
+      ctx.beginPath();
+      ctx.moveTo(x.pos - GRID_CROSS_PX, y.pos);
+      ctx.lineTo(x.pos + GRID_CROSS_PX, y.pos);
+      ctx.moveTo(x.pos, y.pos - GRID_CROSS_PX);
+      ctx.lineTo(x.pos, y.pos + GRID_CROSS_PX);
+      ctx.stroke();
+    }
+  }
+
+  // 가장자리 비네트: 지금까지 그린 격자만 남긴 채(빈 캔버스 위) 알파를 타원 그라데이션으로 깎는다.
+  // 반드시 점보다 먼저 호출해야 점은 영향을 받지 않는다.
+  const cy = (Math.min(top, h / 2) + h) / 2;
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "destination-in";
+  ctx.translate(w / 2, cy);
+  ctx.scale(w / 2, (h - Math.min(top, h / 2)) / 2);
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1.15);
+  g.addColorStop(0, "rgba(0,0,0,1)");
+  g.addColorStop(0.45, "rgba(0,0,0,0.9)");
+  g.addColorStop(0.8, "rgba(0,0,0,0.3)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(-1.5, -1.5, 3, 3);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
 export default function PatentMap({
   points,
   visible,
@@ -109,6 +206,9 @@ export default function PatentMap({
     const baseR = 2.2 * Math.min(2.2, Math.sqrt(k));
     const dim = highlights !== null;
 
+    // 0) 배경 격자
+    drawGrid(ctx, t, size.w, size.h, insetTop);
+
     // 1) 일반 점
     for (const n of nodes) {
       if (!visible.has(n.p.decision)) continue;
@@ -159,7 +259,7 @@ export default function PatentMap({
       }
     }
     ctx.globalAlpha = 1;
-  }, [nodes, byId, size, visible, highlights, selectedId]);
+  }, [nodes, byId, size, visible, highlights, selectedId, insetTop]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(draw);
