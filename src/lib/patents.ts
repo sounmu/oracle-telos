@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { DatasetMeta, PatentFull, SearchHit } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const MASTER_SAMPLE_DIR = path.join(process.cwd(), "data", "master", "sample");
 
 export interface PatentIndex {
   meta: DatasetMeta;
@@ -27,9 +27,9 @@ export function getPatentIndex(): Promise<PatentIndex | null> {
 async function load(): Promise<PatentIndex | null> {
   try {
     const [metaRaw, fullRaw, vecBuf] = await Promise.all([
-      fs.readFile(path.join(DATA_DIR, "meta.json"), "utf8"),
-      fs.readFile(path.join(DATA_DIR, "patents.full.json"), "utf8"),
-      fs.readFile(path.join(DATA_DIR, "embeddings.f32")),
+      fs.readFile(path.join(MASTER_SAMPLE_DIR, "manifest.json"), "utf8"),
+      fs.readFile(path.join(MASTER_SAMPLE_DIR, "embedding.json"), "utf8"),
+      fs.readFile(path.join(MASTER_SAMPLE_DIR, "vectors.f32")),
     ]);
     const meta = JSON.parse(metaRaw) as DatasetMeta;
     const patents = JSON.parse(fullRaw) as PatentFull[];
@@ -40,7 +40,7 @@ async function load(): Promise<PatentIndex | null> {
     );
     if (vectors.length !== patents.length * meta.dim) {
       throw new Error(
-        `embeddings.f32 크기 불일치: ${vectors.length} != ${patents.length} × ${meta.dim}`,
+        `vectors.f32 크기 불일치: ${vectors.length} != ${patents.length} × ${meta.dim}`,
       );
     }
     const byId = new Map<string, PatentFull>();

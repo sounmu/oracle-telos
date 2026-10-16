@@ -3,19 +3,19 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { z } from "zod";
-import { collectKipris } from "../src/lib/korea/kipris";
-import { collectLaws } from "../src/lib/korea/laws";
-import { collectDisclosures } from "../src/lib/korea/dart";
-import { requireKey, SourceError } from "../src/lib/korea/http";
+import { collectKipris } from "../../src/lib/korea/kipris";
+import { collectLaws } from "../../src/lib/korea/laws";
+import { collectDisclosures } from "../../src/lib/korea/dart";
+import { requireKey, SourceError } from "../../src/lib/korea/http";
 import {
   buildResearchIndex,
   mergeDocuments,
   readResearchIndex,
   researchPath,
   writeResearchIndex,
-} from "../src/lib/korea/index";
-import { researchDocumentSchema } from "../src/lib/korea/schema";
-import type { CollectOptions, CollectionResult, ResearchDocument, ResearchSource } from "../src/lib/types";
+} from "../../src/lib/korea/index";
+import { researchDocumentSchema } from "../../src/lib/korea/schema";
+import type { CollectOptions, CollectionResult, ResearchDocument, ResearchSource } from "../../src/lib/types";
 
 loadEnvConfig(process.cwd());
 
@@ -58,7 +58,7 @@ async function main(): Promise<void> {
 --limit: 수집할 특허/법령 조문/공시 절의 최대 개수 (KIPRIS 기본 100, 나머지 기본 20)
 KIPRIS는 출원일 최신순으로 수집합니다.
 --since/--until: KIPRIS 출원일, 법령 시행일, DART 접수일 범위
-한국 색인은 data/korea/index.json에 비공개 저장합니다.
+한국 색인은 data/raw/kipris/index.json에 비공개 저장합니다.
 동일 명령을 다시 실행하면 문서를 병합하고 변경된 본문만 임베딩합니다.`);
     return;
   }
