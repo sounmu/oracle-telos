@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Telos — AI 특허 탐색기
 
-## Getting Started
+창업 지망생이 기존 특허를 한눈에 보고, 자기 아이디어와 비교해 방향을 잡도록 돕는 해커톤 MVP.
 
-First, run the development server:
+- **특허 지도**: 특허 3,000건을 임베딩 → UMAP 2D 투영. 승인(초록)·거절(빨강)·심사중(회색)을 색으로 구분.
+- **AI 특허 검색**: 아이디어를 한국어로 적으면 Claude 에이전트가 유사 특허를 찾아 겹침/차이/거절 사례/방향을 정리. 찾은 특허는 지도에서 하이라이트.
+
+## 실행
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env        # ANTHROPIC_API_KEY 입력
+pnpm build:data             # 최초 1회. 모델(~120MB) + 특허 데이터 다운로드 후 임베딩/UMAP (수 분)
+pnpm dev                    # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+API 키가 없어도 지도와 "유사 특허만 찾기"(로컬 임베딩 검색)는 동작한다. AI 분석만 키가 필요하다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 구조
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[AGENTS.md](./AGENTS.md) 참고. 에이전트와 사람 모두 이 문서의 규칙을 따른다.
 
-## Learn More
+## 데이터
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[HUPD (Harvard USPTO Patent Dataset)](https://huggingface.co/datasets/HUPD/hupd) 2016년 1월 출원 샘플. 각 출원의 심사 결과(ACCEPTED / REJECTED / PENDING)가 포함되어 있다.
