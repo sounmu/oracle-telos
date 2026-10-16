@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ClipboardEvent } from "react";
 import ReactMarkdown from "react-markdown";
 import { DECISION_LABELS, DECISION_TAG_STYLES } from "@/lib/colors";
 import { PROXIMITY_LABELS } from "@/lib/proximity";
@@ -98,6 +98,17 @@ function readableKorean(markdown: string): string {
       // 닫는 따옴표·괄호와 뒤따르는 조사 사이에서 줄을 바꾸지 않는다
       .replace(/([”’")\]」』])(?=[가-힣])/g, "$1\u2060")
   );
+}
+
+/** readableKorean이 넣은 줄바꿈 보정 문자(U+2060, NBSP)를 복사 결과에서 뛴다 */
+function copyWithoutLayoutMarks(event: ClipboardEvent<HTMLDivElement>) {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed) return;
+  const holder = document.createElement("div");
+  for (let i = 0; i < selection.rangeCount; i++) holder.append(selection.getRangeAt(i).cloneContents());
+  event.preventDefault();
+  event.clipboardData.setData("text/plain", selection.toString().replace(/\u2060/g, "").replace(/\u00a0/g, " "));
+  event.clipboardData.setData("text/html", holder.innerHTML.replace(/\u2060/g, "").replace(/&nbsp;|\u00a0/g, " "));
 }
 
 const TOOL_LABELS: Record<string, { label: string; arg: "query" | "id" }> = {
@@ -821,7 +832,7 @@ export default function SearchPanel({
       {answer && (
         <section aria-label="AI 분석" className="rounded-3xl bg-panel p-5 md:p-6">
           <h2 className="mb-3 text-lg font-bold tracking-tight">AI 분석</h2>
-          <div className="prose-telos break-words text-[15px]">
+          <div className="prose-telos break-words text-[15px]" onCopy={copyWithoutLayoutMarks}>
             <ReactMarkdown>{readableKorean(answer)}</ReactMarkdown>
           </div>
         </section>
