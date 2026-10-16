@@ -27,6 +27,7 @@
 - **데이터: HUPD (Harvard USPTO Patent Dataset)** 2016년 1월 샘플. §4.
 - **한국 데이터:** KIPRIS Plus, 국가법령정보 공동활용, Open DART. Node 런타임 XML 파싱은 `fast-xml-parser`, ZIP 파싱은 `fflate`, 스크립트 환경변수 로딩은 `@next/env`.
 - **한국 색인:** 비공개 파일 기반 MVP (`data/korea/index.json`), 키워드·벡터 순위 결합. PostgreSQL/pgvector는 아직 도입하지 않았다.
+- **한국 검색은 하이브리드:** 검색할 때 KIPRIS를 키워드로 실시간 조회 → 색인에 없는 특허만 상세 수신(질의당 최대 5건) → 로컬 색인에 캐시 → 임베딩+키워드 재정렬. `pnpm sync:korea`는 기본 지도 시드와 `--reindex` 전체 재배치용이다.
 
 Next.js는 학습 데이터와 다른 부분이 많다. **코드를 쓰기 전에 `node_modules/next/dist/docs/`의 관련 문서를 읽는다** (아래 자동 생성 블록 참고).
 
@@ -48,7 +49,7 @@ data/
 src/
   app/
     page.tsx                ← 메인: <TelosApp/> (지도 + 우측 검색 패널)
-    api/search/route.ts     ← POST {query, k, decision?} → 임베딩 코사인 유사도 top-k
+    api/search/route.ts     ← POST {query, k, dataset?, decision?} → top-k (한국은 하이브리드, addedPoints·warnings 포함)
     api/agent/route.ts      ← POST {idea} → GPT 에이전트 (SSE, AgentEvent 스트림)
     api/patent/[id]/route.ts ← GET → 전체 레코드 (첫 청구항 포함)
     api/patents/route.ts     ← 한국/미국 샘플 지도 및 출처 준비 상태
@@ -61,13 +62,14 @@ src/
     types.ts                ← Patent, PatentPoint, AgentEvent 등 공용 타입
     colors.ts               ← 결정별 색/라벨 (클라이언트·서버 공용)
     korea/                  ← 수집기, XML 경계, 스키마, 버전 색인·검색 (서버 전용)
+      search.ts             ← searchKoreanPatents: 실시간 KIPRIS → 색인 캐시 → 재정렬
   components/
     TelosApp.tsx            ← 상태 소유자: 점 목록, 필터, 하이라이트, 선택, 포커스
     PatentMap.tsx           ← Canvas 산점도 (zoom/pan/hover/click/highlight)
     SearchPanel.tsx         ← 아이디어 입력 + 에이전트 SSE 스트리밍 + 빠른 검색
     PatentDetail.tsx        ← 클릭한 특허 상세 (청구항 토글)
     ResearchReferences.tsx  ← 선택적 참고 자료와 원문·버전 표시
-tests/                     ← 합성 출처 응답, 버전/검색, API 회귀 테스트
+tests/                     ← 합성 출처 응답, 버전/검색, 하이브리드 캐시, API 회귀 테스트 (kipris-fixtures.ts는 공용 합성 XML)
 .claude/launch.json         ← 데스크톱 앱 브라우저 미리보기용 dev 서버 설정
 ```
 
@@ -88,6 +90,9 @@ tests/                     ← 합성 출처 응답, 버전/검색, API 회귀 �
 - 한국 문서는 `ResearchDocument` 출처별 타입으로 보존하고, 법령 버전 시행일과 조문 시행일을 분리한다. 변경된 청크만 재임베딩하며 모델/차원이 바뀌면 재색인한다. `--remove`는 문서와 파생 청크·지도 점을 함께 제거한다.
 - 초기 한국 수집은 제한된 범위다. 매번 동일 조건으로 재수집해 병합하고, 완전한 변경·삭제 피드 또는 전국 데이터 커버리지를 주장하지 않는다. ZIP은 압축 해제 크기를 제한한다.
 - KIPRIS 수집은 출원일 최신순(`sortSpec=AD`, `descSort=true`)이며 기본 최대 100건이다. `--limit`으로 변경할 수 있고, 법령·공시의 기본 제한은 20건이다.
+- **검색 시 실시간 캐시** (`searchKoreanPatents`): `KIPRIS_API_KEY`가 있으면 `searchKiprisLive`가 출원번호 최대 10건을 받고, 색인에 없는 번호만 상세를 받는다. 상세는 1건당 2회 호출이므로 **질의당 최대 5건(`LIVE_DETAIL_LIMIT`)**으로 제한한다. 전체 8초 제한.
+- `upsertLivePatents`는 새 청크만 임베딩하고(`buildResearchIndex`와 해시 재사용 로직 공유) UMAP을 다시 돌리지 않는다. 새 점 좌표 = 코사인 top-5 기존 점 좌표의 유사도 가중 평균. 기존 점이 3개 이하면 기존 배치 규칙(UMAP/두 축)을 전체에 다시 적용한다. **전체 재배치는 `pnpm sync:korea --reindex`에서만** 한다.
+- 색인 쓰기는 프로세스 내 Promise 체인으로 직렬화한다. 파일 쓰기가 실패하면(읽기 전용 FS) 메모리 캐시로 유지하고 경고만 남긴다. 키가 없거나 실패·시간 초과면 로컬 색인만 검색하고 warning을 함께 돌려준다. 색인 파일이 없어도 실시간 결과로 새 색인을 만든다.
 
 ## 5. OpenAI API 규칙 (반드시 지킬 것)
 
@@ -96,7 +101,7 @@ tests/                     ← 합성 출처 응답, 버전/검색, API 회귀 �
 - 클라이언트는 `new OpenAI()` 인자 없이 생성 → `OPENAI_API_KEY` 환경변수에서 읽는다. 키를 코드에 넣지 않는다. 키가 없으면 생성자가 던지므로 try/catch로 안내 메시지를 보낸다.
 - 도구는 `strict: true` function tool. strict 모드는 모든 프로퍼티가 `required`여야 하므로 선택 값은 `nullable`(`type: ["string","null"]`)로 선언한다. 도구 인자는 JSON.parse 후 zod로 검증하고 실패하면 `{error}`를 돌려준다.
 - 에이전트 루프는 `runPatentAgent`의 for 루프 하나뿐이다: 스트림에서 `response.output_text.delta`를 그대로 전달 → `finalResponse()`의 `function_call` 항목을 실행 → `function_call_output`만 `input`으로, `previous_response_id`로 대화를 이어간다. `instructions`는 이어지지 않으므로 매 요청에 다시 보낸다. 최대 10회.
-- 기본 도구는 `search_patents`, `get_patent(id, refresh|null)`. `includeContext=true`일 때만 `search_laws`, `get_law_article`, `search_disclosures`, `get_disclosure`를 추가한다. 한국 상세는 청구항 처음 최대 5개를 각 1,500자 이하로 제공하고 전체 확인으로 표현하지 않는다.
+- 기본 도구는 `search_patents`, `get_patent(id, refresh|null)`. 한국 `search_patents`는 `searchKoreanPatents`(실시간 KIPRIS + 로컬 캐시)를 쓰며, query는 문장이 아니라 **한국어 핵심 기술 키워드 2~4개**다. 도구 출력은 `{ results, warnings }`이고, 새로 캐시된 점은 `matches`보다 먼저 `points_added` 이벤트로 보내 지도에 병합한다(클라이언트는 id 기준 중복 없이 병합). `includeContext=true`일 때만 `search_laws`, `get_law_article`, `search_disclosures`, `get_disclosure`를 추가한다. 한국 상세는 청구항 처음 최대 5개를 각 1,500자 이하로 제공하고 전체 확인으로 표현하지 않는다.
 - `response.status === "incomplete"`(출력 길이 초과 등)는 에러 이벤트로 바꿔 보낸다.
 - 서버 → 클라이언트 이벤트는 `AgentEvent` 유니온(`src/lib/types.ts`) 하나로만 주고받는다. 새 이벤트가 필요하면 타입부터 추가.
 - 한국 색인은 한국어 질의, HUPD 미국 샘플은 영어 질의를 사용한다. 사용자 언어로 답하되 특허 제목은 원문 유지. 검색 점수는 등록 가능성/침해 확률이 아니다.
