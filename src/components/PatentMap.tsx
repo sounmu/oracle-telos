@@ -8,6 +8,16 @@ import "d3-transition";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import type { Decision, PatentPoint } from "@/lib/types";
 
+/** 지도 점(anchorId) 옆에 꽂는 핀. 분쟁 사례 표시에 쓴다 */
+export interface MapMarker {
+  readonly id: string;
+  readonly anchorId: string;
+  /** 핀 옆 이름표와 툴팁 첫 줄 */
+  readonly label: string;
+  /** 툴팁 둘째 줄 */
+  readonly detail: string;
+}
+
 interface Props {
   points: PatentPoint[];
   visible: Set<Decision>;
@@ -19,6 +29,9 @@ interface Props {
   onSelect: (id: string | null) => void;
   /** 지도 위를 덮는 헤더·범례 높이(px). 점을 그 아래 영역에 맞춘다 */
   insetTop?: number;
+  markers?: readonly MapMarker[];
+  activeMarkerId?: string | null;
+  onMarkerSelect?: (id: string) => void;
 }
 
 interface Node {
@@ -28,6 +41,16 @@ interface Node {
 }
 
 const PAD = 48;
+const NO_MARKERS: readonly MapMarker[] = [];
+// 핀 머리 중심이 기준 점보다 위로 올라가는 거리(px), 같은 점에 핀이 여럿일 때 옆으로 벌리는 간격
+const PIN_LIFT = 18;
+const PIN_SPREAD = 18;
+const PIN_COLOR = "#7c5cff";
+const PIN_ACTIVE = "#5b3df5";
+
+type Hover =
+  | { kind: "point"; p: PatentPoint; x: number; y: number }
+  | { kind: "marker"; m: MapMarker; x: number; y: number };
 
 export default function PatentMap({
   points,
@@ -37,13 +60,16 @@ export default function PatentMap({
   focus,
   onSelect,
   insetTop = PAD,
+  markers = NO_MARKERS,
+  activeMarkerId = null,
+  onMarkerSelect,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const transformRef = useRef<ZoomTransform>(zoomIdentity);
   const zoomRef = useRef<ZoomBehavior<HTMLCanvasElement, unknown> | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const [hover, setHover] = useState<{ p: PatentPoint; x: number; y: number } | null>(null);
+  const [hover, setHover] = useState<Hover | null>(null);
 
   // 데이터 → 기본 캔버스 좌표 (크기에 맞춰 fit)
   const nodes = useMemo<Node[]>(() => {
@@ -70,6 +96,18 @@ export default function PatentMap({
   }, [points, size, insetTop]);
 
   const byId = useMemo(() => new Map(nodes.map((n) => [n.p.id, n])), [nodes]);
+
+  // 핀 → 기준 점. 같은 점에 꽂힌 핀은 옆으로 벌린다
+  const pins = useMemo(() => {
+    const perAnchor = new Map<string, number>();
+    return markers.flatMap((m) => {
+      const n = byId.get(m.anchorId);
+      if (!n) return [];
+      const i = perAnchor.get(m.anchorId) ?? 0;
+      perAnchor.set(m.anchorId, i + 1);
+      return [{ m, n, dx: i * PIN_SPREAD }];
+    });
+  }, [markers, byId]);
 
   const tree = useMemo<Quadtree<Node> | null>(() => {
     if (!nodes.length) return null;
@@ -159,7 +197,48 @@ export default function PatentMap({
       }
     }
     ctx.globalAlpha = 1;
-  }, [nodes, byId, size, visible, highlights, selectedId]);
+
+    // 4) 분쟁 사례 핀. 고른 핀은 맨 위에 이름표와 함께 그린다
+    const ordered = [...pins].sort((a, b) => Number(a.m.id === activeMarkerId) - Number(b.m.id === activeMarkerId));
+    for (const { m, n, dx } of ordered) {
+      const active = m.id === activeMarkerId;
+      const tipX = t.applyX(n.bx);
+      const tipY = t.applyY(n.by);
+      const x = tipX + dx;
+      const y = tipY - PIN_LIFT;
+      if (x < -40 || y < -40 || x > size.w + 40 || y > size.h + 40) continue;
+      const r = active ? 10 : 7.5;
+      ctx.fillStyle = active ? PIN_ACTIVE : PIN_COLOR;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(x, y, r, Math.PI * 0.75, Math.PI * 0.25);
+      ctx.lineTo(tipX + dx * 0.5, tipY - 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.38, 0, Math.PI * 2);
+      ctx.fill();
+      if (active) {
+        ctx.font = "700 12px Pretendard, system-ui, sans-serif";
+        const w = ctx.measureText(m.label).width + 16;
+        const lx = Math.max(8, Math.min(x + r + 6, size.w - w - 8));
+        const ly = y - 12;
+        ctx.fillStyle = "rgba(255,255,255,0.96)";
+        ctx.strokeStyle = PIN_ACTIVE;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(lx, ly, w, 24, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#191f28";
+        ctx.textBaseline = "middle";
+        ctx.fillText(m.label, lx + 8, ly + 12.5);
+      }
+    }
+  }, [nodes, byId, size, visible, highlights, selectedId, pins, activeMarkerId]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(draw);
@@ -200,6 +279,28 @@ export default function PatentMap({
     select(canvas).transition().duration(reduce ? 0 : 650).call(z.transform, target);
   }, [focus, byId, size, insetTop]);
 
+  const findPinAt = useCallback(
+    (clientX: number, clientY: number): MapMarker | null => {
+      const canvas = canvasRef.current;
+      if (!canvas || pins.length === 0) return null;
+      const rect = canvas.getBoundingClientRect();
+      const t = transformRef.current;
+      const px = clientX - rect.left;
+      const py = clientY - rect.top;
+      let best: MapMarker | null = null;
+      let bestD = 14;
+      for (const { m, n, dx } of pins) {
+        const d = Math.hypot(t.applyX(n.bx) + dx - px, t.applyY(n.by) - PIN_LIFT - py);
+        if (d < bestD) {
+          bestD = d;
+          best = m;
+        }
+      }
+      return best;
+    },
+    [pins],
+  );
+
   const findAt = useCallback(
     (clientX: number, clientY: number): Node | null => {
       const canvas = canvasRef.current;
@@ -224,14 +325,18 @@ export default function PatentMap({
         // 터치에서는 미리보기 카드가 툴팁 역할을 하므로 마우스일 때만 띄운다
         onPointerMove={(e) => {
           if (e.pointerType !== "mouse") return;
-          const n = findAt(e.clientX, e.clientY);
           const rect = wrapRef.current?.getBoundingClientRect();
-          setHover(
-            n && rect ? { p: n.p, x: e.clientX - rect.left, y: e.clientY - rect.top } : null,
-          );
+          if (!rect) return setHover(null);
+          const at = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+          const m = findPinAt(e.clientX, e.clientY);
+          if (m) return setHover({ kind: "marker", m, ...at });
+          const n = findAt(e.clientX, e.clientY);
+          setHover(n ? { kind: "point", p: n.p, ...at } : null);
         }}
         onPointerLeave={() => setHover(null)}
         onClick={(e) => {
+          const m = findPinAt(e.clientX, e.clientY);
+          if (m && onMarkerSelect) return onMarkerSelect(m.id);
           const n = findAt(e.clientX, e.clientY);
           onSelect(n ? n.p.id : null);
         }}
@@ -244,16 +349,29 @@ export default function PatentMap({
             top: Math.min(hover.y + 14, size.h - 80),
           }}
         >
-          <div className="mb-1 flex items-center gap-2">
-            <span
-              className="inline-block h-2 w-2 rounded-full"
-              style={{ background: DECISION_COLORS[hover.p.decision] }}
-            />
-            <span className="text-muted">
-              {DECISION_LABELS[hover.p.decision]} · {hover.p.cpc || "CPC 없음"} · {hover.p.filed}
-            </span>
-          </div>
-          <div className="line-clamp-3 font-medium leading-snug">{hover.p.title}</div>
+          {hover.kind === "marker" ? (
+            <>
+              <div className="mb-1 flex items-center gap-2">
+                <span className="inline-block h-2 w-2 rounded-full" style={{ background: PIN_COLOR }} />
+                <span className="text-muted">분쟁 사례 · 누르면 자세히</span>
+              </div>
+              <div className="font-semibold leading-snug">{hover.m.label}</div>
+              <div className="mt-0.5 line-clamp-2 leading-snug text-muted">{hover.m.detail}</div>
+            </>
+          ) : (
+            <>
+              <div className="mb-1 flex items-center gap-2">
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: DECISION_COLORS[hover.p.decision] }}
+                />
+                <span className="text-muted">
+                  {DECISION_LABELS[hover.p.decision]} · {hover.p.cpc || "CPC 없음"} · {hover.p.filed}
+                </span>
+              </div>
+              <div className="line-clamp-3 font-medium leading-snug">{hover.p.title}</div>
+            </>
+          )}
         </div>
       )}
     </div>

@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import PatentMap from "./PatentMap";
+import PatentMap, { type MapMarker } from "./PatentMap";
 import SearchPanel from "./SearchPanel";
 import PatentDetail from "./PatentDetail";
+import CasePanel from "./CasePanel";
 import { ProximityBadge } from "./Comparison";
 import { formatDate, readErrorMessage } from "./ResearchReferences";
+import { DISPUTE_CASES } from "@/lib/cases";
+import { locateCases } from "@/lib/caseMap";
 import { DECISION_COLORS, DECISION_LABELS, DECISION_TAG_STYLES } from "@/lib/colors";
 import {
   DECISIONS,
@@ -56,6 +59,8 @@ export default function TelosApp() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
   const [mobileView, setMobileView] = useState<MobileView>("list");
+  const [activeCaseId, setActiveCaseId] = useState<string | null>(null);
+  const [showCases, setShowCases] = useState(true);
   // 비교는 마지막으로 검색한 기술 설명 기준이다. 새 검색·데이터셋 전환 시 진행 중 요청과 함께 버린다.
   const [comparisonIdea, setComparisonIdea] = useState("");
   const [comparisons, setComparisons] = useState<Map<string, ComparisonState>>(() => new Map());
@@ -104,6 +109,32 @@ export default function TelosApp() {
   const liveSearch = dataset === "korea" && kipris?.configured === true;
   const aiReady = aiConfigured !== false;
 
+  // 분쟁 사례 핀: 사례 키워드가 2개 이상 겹친 지도 점 묶음의 한가운데 (src/lib/caseMap.ts)
+  const caseById = useMemo(() => new Map(DISPUTE_CASES.map((c) => [c.id, c])), []);
+  const caseLocations = useMemo(() => locateCases(points, DISPUTE_CASES), [points]);
+  const locatedCaseIds = useMemo(() => new Set(caseLocations.map((l) => l.caseId)), [caseLocations]);
+  const markers = useMemo<MapMarker[]>(
+    () =>
+      caseLocations.flatMap((l) => {
+        const c = caseById.get(l.caseId);
+        return c ? [{ id: c.id, anchorId: l.anchorId, label: `${c.plaintiff} vs ${c.defendant}`, detail: c.tech }] : [];
+      }),
+    [caseLocations, caseById],
+  );
+  const activeLocation = activeCaseId ? caseLocations.find((l) => l.caseId === activeCaseId) ?? null : null;
+  const activeCase = activeLocation ? caseById.get(activeLocation.caseId) ?? null : null;
+  // 사례를 고르면 검색 하이라이트 대신 겹친 특허를 강조한다. 지도는 값이 클수록 점을 크게 그린다
+  const caseHighlights = useMemo(
+    () => (activeLocation ? new Map([...activeLocation.matches].map(([id, n]) => [id, 0.4 + 0.1 * n])) : null),
+    [activeLocation],
+  );
+  const caseMatches = activeLocation
+    ? [...activeLocation.matches].flatMap(([id, shared]) => {
+        const point = byId.get(id);
+        return point ? [{ point, shared }] : [];
+      })
+    : [];
+
   // 진행 중 요청은 effect cleanup이, SearchPanel의 요청은 key={dataset} 재마운트가 중단한다
   function resetForLoad() {
     setLoad("loading");
@@ -116,6 +147,7 @@ export default function TelosApp() {
     setHighlights(null);
     setSelectedId(null);
     setFocus(null);
+    setActiveCaseId(null);
     startComparisons("");
   }
 
@@ -222,6 +254,25 @@ export default function TelosApp() {
     scrollToTop();
   }
 
+  // 사례 카드의 '지도에서 보기': 핀으로 카메라를 옮기고 왼쪽 열에 사례를 연다. 폰은 지도 화면으로 넘어간다
+  function locateCase(caseId: string) {
+    const loc = caseLocations.find((l) => l.caseId === caseId);
+    if (!loc) return;
+    setActiveCaseId(caseId);
+    setSelectedId(null);
+    setShowCases(true);
+    setFocus({ id: loc.anchorId, nonce: Date.now() });
+    setMobileView("map");
+    scrollToTop();
+  }
+
+  // 지도에서 핀을 누름
+  function selectCase(caseId: string) {
+    setActiveCaseId(caseId);
+    setSelectedId(null);
+    scrollToTop();
+  }
+
   const subtitle =
     load === "ready"
       ? `${label.title} ${points.length.toLocaleString()}건 · 색인 ${
@@ -246,7 +297,10 @@ export default function TelosApp() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-1 pt-3 md:px-6">
             <button
               type="button"
-              onClick={() => setSelectedId(null)}
+              onClick={() => {
+                setSelectedId(null);
+                setActiveCaseId(null);
+              }}
               className="min-h-10 text-xl font-extrabold tracking-tight"
             >
               Telos
@@ -281,7 +335,7 @@ export default function TelosApp() {
 
         <div className="flex-1 px-4 pb-28 md:px-6 md:pb-8">
           {/* 상세를 여는 동안에도 검색 상태(결과·답변·진행 중 요청)를 유지하려고 숨기기만 한다 */}
-          <div className={selected ? "hidden" : ""}>
+          <div className={selected || activeCase ? "hidden" : ""}>
             <SearchPanel
               key={dataset}
               dataset={dataset}
@@ -297,8 +351,13 @@ export default function TelosApp() {
               onCompare={compare}
               onPick={pick}
               selectedId={selectedId}
+              locatableCases={locatedCaseIds}
+              onLocateCase={locateCase}
             />
           </div>
+          {!selected && activeCase && (
+            <CasePanel item={activeCase} matches={caseMatches} onBack={() => setActiveCaseId(null)} onPick={pick} />
+          )}
           {selected && (
             <PatentDetail
               key={selected.id}
@@ -310,6 +369,8 @@ export default function TelosApp() {
               canCompare={detailIdea.length >= 5 && aiReady}
               aiReady={aiReady}
               idea={detailIdea}
+              locatableCases={locatedCaseIds}
+              onLocateCase={locateCase}
               onCompare={() => {
                 if (detailIdea !== comparisonIdea) startComparisons(detailIdea);
                 compare(selected.id, detailIdea);
@@ -329,10 +390,13 @@ export default function TelosApp() {
             points={points}
             insetTop={MAP_OVERLAY_INSET}
             visible={visible}
-            highlights={highlights}
+            highlights={caseHighlights ?? highlights}
             selectedId={selectedId}
             focus={focus}
             onSelect={select}
+            markers={showCases ? markers : undefined}
+            activeMarkerId={activeCaseId}
+            onMarkerSelect={selectCase}
           />
         )}
 
@@ -370,14 +434,37 @@ export default function TelosApp() {
                   </button>
                 );
               })}
-              {highlights && (
+              {markers.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setHighlights(null)}
+                  aria-pressed={showCases}
+                  onClick={() => setShowCases((v) => !v)}
+                  className={`flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold shadow-sm backdrop-blur-sm transition ${
+                    showCases ? "bg-panel/95 text-foreground hover:bg-panel" : "bg-panel/60 text-muted line-through hover:text-foreground"
+                  }`}
+                >
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7c5cff]" style={{ opacity: showCases ? 1 : 0.4 }} />
+                  분쟁 사례 {markers.length}
+                </button>
+              )}
+              {activeCase ? (
+                <button
+                  type="button"
+                  onClick={() => setActiveCaseId(null)}
                   className="min-h-9 shrink-0 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm backdrop-blur-sm hover:text-foreground"
                 >
-                  하이라이트 해제 ({highlights.size})
+                  사례 강조 해제 ({activeLocation?.matches.size ?? 0})
                 </button>
+              ) : (
+                highlights && (
+                  <button
+                    type="button"
+                    onClick={() => setHighlights(null)}
+                    className="min-h-9 shrink-0 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm backdrop-blur-sm hover:text-foreground"
+                  >
+                    하이라이트 해제 ({highlights.size})
+                  </button>
+                )
               )}
             </div>
           )}
@@ -456,8 +543,44 @@ export default function TelosApp() {
         </div>
       )}
 
+      {/* 폰 전용: 지도에서 고른 분쟁 사례 미리보기 */}
+      {mobileView === "map" && !selected && activeCase && (
+        <div className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 rounded-3xl bg-panel p-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)] md:hidden">
+          <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-[#f0edff] px-2 py-0.5 font-bold text-[#5b3df5]">
+              <span className="inline-block h-2 w-2 rounded-full bg-[#7c5cff]" />
+              분쟁 사례
+            </span>
+            <span>
+              {activeCase.period.start}~{activeCase.period.end}
+            </span>
+            <span className="ml-auto">키워드 겹친 특허 {activeLocation?.matches.size ?? 0}건</span>
+          </div>
+          <p className="mt-1.5 text-[17px] font-bold leading-snug">
+            {activeCase.plaintiff} vs {activeCase.defendant}
+          </p>
+          <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-muted">{activeCase.tech}</p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={openSelected}
+              className="min-h-12 flex-1 rounded-2xl bg-[#5b3df5] px-4 text-[15px] font-bold text-white hover:brightness-110"
+            >
+              사례 자세히 보기
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCaseId(null)}
+              className="min-h-12 rounded-2xl bg-background px-4 text-[15px] font-semibold text-ink-2 hover:bg-border"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 폰 전용: 목록 ↔ 지도 전환. 지도에서 미리보기 카드가 떠 있으면 카드 버튼을 쓴다 */}
-      {load === "ready" && points.length > 0 && !(mobileView === "map" && selected) && (
+      {load === "ready" && points.length > 0 && !(mobileView === "map" && (selected || activeCase)) && (
         <button
           type="button"
           onClick={() => (mobileView === "map" ? openSelected() : setMobileView("map"))}
@@ -475,7 +598,11 @@ export default function TelosApp() {
               <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
                 <path d="M2.5 5l5-2 5 2 5-2v12l-5 2-5-2-5 2z M7.5 3v12 M12.5 5v12" />
               </svg>
-              {selected ? "지도에서 위치 보기" : highlights ? `지도에서 ${highlights.size}건 보기` : "지도 보기"}
+              {selected || activeCase
+                ? "지도에서 위치 보기"
+                : highlights
+                  ? `지도에서 ${highlights.size}건 보기`
+                  : "지도 보기"}
             </>
           )}
         </button>

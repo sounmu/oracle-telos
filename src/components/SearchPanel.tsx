@@ -41,6 +41,9 @@ interface Props {
   /** 새 검색을 시작하면 이전 기술 설명으로 만든 비교를 버린다 */
   onSearchStart: (idea: string) => void;
   onCompare: (id: string, idea: string) => void;
+  /** 지도에 핀이 있는 분쟁 사례 id와 그 핀으로 이동하는 함수 */
+  locatableCases?: ReadonlySet<string>;
+  onLocateCase?: (caseId: string) => void;
 }
 
 // MVP: 가장 가까운 3건을 먼저 비교해 보여 준다.
@@ -134,6 +137,8 @@ export default function SearchPanel({
   comparisons,
   onSearchStart,
   onCompare,
+  locatableCases,
+  onLocateCase,
 }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [statusLine, setStatusLine] = useState("");
@@ -812,7 +817,7 @@ export default function SearchPanel({
                 내 기술 설명, 기술 요소, 찾은 특허 제목과 키워드가 겹치는 분쟁이에요. 어떤 기술 차이가 결론을 갈랐는지 보여
                 드려요.
               </p>
-              <DisputeCases matches={caseMatches} />
+              <DisputeCases matches={caseMatches} locatable={locatableCases} onLocate={onLocateCase} />
             </div>
           )}
         </section>

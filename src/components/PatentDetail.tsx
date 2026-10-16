@@ -19,6 +19,9 @@ interface Props {
   onCompare: () => void;
   /** 관련 분쟁 사례를 고르고 상담용 요약을 만들 때 쓰는 내 기술 설명 */
   idea?: string;
+  /** 지도에 핀이 있는 분쟁 사례 id와 그 핀으로 이동하는 함수 */
+  locatableCases?: ReadonlySet<string>;
+  onLocateCase?: (caseId: string) => void;
 }
 
 interface RequestState {
@@ -36,6 +39,8 @@ export default function PatentDetail({
   aiReady = true,
   onCompare,
   idea = "",
+  locatableCases,
+  onLocateCase,
 }: Props) {
   const [full, setFull] = useState<PatentFull | null>(null);
   const [initial, setInitial] = useState<RequestState>({ loading: true, error: null });
@@ -279,7 +284,13 @@ export default function PatentDetail({
       <section aria-label="같은 기술로 다툰 분쟁" className="rounded-3xl bg-panel p-5 md:p-6">
         <h2 className="mb-1 text-lg font-bold tracking-tight">같은 기술로 다툰 분쟁</h2>
         <p className="mb-3 text-[13px] text-muted">이 특허와 내 기술의 키워드가 겹치는 분쟁 사례예요.</p>
-        <DisputeCases matches={related} openFirst emptyText="이 기술 요소로 다툰 분쟁 사례가 아직 없어요." />
+        <DisputeCases
+          matches={related}
+          openFirst
+          emptyText="이 기술 요소로 다툰 분쟁 사례가 아직 없어요."
+          locatable={locatableCases}
+          onLocate={onLocateCase}
+        />
       </section>
 
       <div className="flex flex-col gap-2 sm:flex-row">

@@ -27,9 +27,12 @@ interface Props {
   /** 첫 사례를 펼친 채로 보여 준다 */
   openFirst?: boolean;
   emptyText?: string;
+  /** 지도에 핀이 있는 사례 id. 여기에 든 사례만 '지도에서 보기'를 보인다 */
+  locatable?: ReadonlySet<string>;
+  onLocate?: (caseId: string) => void;
 }
 
-export default function DisputeCases({ matches, openFirst = false, emptyText }: Props) {
+export default function DisputeCases({ matches, openFirst = false, emptyText, locatable, onLocate }: Props) {
   if (matches.length === 0) {
     return (
       <p className="py-6 text-center text-[15px] leading-relaxed text-muted">
@@ -41,14 +44,29 @@ export default function DisputeCases({ matches, openFirst = false, emptyText }: 
     <ul className="space-y-2" aria-label="분쟁 사례">
       {matches.map(({ item, matched }, i) => (
         <li key={item.id}>
-          <CaseCard item={item} matched={matched} open={openFirst && i === 0} />
+          <CaseCard
+            item={item}
+            matched={matched}
+            open={openFirst && i === 0}
+            onLocate={onLocate && locatable?.has(item.id) ? () => onLocate(item.id) : undefined}
+          />
         </li>
       ))}
     </ul>
   );
 }
 
-function CaseCard({ item, matched, open }: { item: DisputeCase; matched: string[]; open: boolean }) {
+export function CaseCard({
+  item,
+  matched,
+  open,
+  onLocate,
+}: {
+  item: DisputeCase;
+  matched: string[];
+  open: boolean;
+  onLocate?: () => void;
+}) {
   const facts: [string, string][] = (
     [
       ["결과", item.result],
@@ -85,6 +103,19 @@ function CaseCard({ item, matched, open }: { item: DisputeCase; matched: string[
         </svg>
       </summary>
       <div className="space-y-4 pb-5">
+        {onLocate && (
+          <button
+            type="button"
+            onClick={onLocate}
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#f0edff] text-[15px] font-bold text-[#5b3df5] hover:brightness-95"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+              <path d="M10 18s5.5-5 5.5-9.5a5.5 5.5 0 10-11 0C4.5 13 10 18 10 18z" />
+              <circle cx="10" cy="8.5" r="1.8" />
+            </svg>
+            지도에서 보기
+          </button>
+        )}
         {item.steps.length > 0 && (
           <ol className="space-y-2" aria-label="분쟁 과정">
             {item.steps.map((step, i) => (
