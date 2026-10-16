@@ -9,8 +9,10 @@ import {
   upsertLivePatents,
   writeResearchIndex,
 } from "../src/lib/korea/index";
-import { searchKoreanPatents } from "../src/lib/korea/search";
-import type { EmbedTexts, KoreanPatentDocument } from "../src/lib/types";
+import { LIVE_DETAIL_LIMIT } from "../src/lib/korea/kipris";
+import { describeKiprisFailure, searchKoreanPatents } from "../src/lib/korea/search";
+import { SourceError } from "../src/lib/korea/http";
+import type { EmbedTexts, KoreanPatentDocument, KoreanSearchRequest } from "../src/lib/types";
 import { KEY, cpcXml, detailXml, fakeFetch, searchXml, xml } from "./kipris-fixtures";
 
 async function useResearchDir(t: TestContext, directory?: string): Promise<string> {
@@ -51,6 +53,8 @@ function patent(number: string, title: string): KoreanPatentDocument {
 }
 
 const constantEmbed: EmbedTexts = async (texts) => texts.map(() => Float32Array.from([1, 0]));
+
+const ask = (text: string): KoreanSearchRequest => ({ description: text, queries: [text] });
 
 test("a live patent lands near its most similar existing points and only new chunks are embedded", async (t) => {
   await useResearchDir(t);
@@ -106,24 +110,27 @@ test("a cold start builds the index from live results and a repeated query calls
   const options = { key: KEY, fetcher, embed: constantEmbed, model: "synthetic", dim: 2 };
   const details = () => log.filter((url) => url.pathname.endsWith("/getBibliographyDetailInfoSearch")).length;
 
-  const first = await searchKoreanPatents("드론 배터리 교체", 10, undefined, options);
+  const first = await searchKoreanPatents(ask("드론 배터리 교체"), 10, undefined, options);
   assert.equal(details(), 2);
   assert.deepEqual(first.warnings, []);
   assert.deepEqual(first.addedPoints.map((point) => point.id).sort(), ["kipris:1020240000001", "kipris:1020240000002"]);
   assert.equal(first.hits.length, 2);
 
   const callsAfterFirst = log.length;
-  const second = await searchKoreanPatents(" 드론  배터리 교체", 10, undefined, options);
+  const second = await searchKoreanPatents(ask(" 드론  배터리 교체"), 10, undefined, options);
   assert.equal(log.length, callsAfterFirst);
   assert.deepEqual(second.addedPoints, []);
   assert.deepEqual(second.hits.map((hit) => hit.id).sort(), first.hits.map((hit) => hit.id).sort());
 
   const stored = JSON.parse(await fs.readFile(path.join(process.env.TELOS_RESEARCH_DIR ?? "", "queries.json"), "utf8"));
-  assert.deepEqual(stored["드론 배터리 교체"].numbers, ["1020240000001", "1020240000002"]);
+  assert.deepEqual(
+    stored["드론 배터리 교체"].candidates.map((candidate: { applicationNumber: string }) => candidate.applicationNumber),
+    ["1020240000001", "1020240000002"],
+  );
 
   const searches = () => log.filter((url) => url.pathname.endsWith("/getAdvancedSearch")).length;
   const eightDaysLater = Date.now() + 8 * 24 * 60 * 60 * 1000;
-  await searchKoreanPatents("드론 배터리 교체", 10, undefined, { ...options, now: () => eightDaysLater });
+  await searchKoreanPatents(ask("드론 배터리 교체"), 10, undefined, { ...options, now: () => eightDaysLater });
   assert.equal(searches(), 2);
   assert.equal(details(), 2);
 });
@@ -135,7 +142,7 @@ test("KIPRIS failure or timeout still returns local results with a warning", asy
   ));
   const base = { key: KEY, embed: constantEmbed, model: "synthetic", dim: 2 };
 
-  const failed = await searchKoreanPatents("반려동물 급식", 5, undefined, {
+  const failed = await searchKoreanPatents(ask("반려동물 급식"), 5, undefined, {
     ...base, fetcher: fakeFetch(() => xml("", 503)),
   });
   assert.deepEqual(failed.hits.map((hit) => hit.id), ["kipris:1020240000001"]);
@@ -144,15 +151,60 @@ test("KIPRIS failure or timeout still returns local results with a warning", asy
   const hanging: typeof fetch = (_input, init) => new Promise((_resolve, reject) => {
     init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
   });
-  const timedOut = await searchKoreanPatents("반려동물 급식", 5, undefined, {
+  const timedOut = await searchKoreanPatents(ask("반려동물 급식"), 5, undefined, {
     ...base, fetcher: hanging, timeoutMs: 20,
   });
   assert.deepEqual(timedOut.hits.map((hit) => hit.id), ["kipris:1020240000001"]);
   assert.match(timedOut.warnings.join("\n"), /시간 초과/);
 
-  const keyless = await searchKoreanPatents("반려동물 급식", 5, undefined, { ...base, key: "" });
+  const keyless = await searchKoreanPatents(ask("반려동물 급식"), 5, undefined, { ...base, key: "" });
   assert.equal(keyless.hits.length, 1);
   assert.match(keyless.warnings.join("\n"), /KIPRIS_API_KEY/);
+});
+
+test("a query bundle dedupes candidates and fetches details only for the closest titles and abstracts", async (t) => {
+  await useResearchDir(t);
+  const number = (index: number) => `10202400${String(index).padStart(5, "0")}`;
+  const battery = Array.from({ length: LIVE_DETAIL_LIMIT }, (_, index) => ({ number: number(index), title: `드론 배터리 교체 ${index}` }));
+  const unrelated = Array.from({ length: 6 }, (_, index) => ({ number: number(100 + index), title: `반려동물 급식기 ${index}` }));
+  const log: URL[] = [];
+  const fetcher = fakeFetch((operation, url) => {
+    if (operation === "getAdvancedSearch") {
+      // 두 검색어의 결과가 절반씩 겹친다.
+      return url.searchParams.get("word") === "드론 배터리"
+        ? searchXml([...unrelated, ...battery.slice(0, 12)], 18)
+        : searchXml(battery.slice(6), LIVE_DETAIL_LIMIT - 6);
+    }
+    if (operation === "patentCpcInfo") return cpcXml([]);
+    return detailXml(url.searchParams.get("applicationNumber") ?? "");
+  }, log);
+  const embed: EmbedTexts = async (texts) => texts.map((text) => Float32Array.from(/배터리/.test(text) ? [1, 0] : [0, 1]));
+
+  const result = await searchKoreanPatents(
+    { description: "드론 배터리를 자동으로 교체하는 스테이션", queries: ["드론 배터리", "배터리 교체 스테이션", " 드론  배터리 "] },
+    10,
+    undefined,
+    { key: KEY, fetcher, embed, model: "synthetic", dim: 2 },
+  );
+
+  assert.deepEqual(result.coverage, {
+    queries: ["드론 배터리", "배터리 교체 스테이션"],
+    candidates: LIVE_DETAIL_LIMIT + 6,
+    detailed: LIVE_DETAIL_LIMIT,
+  });
+  const detailed = log
+    .filter((url) => url.pathname.endsWith("/getBibliographyDetailInfoSearch"))
+    .map((url) => url.searchParams.get("applicationNumber"))
+    .sort();
+  assert.deepEqual(detailed, battery.map((item) => item.number).sort());
+  assert.equal(log.filter((url) => url.pathname.endsWith("/getAdvancedSearch")).length, 2);
+});
+
+test("KIPRIS failures are explained as auth, quota, network or timeout problems", () => {
+  assert.match(describeKiprisFailure(new SourceError("KIPRIS", "게이트웨이 오류: SERVICE_KEY_IS_NOT_REGISTERED_ERROR"), false, 20_000), /^인증 실패/);
+  assert.match(describeKiprisFailure(new SourceError("KIPRIS", "API 오류 22 LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR"), false, 20_000), /^호출 한도 초과/);
+  assert.match(describeKiprisFailure(new SourceError("KIPRIS", "외부 서버에 연결하지 못했습니다."), false, 20_000), /^네트워크 오류/);
+  assert.match(describeKiprisFailure(new Error("aborted"), true, 20_000), /^시간 초과\(20초\)/);
 });
 
 test("concurrent upserts keep both documents and an unwritable index falls back to memory", async (t) => {

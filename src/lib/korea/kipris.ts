@@ -7,9 +7,9 @@ import type {
   CollectOptions,
   CollectionResult,
   Decision,
+  DetailResult,
   KoreanPatentDocument,
-  LiveSearchOptions,
-  LiveSearchResult,
+  SearchCandidate,
 } from "../types";
 import {
   SourceError,
@@ -29,7 +29,7 @@ const OPENAPI_BASE =
 const MAX_PAGE_SIZE = 500; // getAdvancedSearch numOfRows 최대값
 const DETAIL_CONCURRENCY = 4;
 const LIVE_SEARCH_LIMIT = 20;
-/** 상세 1건 = 서지상세 + CPC 2회 호출. 쿼터를 지키려고 질의당 신규 상세를 제한한다. */
+/** 상세 1건 = 서지상세 + CPC 2회 호출. 쿼터를 지키려고 검색 요청당 신규 상세를 제한한다. */
 export const LIVE_DETAIL_LIMIT = 20;
 const APPLICATION_NUMBER = /^\d{10,13}$/;
 
@@ -113,12 +113,26 @@ function restUrl(operation: string, params: Record<string, string>, key: string)
   return url;
 }
 
-async function searchApplicationNumbers(
+function candidateFrom(item: unknown): SearchCandidate | null {
+  const entry = record(item);
+  const applicationNumber = digits(entry.applicationNumber);
+  if (!applicationNumber) return null;
+  return {
+    applicationNumber,
+    title: clean(entry.inventionTitle),
+    abstract: clean(entry.astrtCont),
+    applicant: clean(entry.applicantName),
+    rawStatus: clean(entry.registerStatus),
+    filingDate: isoDate(text(entry.applicationDate)),
+  };
+}
+
+async function searchCandidates(
   options: CollectOptions,
   key: string,
   fetcher: typeof fetch,
-): Promise<string[]> {
-  const found: string[] = [];
+): Promise<SearchCandidate[]> {
+  const found: SearchCandidate[] = [];
   const seen = new Set<string>();
   const dateRange =
     options.since || options.until
@@ -148,10 +162,10 @@ async function searchApplicationNumbers(
     const payload = record(body.body);
     const items = list(record(payload.items).item);
     for (const item of items) {
-      const applicationNumber = digits(record(item).applicationNumber);
-      if (applicationNumber && !seen.has(applicationNumber)) {
-        seen.add(applicationNumber);
-        found.push(applicationNumber);
+      const candidate = candidateFrom(item);
+      if (candidate && !seen.has(candidate.applicationNumber)) {
+        seen.add(candidate.applicationNumber);
+        found.push(candidate);
       }
     }
     const total = Number(text(record(payload.count).totalCount));
@@ -263,12 +277,13 @@ export async function getKiprisPatent(
   return fetchDetail(number, key, signal, fetcher);
 }
 
-async function fetchDetails(
+/** 상세(서지+CPC)를 배치로 받는다. 호출 수를 제한하는 것은 호출하는 쪽의 책임이다. */
+export async function fetchKiprisDetails(
   numbers: readonly string[],
   key: string,
   signal: AbortSignal | undefined,
-  fetcher: typeof fetch,
-): Promise<Omit<LiveSearchResult, "numbers">> {
+  fetcher: typeof fetch = fetch,
+): Promise<DetailResult> {
   const documents: KoreanPatentDocument[] = [];
   const warnings: string[] = [];
   for (
@@ -309,37 +324,24 @@ export async function collectKipris(
   if (!options.query.trim() || options.limit < 1) {
     return { documents: [], warnings: [] };
   }
-  const numbers = await searchApplicationNumbers(options, key, fetcher);
-  return fetchDetails(numbers, key, options.signal, fetcher);
-}
-
-/**
- * 키워드로 검색해 색인에 없는 출원번호만 상세를 받는다 (질의당 최대 LIVE_DETAIL_LIMIT건).
- * numbers(질의 캐시)가 주어지면 검색 호출을 건너뛴다.
- */
-export async function searchKiprisLive(
-  { query, limit = LIVE_SEARCH_LIMIT, knownIds, numbers: cached, signal }: LiveSearchOptions,
-  key: string,
-  fetcher: typeof fetch = fetch,
-): Promise<LiveSearchResult> {
-  if (!query.trim() || limit < 1) return { numbers: [], documents: [], warnings: [] };
-  const numbers = cached
-    ? [...cached]
-    : await searchApplicationNumbers({ query, limit, signal }, key, fetcher);
-  const unseen = numbers.filter((number) => !knownIds.has(number));
-  const result = await fetchDetails(
-    unseen.slice(0, LIVE_DETAIL_LIMIT),
+  const candidates = await searchCandidates(options, key, fetcher);
+  return fetchKiprisDetails(
+    candidates.map((candidate) => candidate.applicationNumber),
     key,
-    signal,
+    options.signal,
     fetcher,
   );
-  if (unseen.length <= LIVE_DETAIL_LIMIT) return { numbers, ...result };
-  return {
-    numbers,
-    documents: result.documents,
-    warnings: [
-      ...result.warnings,
-      `KIPRIS 신규 ${unseen.length}건 중 ${LIVE_DETAIL_LIMIT}건만 상세 조회했습니다 (호출 한도).`,
-    ],
-  };
 }
+
+/** 검색어 하나로 KIPRIS 검색 목록(출원일 최신순)을 받는다. 상세는 받지 않는다. */
+export function searchKiprisCandidates(
+  query: string,
+  key: string,
+  signal?: AbortSignal,
+  fetcher: typeof fetch = fetch,
+  limit = LIVE_SEARCH_LIMIT,
+): Promise<SearchCandidate[]> {
+  if (!query.trim()) return Promise.resolve([]);
+  return searchCandidates({ query, limit, signal }, key, fetcher);
+}
+

@@ -19,15 +19,26 @@ export function okXml(body: string): Response {
   return xml(`<response>${OK_HEADER}${body}</response>`);
 }
 
-export function searchXml(numbers: string[], totalCount: number): Response {
-  const items = numbers
-    .map(
-      (number, index) =>
-        `<item><applicationNumber>${number}</applicationNumber><indexNo>${index + 1}</indexNo><registerStatus>공개</registerStatus></item>`,
-    )
+export interface SearchItemFixture {
+  number: string;
+  title?: string;
+  abstract?: string;
+  applicant?: string;
+}
+
+export function searchXml(entries: (string | SearchItemFixture)[], totalCount: number): Response {
+  const items = entries
+    .map((entry, index) => {
+      const item = typeof entry === "string" ? { number: entry } : entry;
+      return `<item><applicationNumber>${item.number}</applicationNumber><indexNo>${index + 1}</indexNo>` +
+        `<inventionTitle>${item.title ?? `합성 특허 ${item.number}`}</inventionTitle>` +
+        `<astrtCont>${item.abstract ?? "합성 초록"}</astrtCont>` +
+        `<applicantName>${item.applicant ?? "합성 주식회사"}</applicantName>` +
+        `<applicationDate>20240105</applicationDate><registerStatus>공개</registerStatus></item>`;
+    })
     .join("");
   return okXml(
-    `<body><items>${items}</items><count><numOfRows>${numbers.length}</numOfRows><pageNo>1</pageNo><totalCount>${totalCount}</totalCount></count></body>`,
+    `<body><items>${items}</items><count><numOfRows>${entries.length}</numOfRows><pageNo>1</pageNo><totalCount>${totalCount}</totalCount></count></body>`,
   );
 }
 

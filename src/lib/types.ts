@@ -131,27 +131,45 @@ export interface CollectionResult {
   readonly warnings: string[];
 }
 
-/** 검색 시 KIPRIS 실시간 조회. knownIds는 이미 색인에 있는 출원번호(숫자만)다. */
-export interface LiveSearchOptions {
-  readonly query: string;
-  readonly limit?: number;
-  readonly knownIds: ReadonlySet<string>;
-  /** 질의 캐시에 저장된 검색 결과. 있으면 검색 호출을 건너뛴다. */
-  readonly numbers?: readonly string[];
-  readonly signal?: AbortSignal;
+/** KIPRIS 검색 목록 항목. 상세 조회 전에 제목·초록으로 후보를 고르는 데 쓴다. */
+export interface SearchCandidate {
+  readonly applicationNumber: string;
+  readonly title: string;
+  readonly abstract: string;
+  readonly applicant: string;
+  readonly rawStatus: string;
+  readonly filingDate: string;
 }
 
-export interface LiveSearchResult {
-  /** 검색(또는 캐시)에서 얻은 출원번호 전체 */
-  readonly numbers: string[];
+export interface DetailResult {
   readonly documents: KoreanPatentDocument[];
   readonly warnings: string[];
 }
 
-/** data/korea/queries.json: 정규화한 질의 → KIPRIS 검색 결과 */
+/** data/korea/queries.json: 정규화한 검색어 → KIPRIS 검색 목록 */
 export interface QueryCacheEntry {
-  readonly numbers: string[];
+  readonly candidates: SearchCandidate[];
   readonly fetchedAt: string;
+}
+
+/** 기술 설명을 나눈 기술 요소와 KIPRIS 검색어 묶음 */
+export interface SearchPlan {
+  readonly elements: string[];
+  readonly queries: string[];
+}
+
+/** description은 의미 정렬 기준, queries는 KIPRIS 검색어 묶음이다. */
+export interface KoreanSearchRequest {
+  readonly description: string;
+  readonly queries: readonly string[];
+}
+
+export interface SearchCoverage {
+  readonly queries: string[];
+  /** 검색어 묶음으로 확보한 중복 없는 후보 수 */
+  readonly candidates: number;
+  /** 이번에 상세를 새로 받은 특허 수 */
+  readonly detailed: number;
 }
 
 export type EmbedTexts = (texts: string[]) => Promise<Float32Array[]>;
@@ -173,6 +191,7 @@ export interface KoreanSearchResult {
   /** 이번 검색으로 색인에 새로 들어오거나 좌표가 바뀐 지도 점 */
   readonly addedPoints: PatentPoint[];
   readonly warnings: string[];
+  readonly coverage: SearchCoverage;
 }
 
 export interface ResearchChunk {
