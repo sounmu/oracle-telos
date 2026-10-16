@@ -28,9 +28,9 @@ const OPENAPI_BASE =
   "https://plus.kipris.or.kr/openapi/rest/patUtiModInfoSearchSevice/";
 const MAX_PAGE_SIZE = 500; // getAdvancedSearch numOfRows 최대값
 const DETAIL_CONCURRENCY = 4;
-const LIVE_SEARCH_LIMIT = 10;
-/** 상세 1건 = 서지상세 + CPC 2회 호출. 무료 쿼터를 지키려고 질의당 신규 상세를 제한한다. */
-export const LIVE_DETAIL_LIMIT = 5;
+const LIVE_SEARCH_LIMIT = 50;
+/** 상세 1건 = 서지상세 + CPC 2회 호출. 쿼터를 지키려고 질의당 신규 상세를 제한한다. */
+export const LIVE_DETAIL_LIMIT = 50;
 const APPLICATION_NUMBER = /^\d{10,13}$/;
 
 /** 공개 여부만으로 심사 진행 여부를 단정하지 않는다. */
@@ -271,7 +271,11 @@ async function fetchDetails(
 ): Promise<LiveSearchResult> {
   const documents: KoreanPatentDocument[] = [];
   const warnings: string[] = [];
-  for (let start = 0; start < numbers.length; start += DETAIL_CONCURRENCY) {
+  for (
+    let start = 0;
+    start < numbers.length && !signal?.aborted;
+    start += DETAIL_CONCURRENCY
+  ) {
     const batch = numbers.slice(start, start + DETAIL_CONCURRENCY);
     const settled = await Promise.allSettled(
       batch.map((number) => fetchDetail(number, key, signal, fetcher)),
@@ -281,12 +285,18 @@ async function fetchDetails(
         documents.push(result.value);
         return;
       }
-      if (signal?.aborted) throw result.reason;
+      if (signal?.aborted) return;
       const reason: unknown = result.reason;
       warnings.push(
         `${batch[index]}: ${reason instanceof Error ? reason.message : String(reason)}`,
       );
     });
+  }
+  // 시간 제한·중단 시 이미 받은 상세는 버리지 않는다. 다음 검색이 나머지를 이어 받는다.
+  if (signal?.aborted) {
+    warnings.push(
+      `요청 시간 제한으로 상세 ${numbers.length}건 중 ${documents.length}건만 받았습니다.`,
+    );
   }
   return { documents, warnings };
 }

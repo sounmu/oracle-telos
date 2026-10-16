@@ -239,17 +239,19 @@ test("stops on a short page and paginates when the limit exceeds one page", asyn
 
 test("live search skips known application numbers and caps new detail lookups per query", async () => {
   const number = (index: number) => `10202400${String(index).padStart(5, "0")}`;
+  const numbers = (count: number) => Array.from({ length: count }, (_, index) => number(index));
   const log: URL[] = [];
   const fetcher = fakeFetch((operation, url) => {
     if (operation === "getAdvancedSearch") {
-      return searchXml(Array.from({ length: 8 }, (_, index) => number(index)), 8);
+      const rows = Number(url.searchParams.get("numOfRows"));
+      return searchXml(numbers(rows), rows);
     }
     if (operation === "patentCpcInfo") return cpcXml([]);
     return detailXml(url.searchParams.get("applicationNumber") ?? "");
   }, log);
 
   const result = await searchKiprisLive(
-    { query: "드론 배터리 교체", knownIds: new Set([number(0), number(1)]) },
+    { query: "드론 배터리 교체", limit: LIVE_DETAIL_LIMIT + 8, knownIds: new Set([number(0), number(1)]) },
     KEY,
     fetcher,
   );
@@ -259,22 +261,54 @@ test("live search skips known application numbers and caps new detail lookups pe
   assert.equal(log.filter((url) => url.pathname.endsWith("/patentCpcInfo")).length, LIVE_DETAIL_LIMIT);
   assert.deepEqual(
     result.documents.map((document) => patentOf(document).sourceId),
-    [2, 3, 4, 5, 6].map(number),
+    numbers(LIVE_DETAIL_LIMIT + 2).slice(2),
   );
-  assert.match(result.warnings.join("\n"), /6건 중 5건/);
+  assert.match(result.warnings.join("\n"), new RegExp(`${LIVE_DETAIL_LIMIT + 6}건 중 ${LIVE_DETAIL_LIMIT}건`));
   const search = log.find((url) => url.pathname.endsWith("/getAdvancedSearch"));
-  assert.equal(search?.searchParams.get("numOfRows"), "10");
   assert.equal(search?.searchParams.get("word"), "드론 배터리 교체");
 
   const repeatLog: URL[] = [];
   const repeat = await searchKiprisLive(
-    { query: "드론 배터리 교체", knownIds: new Set(Array.from({ length: 8 }, (_, index) => number(index))) },
+    { query: "드론 배터리 교체", knownIds: new Set(numbers(50)) },
     KEY,
-    fakeFetch((operation) => {
+    fakeFetch((operation, url) => {
       assert.equal(operation, "getAdvancedSearch");
-      return searchXml(Array.from({ length: 8 }, (_, index) => number(index)), 8);
+      assert.equal(url.searchParams.get("numOfRows"), "50");
+      return searchXml(numbers(50), 50);
     }, repeatLog),
   );
   assert.equal(repeatLog.length, 1);
   assert.deepEqual(repeat, { documents: [], warnings: [] });
+});
+
+test("live search keeps details fetched before the time limit", async () => {
+  const number = (index: number) => `10202400${String(index).padStart(5, "0")}`;
+  const controller = new AbortController();
+  const fetcher: typeof fetch = async (input, init) => {
+    const url = new URL(input instanceof URL ? input : typeof input === "string" ? input : input.url);
+    const operation = url.pathname.split("/").at(-1) ?? "";
+    if (operation === "getAdvancedSearch") return searchXml(Array.from({ length: 8 }, (_, index) => number(index)), 8);
+    const applicationNumber = url.searchParams.get("applicationNumber") ?? "";
+    if (applicationNumber >= number(4)) {
+      // 두 번째 배치에서 제한 시간이 끝난 상황을 만든다.
+      controller.abort();
+      return new Promise<Response>((_resolve, reject) => {
+        if (init?.signal?.aborted) reject(init.signal.reason);
+        init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
+      });
+    }
+    return operation === "patentCpcInfo" ? cpcXml([]) : detailXml(applicationNumber);
+  };
+
+  const result = await searchKiprisLive(
+    { query: "드론 배터리", knownIds: new Set(), signal: controller.signal },
+    KEY,
+    fetcher,
+  );
+
+  assert.deepEqual(
+    result.documents.map((document) => patentOf(document).sourceId),
+    [0, 1, 2, 3].map(number),
+  );
+  assert.match(result.warnings.join("\n"), /8건 중 4건/);
 });

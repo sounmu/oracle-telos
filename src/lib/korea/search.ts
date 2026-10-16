@@ -11,7 +11,8 @@ import { SourceError } from "./http";
 import { patentFromDocument, rankResearch, readResearchIndex, upsertLivePatents } from "./index";
 import { searchKiprisLive } from "./kipris";
 
-const LIVE_TIMEOUT_MS = 8000;
+// 상세 최대 50건(호출 100회)을 동시 4건씩 받는 시간. 초과하면 받은 만큼만 캐시한다.
+const LIVE_TIMEOUT_MS = 20_000;
 
 export async function searchKoreanPatents(
   query: string,
