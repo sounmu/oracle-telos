@@ -1945,5 +1945,566 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
         "url": "https://bizhankook.com/articles/25790.html"
       }
     ]
-  }
+  },
+{
+  "id": "lgenergy-sk-ev-battery",
+  "kind": "tech",
+  "title": "전기차 배터리 영업비밀 분쟁 (ITC 337-TA-1159)",
+  "plaintiff": "LG화학(현 LG에너지솔루션)",
+  "defendant": "SK이노베이션",
+  "domain": "이차전지",
+  "tech": "전기차용 리튬이온 배터리 셀·모듈·팩의 제조공정(슬러리, 전극 코팅, 파우치 실링, 화성)과 전극·전해액 소재 레시피",
+  "keywords": [
+    "리튬이온",
+    "배터리",
+    "슬러리",
+    "전극 코팅",
+    "파우치 실링",
+    "화성",
+    "전해액",
+    "영업비밀",
+    "lithium ion",
+    "battery",
+    "electrode coating"
+  ],
+  "relation": "전 직원 이직",
+  "procedures": [
+    "ITC 337조 조사 (337-TA-1159)",
+    "조기패소(default) 판정",
+    "제한적 배제명령·중지명령"
+  ],
+  "period": {
+    "start": "2019.4",
+    "end": "2021.4"
+  },
+  "steps": [
+    {
+      "date": "2019.4.29",
+      "text": "LG화학이 ITC에 SK이노베이션을 관세법 337조 위반으로 제소했다."
+    },
+    {
+      "date": "2020.2.14",
+      "text": "행정판사가 증거인멸을 이유로 SK이노베이션에 조기패소 예비판정을 내렸다."
+    },
+    {
+      "date": "2021.2.10",
+      "text": "ITC 위원회가 337조 위반을 인정하고 제한적 배제명령과 중지명령을 내렸다."
+    },
+    {
+      "date": "2021.4.11",
+      "text": "양사가 미국 대통령 검토 시한 직전에 합의했다."
+    }
+  ],
+  "result": "SK이노베이션 배터리의 미국 수입을 10년간 금지하는 배제명령과 중지명령. 합의금 현재가치 2조원(현금 1조원, 로열티 1조원), 국내외 쟁송 취하.",
+  "reason": "위원회는 SK이노베이션이 소송을 예견한 뒤에도 문서 파기를 계속했다고 보고 악의를 인정해 조기패소를 확정했다. 영업비밀 목록이 22개 범주로 한정되었고, 독자 개발 기간은 10년으로 판단했다.",
+  "techImpact": "배제명령 대상은 22개 영업비밀을 쓴 SK이노베이션의 배터리·셀·모듈·팩·부품이다. 기술 재설계를 입증하면 명령 대상에서 벗어날 수 있다.",
+  "bizImpact": "포드·폭스바겐에 4년·2년 예외 기간이 주어졌다. SK이노베이션은 조지아 공장 투자를 회수하기 어렵다고 밝혔다.",
+  "ids": {
+    "patents": [],
+    "cases": [
+      "USITC 337-TA-1159"
+    ]
+  },
+  "sources": [
+    {
+      "label": "USITC 337-TA-1159 위원회 의견서 공개본 2021.3.4",
+      "url": "https://ipwatchdog.com/wp-content/uploads/2023/09/1159-Commn-Op.pdf"
+    },
+    {
+      "label": "Mondaq 최종판정 요약",
+      "url": "https://www.mondaq.com/unitedstates/export-controls-trade-investment-sanctions/1036394/commission-issues-final-determination-in-certain-lithium-ion-batteries-337-ta-1159"
+    },
+    {
+      "label": "InsideEVs",
+      "url": "https://insideevs.com/news/487231/sk-innovation-batteries-banned-10-years-us/"
+    },
+    {
+      "label": "데일리안",
+      "url": "https://www.dailian.co.kr/news/view/981043/"
+    }
+  ]
+},
+{
+  "id": "waymo-uber-lidar",
+  "kind": "tech",
+  "title": "자율주행 라이다 영업비밀 분쟁 (Waymo vs Uber·Otto)",
+  "plaintiff": "Waymo (Alphabet)",
+  "defendant": "Uber Technologies, Otto",
+  "domain": "자율주행",
+  "tech": "자율주행차용 라이다(LiDAR) 하드웨어 설계(회로기판 설계 포함)와 자율주행 소프트웨어",
+  "keywords": [
+    "라이다",
+    "lidar",
+    "자율주행",
+    "회로기판",
+    "영업비밀",
+    "self-driving",
+    "trade secret",
+    "autonomous"
+  ],
+  "relation": "전 직원 이직",
+  "procedures": [
+    "민사 영업비밀 소송",
+    "예비적 금지명령",
+    "형사 기소 (United States v. Levandowski)"
+  ],
+  "period": {
+    "start": "2017.2",
+    "end": "2021.1"
+  },
+  "steps": [
+    {
+      "date": "2016.8",
+      "text": "Uber가 Levandowski가 세운 Otto를 6억8000만 달러에 인수했다."
+    },
+    {
+      "date": "2017.2",
+      "text": "Waymo가 Uber를 제소했다."
+    },
+    {
+      "date": "2017.5",
+      "text": "Alsup 판사가 Levandowski의 라이다 업무 참여를 금지하고 파일 반환을 명했다."
+    },
+    {
+      "date": "2018.2.9",
+      "text": "Waymo와 Uber가 배심 재판 중 합의했다."
+    },
+    {
+      "date": "2020.8.4",
+      "text": "Levandowski가 1개 혐의에 유죄를 인정하고 징역 18개월을 선고받았다."
+    },
+    {
+      "date": "2021.1.20",
+      "text": "Levandowski가 사면됐다."
+    }
+  ],
+  "result": "Uber가 지분 0.34%(약 2억4500만 달러)를 Waymo에 넘기고 Waymo 기술 사용 금지를 약속했다. Levandowski는 징역 18개월을 선고받았으나 사면됐다.",
+  "reason": "민사 사건은 합의로 끝나 본안 판단이 없다. 예비적 금지명령에서 Alsup 판사는 Uber가 Waymo 기밀 파일 1만4000건 이상을 보유한 사실을 알았거나 알았어야 했다고 봤다.",
+  "techImpact": "Uber 소프트웨어 일부는 독립 전문가 검토 대상이 되었고, Uber는 Waymo 라이선스를 받거나 기능을 재설계해야 할 수 있다고 공시했다.",
+  "bizImpact": "Uber는 Otto 관련 분쟁을 지분 제공으로 정리했다. Levandowski는 Google에 1억7900만 달러 지급 판정 뒤 파산을 신청했다.",
+  "ids": {
+    "patents": [],
+    "cases": [
+      "Waymo LLC v. Uber Technologies (N.D. Cal., Alsup)",
+      "United States v. Levandowski, No. 5:19-cr-00377"
+    ]
+  },
+  "sources": [
+    {
+      "label": "Verdict 2017.5.3",
+      "url": "https://www.verdict.co.uk/uber-faces-waymo-in-court-battle-over-driverless-car-technology/"
+    },
+    {
+      "label": "Axios 2018.2.9",
+      "url": "https://www.axios.com/2018/02/09/stunner-google-and-uber-settle-1518191623"
+    },
+    {
+      "label": "미 법무부 보도자료 2020.8.4",
+      "url": "https://www.justice.gov/usao-ndca/pr/former-uber-executive-sentenced-18-months-jail-trade-secret-theft-google"
+    },
+    {
+      "label": "CNBC 2021.1.20",
+      "url": "https://www.cnbc.com/2021/01/20/anthony-levandowski-pardoned-after-stealing-trade-secrets-from-google.html"
+    },
+    {
+      "label": "9to5Google 2019.11.7",
+      "url": "https://9to5google.com/2019/11/07/waymo-tech-uber/"
+    }
+  ]
+},
+{
+  "id": "nexon-dnd-trade-secret",
+  "kind": "tech",
+  "title": "다크앤다커 영업비밀·저작권 분쟁 (넥슨 vs 아이언메이스)",
+  "plaintiff": "넥슨",
+  "defendant": "아이언메이스(최주현 대표)",
+  "domain": "게임",
+  "tech": "넥슨 미공개 게임 프로젝트 'P3'의 프로그램·소스코드·빌드 파일·그래픽 리소스와 게임 구성 정보",
+  "keywords": [
+    "게임",
+    "소스코드",
+    "그래픽 리소스",
+    "빌드",
+    "영업비밀",
+    "저작권",
+    "익스트랙션",
+    "game",
+    "source code",
+    "trade secret",
+    "copyright"
+  ],
+  "relation": "전 직원 이직",
+  "procedures": [
+    "영업비밀 침해 민사소송",
+    "저작권 침해 청구",
+    "금지 가처분",
+    "형사 고소"
+  ],
+  "period": {
+    "start": "2021.7",
+    "end": "2026.4"
+  },
+  "steps": [
+    {
+      "date": "2021.7",
+      "text": "P3 개발팀 디렉터였던 최주현 대표가 넥슨을 퇴사했다."
+    },
+    {
+      "date": "2021.8",
+      "text": "넥슨이 경찰에 고소하고 영업비밀·저작권 침해금지 가처분을 신청했다."
+    },
+    {
+      "date": "2023.8",
+      "text": "아이언메이스가 소송 중 다크앤다커를 얼리액세스로 출시했다."
+    },
+    {
+      "date": "2025.2.13",
+      "text": "1심이 영업비밀 침해를 인정해 85억원 배상을 명했고, 저작권 침해와 서비스 금지는 기각했다."
+    },
+    {
+      "date": "2025.12.4",
+      "text": "2심이 영업비밀 침해를 인정하고 배상액을 57억원대로 줄였다."
+    },
+    {
+      "date": "2026.4.30",
+      "text": "대법원이 상고를 모두 기각해 배상액 57억6464만원이 확정됐다."
+    }
+  ],
+  "result": "아이언메이스가 넥슨에 57억6464만원을 배상하도록 확정. 저작권 침해는 인정되지 않았고, 서비스 금지는 명령되지 않았다.",
+  "reason": "P3 소스코드와 그래픽 리소스를 하나의 영업비밀로 특정할 수 있다고 봤다. 보호기간은 퇴사 시점부터 얼리액세스 시점까지로 제한됐고, 저작권은 P3에 구현·공표되지 않은 요소라 보호받기 어렵다고 판단했다.",
+  "techImpact": "저작권 기반 사용 제한 판단은 없었다. 영업비밀 보호기간 종료 이후 서비스 금지는 인정되지 않았다.",
+  "bizImpact": "다크앤다커는 소송 중 얼리액세스로 출시됐다. 크래프톤의 모바일 글로벌 라이선스는 2025.2 합의 해지됐다.",
+  "ids": {
+    "patents": [],
+    "cases": [
+      "대법원 2026다200492 (1심 서울중앙지법 2025.2.13, 2심 서울고법 2025.12.4)"
+    ]
+  },
+  "sources": [
+    {
+      "label": "법률신문",
+      "url": "https://www.lawtimes.co.kr/news/articleView.html?idxno=220172"
+    },
+    {
+      "label": "헤럴드경제 2025.12.4",
+      "url": "https://www.heraldk.com/article/2025120400511251185"
+    },
+    {
+      "label": "파이낸셜뉴스 2025.2.17",
+      "url": "https://www.fnnews.com/news/202502171718369753"
+    },
+    {
+      "label": "서울경제",
+      "url": "https://www.sedaily.com/article/20039002"
+    }
+  ]
+},
+{
+  "id": "shinsaeng-carbide",
+  "kind": "tech",
+  "title": "초경합금 제조기술 영업비밀 분쟁 (신생공업 vs K사)",
+  "plaintiff": "신생공업",
+  "defendant": "K사(전 신생공업 전문경영인 설립), 일본 S사 공동",
+  "domain": "금속소재",
+  "tech": "내마모계열 초경합금 제조기술(원료관리표준, 소결자료, 금형설계자료, 원료공급업체 정보)",
+  "keywords": [
+    "초경합금",
+    "소결",
+    "금형 설계",
+    "원료 관리",
+    "영업비밀",
+    "cemented carbide",
+    "sintering",
+    "trade secret"
+  ],
+  "relation": "전 직원 이직",
+  "procedures": [
+    "영업비밀 침해 민사소송 (1심·항소심)",
+    "형사 고소 (산업기술유출방지법, 부정경쟁방지법, 업무상배임)"
+  ],
+  "period": {
+    "start": "2011.5",
+    "end": "2017.5"
+  },
+  "steps": [
+    {
+      "date": "2011.5",
+      "text": "K씨가 신생공업 전문경영인으로 퇴사하며 원료·소결·금형 자료를 USB 등으로 가져갔다고 주장됐다."
+    },
+    {
+      "date": "2011.7",
+      "text": "K씨가 일본 동종업체 S사의 지원을 받아 K사를 설립했다."
+    },
+    {
+      "date": "2012",
+      "text": "신생공업이 형사 고소했으나 불기소처분이 나왔다. 항고 뒤 2015.6 업무상배임 기소가 이뤄졌다."
+    },
+    {
+      "date": "1심",
+      "text": "대구지법 서부지원이 영업비밀 침해를 인정해 약 71억9900만원 배상을 명했다."
+    },
+    {
+      "date": "2017.5.11",
+      "text": "대구고법이 항소심에서 배상액을 77억8000만원으로 늘렸다."
+    }
+  ],
+  "result": "항소심 배상액 77억8000만원(지연손해금 포함). 일본 S사도 공동 배상 책임. 금지청구 일부는 침해 후 4년 이상 경과를 이유로 기각.",
+  "reason": "반출 자료가 초경합금 생산의 핵심 정보라 영업비밀로 인정했다. 접근 직원 제한, 패스워드, 비밀준수의무 같은 관리 조치로 중소기업의 비밀유지성을 인정했다.",
+  "techImpact": "K사는 설립 4개월 만에 완제품을 출시했다고 주장됐다. 금지청구는 시간 경과로 일부 제한됐다.",
+  "bizImpact": "K사 매출은 2012년 약 57억원에서 2015년 약 114억원으로 늘었다. 신생공업 매출은 2011년 약 434억원에서 2015년 약 286억원으로 줄었다.",
+  "ids": {
+    "patents": [],
+    "cases": []
+  },
+  "sources": [
+    {
+      "label": "한국일보 2016.7.26",
+      "url": "https://www.hankookilbo.com/news/article/201607261855765387"
+    },
+    {
+      "label": "경북매일 2017.5.12",
+      "url": "https://kbmaeil.com/article/201705120192058"
+    },
+    {
+      "label": "법무법인 세종 뉴스레터 2017.5.19",
+      "url": "https://shinkim.com/kor/media/newsletter/941"
+    }
+  ]
+},
+{
+  "id": "samsung-boe-oled",
+  "kind": "tech",
+  "title": "OLED 특허·영업비밀 분쟁 (ITC 337-TA-1351·1378)",
+  "plaintiff": "삼성디스플레이",
+  "defendant": "BOE Technology Group 및 계열사",
+  "domain": "디스플레이",
+  "tech": "스마트폰용 AMOLED 패널 화소 구조(다이아몬드 픽셀 등)와 OLED 디스플레이 모듈 제조 영업비밀",
+  "keywords": [
+    "oled",
+    "amoled",
+    "디스플레이",
+    "화소",
+    "다이아몬드 픽셀",
+    "패널",
+    "영업비밀",
+    "display",
+    "pixel",
+    "trade secret"
+  ],
+  "relation": "전 직원 이직",
+  "procedures": [
+    "ITC 337조 특허 침해 조사 (337-TA-1351)",
+    "ITC 337조 영업비밀 조사 (337-TA-1378)",
+    "텍사스 연방법원 특허 소송"
+  ],
+  "period": {
+    "start": "2022.12",
+    "end": "2026.1"
+  },
+  "steps": [
+    {
+      "date": "2022.12",
+      "text": "삼성디스플레이가 BOE와 미국 유통사를 상대로 ITC와 텍사스 법원에 AMOLED 특허 침해 소송을 냈다."
+    },
+    {
+      "date": "2023.10.31",
+      "text": "영업비밀 침해를 이유로 ITC 337조 조사를 신청했다."
+    },
+    {
+      "date": "2024.11",
+      "text": "337-TA-1351 행정판사가 특허 유효성을 인정하고 BOE 3건, 미국 도매업체 4건 침해를 판정했다."
+    },
+    {
+      "date": "2025.7.11",
+      "text": "337-TA-1378 행정판사가 337조 위반과 제한적 배제명령(15년 0.5개월) 등을 권고했다."
+    },
+    {
+      "date": "2025.11",
+      "text": "양사가 합의하고 텍사스 소송 3건을 취하했다."
+    },
+    {
+      "date": "2026.1.5",
+      "text": "ITC 위원회가 합의를 이유로 337-TA-1378 조사를 종료했다."
+    }
+  ],
+  "result": "337-TA-1351: BOE 침해 판단 유지, 수입·판매 금지는 부과되지 않음. 337-TA-1378: 합의로 종료, 구제명령 없음. 합의 조건은 비공개이며 로열티 보도가 있었으나 확인되지 않음.",
+  "reason": "행정판사는 영업비밀 범주 TS I·II·IV·VII 침해를 인정하고 TS III는 침해가 아니라고 봤다. DTSA 소멸시효는 337조 조사에 적용되지 않는다고 판단했다.",
+  "techImpact": "권고 배제명령 대상은 침해 영업비밀을 쓴 OLED 모듈과 패널이었다. 다툼 대상 특허 5건 중 4건은 PTAB에서 유효성을 유지했다.",
+  "bizImpact": "BOE는 장기 수입배제 없이 주요 스마트폰 업체에 패널 공급을 이어 갈 수 있게 됐다. 첫 소송부터 합의까지 약 3년이 걸렸다.",
+  "ids": {
+    "patents": [],
+    "cases": [
+      "USITC 337-TA-1351",
+      "USITC 337-TA-1378"
+    ]
+  },
+  "sources": [
+    {
+      "label": "KED Global 2025.11.20",
+      "url": "https://www.kedglobal.com/electronics/newsView/ked202511200007"
+    },
+    {
+      "label": "Korea Times 2025.3.20",
+      "url": "https://www.koreatimes.co.kr/business/tech-science/20250320/samsung-display-wins-oled-patent-suit-over-boe"
+    },
+    {
+      "label": "USITC 2025.9.11 공고 (Federal Register 2025-18459)",
+      "url": "https://public-inspection.federalregister.gov/2025-18459.pdf"
+    },
+    {
+      "label": "USITC 2026.1.5 공고 (Federal Register 2026-00099)",
+      "url": "https://public-inspection.federalregister.gov/2026-00099.pdf"
+    }
+  ]
+},
+{
+  "id": "huawei-samsung-4g-sep",
+  "kind": "tech",
+  "title": "4G LTE 표준필수특허 침해소송 (화웨이 vs 삼성전자, 선전)",
+  "plaintiff": "화웨이",
+  "defendant": "삼성전자 및 중국 법인",
+  "domain": "통신",
+  "tech": "4G LTE 표준필수특허(SEP)와 FRAND 라이선스 조건",
+  "keywords": [
+    "lte",
+    "4g",
+    "표준필수특허",
+    "sep",
+    "frand",
+    "라이선스",
+    "통신",
+    "standard essential",
+    "licensing",
+    "royalty"
+  ],
+  "relation": "경쟁사 간 분쟁",
+  "procedures": [
+    "중국 선전 중급인민법원 특허침해 소송",
+    "미국 캘리포니아 북부 연방법원 소송금지명령",
+    "합의"
+  ],
+  "period": {
+    "start": "2016.5",
+    "end": "2019.2"
+  },
+  "steps": [
+    {
+      "date": "2016.5.24",
+      "text": "화웨이가 미국 연방법원에 삼성전자를 제소했고, 다음 날 중국에서도 제소했다."
+    },
+    {
+      "date": "2018.1",
+      "text": "선전 중급인민법원이 삼성 4G 스마트폰의 화웨이 표준필수특허 2건 침해를 인정하고 중국 내 제조·판매 금지를 명령했다."
+    },
+    {
+      "date": "2018.4.13",
+      "text": "미국 연방법원이 화웨이의 선전 판결 집행을 막는 소송금지명령을 내렸다."
+    },
+    {
+      "date": "2019.2.25",
+      "text": "양사가 합의했다. 조건은 공개되지 않았다."
+    }
+  ],
+  "result": "선전 법원은 침해와 금지명령을 인정했으나, 미국 소송금지명령으로 집행되지 않은 상태에서 합의가 이뤄졌다.",
+  "reason": "법원은 3GPP 기술규격을 기준으로 표준필수성을 판단했다. 삼성전자가 표준필수특허만의 라이선스 논의를 거부하고 화웨이 제안에 답하지 않은 점을 FRAND 과실로 봤다.",
+  "techImpact": "금지명령은 두 특허를 쓰는 단말과 네트워크 기기 전반에 미칠 수 있었다.",
+  "bizImpact": "삼성전자 중국 법인의 4G 스마트폰 판매 금지 위험이 있었고, 합의로 정리됐다.",
+  "ids": {
+    "patents": [
+      "ZL201110269715.3",
+      "ZL201010137731.2"
+    ],
+    "cases": [
+      "(2016)粤03民初816号·840号 (Bird & Bird 기재)",
+      "16-cv-02787-WHO (N.D. Cal.)"
+    ]
+  },
+  "sources": [
+    {
+      "label": "Bird & Bird 2018 (Conventus Law 게재)",
+      "url": "https://conventuslaw.com/report/china-shenzhen-court-grants-injunctions-in-sep/"
+    },
+    {
+      "label": "World IP Review",
+      "url": "https://www.worldipreview.com/news/chinese-court-rules-against-samsung-again-15183"
+    },
+    {
+      "label": "techpartner.news",
+      "url": "https://www.techpartner.news/news/huawei-samsung-agree-to-settle-patent-dispute-519924"
+    },
+    {
+      "label": "Wikipedia: Samsung v. Huawei",
+      "url": "https://en.wikipedia.org/wiki/Samsung_v._Huawei"
+    }
+  ]
+},
+{
+  "id": "lgenergy-sunwoda-separator",
+  "kind": "tech",
+  "title": "배터리 분리막·전극조립체 특허 침해소송 (LG에너지솔루션 공동보유 vs 신왕다, 뮌헨)",
+  "plaintiff": "Tulip Innovation (LG에너지솔루션·파나소닉 특허 라이선스 대리인)",
+  "defendant": "신왕다(Sunwoda)",
+  "domain": "이차전지",
+  "tech": "리튬이온 배터리 분리막(SRS 코팅)과 전극·분리막 결합 구조",
+  "keywords": [
+    "분리막",
+    "separator",
+    "srs",
+    "코팅",
+    "전극 조립체",
+    "리튬이온",
+    "배터리",
+    "battery",
+    "electrode assembly"
+  ],
+  "relation": "경쟁사 간 분쟁",
+  "procedures": [
+    "독일 뮌헨 지방법원 특허 침해소송",
+    "금지명령·판매금지 판결"
+  ],
+  "period": {
+    "start": "2025.5",
+    "end": "2025.7"
+  },
+  "steps": [
+    {
+      "date": "2025.5.22",
+      "text": "뮌헨 지방법원이 두 특허 사건에서 금지명령을 냈다."
+    },
+    {
+      "date": "2025.7.3",
+      "text": "뮌헨 지방법원이 세 번째 특허 사건 구두심리를 열었다."
+    },
+    {
+      "date": "2025.7.17",
+      "text": "뮌헨 지방법원이 세 번째 특허 침해를 인정하는 판결을 했다."
+    }
+  ],
+  "result": "대상 배터리의 금지명령, 잔여 재고 회수·폐기, 손해배상 책임 인정과 회계정보 제공 명령. 즉시 집행 가능, 신왕다는 항소 가능.",
+  "reason": "청구항별 침해 판단 근거는 공개되지 않았다. 신왕다는 세 특허에 대해 무효소송을 냈고 계속 진행 중이다.",
+  "techImpact": "금지 대상은 다치아 스프링에 쓰인 특정 신왕다 배터리 모델로 보도되었다.",
+  "bizImpact": "신왕다는 대상 배터리를 독일에서 팔 수 없게 되었다. 손해배상액은 공개되지 않았다.",
+  "ids": {
+    "patents": [
+      "EP 1 829 139 B1",
+      "EP 2 528 141 B1",
+      "EP 2 378 595 B1"
+    ],
+    "cases": []
+  },
+  "sources": [
+    {
+      "label": "헤럴드경제 2025.7.24",
+      "url": "https://biz.heraldcorp.com/article/10538562"
+    },
+    {
+      "label": "Tulip 보도자료 2025.5.27 (IPWatchdog)",
+      "url": "https://ipwatchdog.com/press/tulip-innovation-obtains-landmark-injunctions-battery-patent-dispute-sunwoda-group/"
+    },
+    {
+      "label": "Tulip 보도자료 2025.7.24 (Kyodo PR Wire)",
+      "url": "https://kyodonewsprwire.jp/release/202507242623"
+    }
+  ]
+}
 ];
