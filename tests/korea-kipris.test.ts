@@ -1,114 +1,23 @@
-// 모든 XML 픽스처는 KIPRIS Plus 공식 문서(getAdvancedSearch / getBibliographyDetailInfoSearch /
-// patentCpcInfo)의 응답 구조를 따라 만든 합성(synthetic) 데이터다. 실제 API는 호출하지 않는다.
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { KoreanPatentDocument, ResearchDocument } from "../src/lib/types";
 import { SourceError } from "../src/lib/korea/http";
 import {
   collectKipris,
   getKiprisPatent,
+  LIVE_DETAIL_LIMIT,
   normalizeKiprisDecision,
+  searchKiprisLive,
 } from "../src/lib/korea/kipris";
-
-const KEY = "synthetic-test-key";
-
-const OK_HEADER =
-  "<header><successYN>Y</successYN><resultCode>00</resultCode><resultMsg>NORMAL SERVICE.</resultMsg></header>";
-
-function xml(body: string, status = 200): Response {
-  return new Response(`<?xml version="1.0" encoding="UTF-8"?>${body}`, {
-    status,
-    headers: { "content-type": "application/xml" },
-  });
-}
-
-function searchXml(numbers: string[], totalCount: number): Response {
-  const items = numbers
-    .map(
-      (number, index) =>
-        `<item><applicationNumber>${number}</applicationNumber><indexNo>${index + 1}</indexNo><registerStatus>공개</registerStatus></item>`,
-    )
-    .join("");
-  return xml(
-    `<response>${OK_HEADER}<body><items>${items}</items><count><numOfRows>${numbers.length}</numOfRows><pageNo>1</pageNo><totalCount>${totalCount}</totalCount></count></body></response>`,
-  );
-}
-
-interface DetailFixture {
-  status?: string;
-  applicationNumber?: string;
-  claims?: string[];
-  applicants?: string[];
-  title?: string;
-}
-
-function dotted(number: string): string {
-  return `${number.slice(0, 2)}-${number.slice(2, 6)}-${number.slice(6)}`;
-}
-
-function detailXml(number: string, fixture: DetailFixture = {}): Response {
-  const claims = fixture.claims ?? [
-    "1. 센서를 구비한 장치.",
-    "2. 제1 항에 있어서 &lt;P INDENT=14&gt;상기 센서&lt;/P&gt;는 온도 센서인 장치 &amp; 방법.",
-    "3. 삭제",
-  ];
-  const applicants = fixture.applicants ?? ["합성 주식회사"];
-  const claimXml = claims
-    .map((claim) => `<claimInfo><claim>${claim}</claim></claimInfo>`)
-    .join("");
-  const applicantXml = applicants
-    .map((name) => `<applicantInfo><name>${name}</name></applicantInfo>`)
-    .join("");
-  return xml(
-    `<response>${OK_HEADER}<body><item>` +
-      `<biblioSummaryInfoArray><biblioSummaryInfo>` +
-      `<applicationDate>2020.03.05</applicationDate>` +
-      `<applicationNumber>${fixture.applicationNumber ?? dotted(number)}</applicationNumber>` +
-      `<inventionTitle>${fixture.title ?? "합성 센서 장치(Synthetic Sensor Device)"}</inventionTitle>` +
-      `<openDate>2021.09.10</openDate><openNumber>10-2021-0116000</openNumber>` +
-      `<publicationDate> </publicationDate><registerDate> </registerDate>` +
-      `<registerStatus>${fixture.status ?? "공개"}</registerStatus>` +
-      `</biblioSummaryInfo></biblioSummaryInfoArray>` +
-      `<ipcInfoArray><ipcInfo><ipcNumber>H04Q 9/00</ipcNumber></ipcInfo></ipcInfoArray>` +
-      `<abstractInfoArray><abstractInfo><astrtCont> 본 발명은 합성 센서 장치에 관한 것이다. </astrtCont></abstractInfo></abstractInfoArray>` +
-      `<claimInfoArray>${claimXml}</claimInfoArray>` +
-      `<applicantInfoArray>${applicantXml}</applicantInfoArray>` +
-      `</item></body></response>`,
-  );
-}
-
-function cpcXml(codes: string[]): Response {
-  const items = codes
-    .map(
-      (code) =>
-        `<patentCpcInfo><CooperativepatentclassificationNumber>${code}</CooperativepatentclassificationNumber><CooperativepatentclassificationDate>(2013.01)</CooperativepatentclassificationDate></patentCpcInfo>`,
-    )
-    .join("");
-  return xml(
-    `<response><header><resultCode/><resultMsg/></header><body><items>${items}</items></body></response>`,
-  );
-}
-
-type Handler = (operation: string, url: URL) => Response;
-
-function fakeFetch(handler: Handler, log: URL[] = []): typeof fetch {
-  return async (input) => {
-    const url =
-      input instanceof URL
-        ? input
-        : new URL(typeof input === "string" ? input : input.url);
-    log.push(url);
-    const operation = url.pathname.split("/").at(-1) ?? "";
-    return handler(operation, url);
-  };
-}
-
-function patentOf(document: ResearchDocument | undefined): KoreanPatentDocument {
-  assert.ok(document, "document missing");
-  assert.equal(document.source, "kipris");
-  if (document.source !== "kipris") throw new Error("unreachable");
-  return document;
-}
+import {
+  KEY,
+  cpcXml,
+  detailXml,
+  fakeFetch,
+  okXml,
+  patentOf,
+  searchXml,
+  xml,
+} from "./kipris-fixtures";
 
 test("collects a singleton search hit with full bibliography, claims, CPC and official link", async () => {
   const log: URL[] = [];
@@ -263,7 +172,7 @@ test("surfaces API, HTTP, gateway and XML failures as SourceError", async () => 
       fakeFetch((operation) =>
         operation === "patentCpcInfo"
           ? cpcXml([])
-          : xml(`<response>${OK_HEADER}<body><item/></body></response>`),
+          : okXml("<body><item/></body>"),
       ),
     ),
     isSourceError,
@@ -326,4 +235,46 @@ test("stops on a short page and paginates when the limit exceeds one page", asyn
   assert.deepEqual(pages, ["1:500", "2:500"]);
   assert.equal(result.documents.length, 501);
   assert.equal(new Set(result.documents.map((doc) => doc.id)).size, 501);
+});
+
+test("live search skips known application numbers and caps new detail lookups per query", async () => {
+  const number = (index: number) => `10202400${String(index).padStart(5, "0")}`;
+  const log: URL[] = [];
+  const fetcher = fakeFetch((operation, url) => {
+    if (operation === "getAdvancedSearch") {
+      return searchXml(Array.from({ length: 8 }, (_, index) => number(index)), 8);
+    }
+    if (operation === "patentCpcInfo") return cpcXml([]);
+    return detailXml(url.searchParams.get("applicationNumber") ?? "");
+  }, log);
+
+  const result = await searchKiprisLive(
+    { query: "드론 배터리 교체", knownIds: new Set([number(0), number(1)]) },
+    KEY,
+    fetcher,
+  );
+
+  const details = log.filter((url) => url.pathname.endsWith("/getBibliographyDetailInfoSearch"));
+  assert.equal(details.length, LIVE_DETAIL_LIMIT);
+  assert.equal(log.filter((url) => url.pathname.endsWith("/patentCpcInfo")).length, LIVE_DETAIL_LIMIT);
+  assert.deepEqual(
+    result.documents.map((document) => patentOf(document).sourceId),
+    [2, 3, 4, 5, 6].map(number),
+  );
+  assert.match(result.warnings.join("\n"), /6건 중 5건/);
+  const search = log.find((url) => url.pathname.endsWith("/getAdvancedSearch"));
+  assert.equal(search?.searchParams.get("numOfRows"), "10");
+  assert.equal(search?.searchParams.get("word"), "드론 배터리 교체");
+
+  const repeatLog: URL[] = [];
+  const repeat = await searchKiprisLive(
+    { query: "드론 배터리 교체", knownIds: new Set(Array.from({ length: 8 }, (_, index) => number(index))) },
+    KEY,
+    fakeFetch((operation) => {
+      assert.equal(operation, "getAdvancedSearch");
+      return searchXml(Array.from({ length: 8 }, (_, index) => number(index)), 8);
+    }, repeatLog),
+  );
+  assert.equal(repeatLog.length, 1);
+  assert.deepEqual(repeat, { documents: [], warnings: [] });
 });

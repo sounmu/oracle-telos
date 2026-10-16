@@ -130,6 +130,19 @@ export interface CollectionResult {
   readonly warnings: string[];
 }
 
+/** 검색 시 KIPRIS 실시간 조회. knownIds는 이미 색인에 있는 출원번호(숫자만)다. */
+export interface LiveSearchOptions {
+  readonly query: string;
+  readonly limit?: number;
+  readonly knownIds: ReadonlySet<string>;
+  readonly signal?: AbortSignal;
+}
+
+export interface LiveSearchResult {
+  readonly documents: KoreanPatentDocument[];
+  readonly warnings: string[];
+}
+
 export interface ResearchChunk {
   readonly id: string;
   readonly documentId: string;

@@ -8,6 +8,8 @@ import type {
   CollectionResult,
   Decision,
   KoreanPatentDocument,
+  LiveSearchOptions,
+  LiveSearchResult,
 } from "../types";
 import {
   SourceError,
@@ -26,6 +28,9 @@ const OPENAPI_BASE =
   "https://plus.kipris.or.kr/openapi/rest/patUtiModInfoSearchSevice/";
 const MAX_PAGE_SIZE = 500; // getAdvancedSearch numOfRows 최대값
 const DETAIL_CONCURRENCY = 4;
+const LIVE_SEARCH_LIMIT = 10;
+/** 상세 1건 = 서지상세 + CPC 2회 호출. 무료 쿼터를 지키려고 질의당 신규 상세를 제한한다. */
+export const LIVE_DETAIL_LIMIT = 5;
 const APPLICATION_NUMBER = /^\d{10,13}$/;
 
 /** 공개 여부만으로 심사 진행 여부를 단정하지 않는다. */
@@ -258,6 +263,34 @@ export async function getKiprisPatent(
   return fetchDetail(number, key, signal, fetcher);
 }
 
+async function fetchDetails(
+  numbers: readonly string[],
+  key: string,
+  signal: AbortSignal | undefined,
+  fetcher: typeof fetch,
+): Promise<LiveSearchResult> {
+  const documents: KoreanPatentDocument[] = [];
+  const warnings: string[] = [];
+  for (let start = 0; start < numbers.length; start += DETAIL_CONCURRENCY) {
+    const batch = numbers.slice(start, start + DETAIL_CONCURRENCY);
+    const settled = await Promise.allSettled(
+      batch.map((number) => fetchDetail(number, key, signal, fetcher)),
+    );
+    settled.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        documents.push(result.value);
+        return;
+      }
+      if (signal?.aborted) throw result.reason;
+      const reason: unknown = result.reason;
+      warnings.push(
+        `${batch[index]}: ${reason instanceof Error ? reason.message : String(reason)}`,
+      );
+    });
+  }
+  return { documents, warnings };
+}
+
 export async function collectKipris(
   options: CollectOptions,
   key: string,
@@ -267,26 +300,34 @@ export async function collectKipris(
     return { documents: [], warnings: [] };
   }
   const numbers = await searchApplicationNumbers(options, key, fetcher);
-  const documents: KoreanPatentDocument[] = [];
-  const warnings: string[] = [];
-  for (let start = 0; start < numbers.length; start += DETAIL_CONCURRENCY) {
-    const batch = numbers.slice(start, start + DETAIL_CONCURRENCY);
-    const settled = await Promise.allSettled(
-      batch.map((number) =>
-        fetchDetail(number, key, options.signal, fetcher),
-      ),
-    );
-    settled.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        documents.push(result.value);
-        return;
-      }
-      if (options.signal?.aborted) throw result.reason;
-      const reason: unknown = result.reason;
-      warnings.push(
-        `${batch[index]}: ${reason instanceof Error ? reason.message : String(reason)}`,
-      );
-    });
-  }
-  return { documents, warnings };
+  return fetchDetails(numbers, key, options.signal, fetcher);
+}
+
+/** 키워드로 검색해 색인에 없는 출원번호만 상세를 받는다 (질의당 최대 LIVE_DETAIL_LIMIT건). */
+export async function searchKiprisLive(
+  { query, limit = LIVE_SEARCH_LIMIT, knownIds, signal }: LiveSearchOptions,
+  key: string,
+  fetcher: typeof fetch = fetch,
+): Promise<LiveSearchResult> {
+  if (!query.trim() || limit < 1) return { documents: [], warnings: [] };
+  const numbers = await searchApplicationNumbers(
+    { query, limit, signal },
+    key,
+    fetcher,
+  );
+  const unseen = numbers.filter((number) => !knownIds.has(number));
+  const result = await fetchDetails(
+    unseen.slice(0, LIVE_DETAIL_LIMIT),
+    key,
+    signal,
+    fetcher,
+  );
+  if (unseen.length <= LIVE_DETAIL_LIMIT) return result;
+  return {
+    documents: result.documents,
+    warnings: [
+      ...result.warnings,
+      `KIPRIS 신규 ${unseen.length}건 중 ${LIVE_DETAIL_LIMIT}건만 상세 조회했습니다 (호출 한도).`,
+    ],
+  };
 }
