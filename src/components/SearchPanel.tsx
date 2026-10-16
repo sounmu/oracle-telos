@@ -276,7 +276,7 @@ export default function SearchPanel({
       const res = await fetch("/api/search", {
         method: "POST",
         headers: JSON_HEADERS,
-        body: JSON.stringify({ query, k: 10, dataset }),
+        body: JSON.stringify({ query, k: 10, dataset, ...(mode === "patent" ? { intent: "lookup" } : {}) }),
         signal: ac.signal,
       });
       const body: unknown = await res.json().catch(() => null);
