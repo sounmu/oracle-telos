@@ -28,9 +28,9 @@ const OPENAPI_BASE =
   "https://plus.kipris.or.kr/openapi/rest/patUtiModInfoSearchSevice/";
 const MAX_PAGE_SIZE = 500; // getAdvancedSearch numOfRows 최대값
 const DETAIL_CONCURRENCY = 4;
-const LIVE_SEARCH_LIMIT = 50;
+const LIVE_SEARCH_LIMIT = 20;
 /** 상세 1건 = 서지상세 + CPC 2회 호출. 쿼터를 지키려고 질의당 신규 상세를 제한한다. */
-export const LIVE_DETAIL_LIMIT = 50;
+export const LIVE_DETAIL_LIMIT = 20;
 const APPLICATION_NUMBER = /^\d{10,13}$/;
 
 /** 공개 여부만으로 심사 진행 여부를 단정하지 않는다. */

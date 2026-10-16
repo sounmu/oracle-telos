@@ -269,12 +269,12 @@ test("live search skips known application numbers and caps new detail lookups pe
 
   const repeatLog: URL[] = [];
   const repeat = await searchKiprisLive(
-    { query: "드론 배터리 교체", knownIds: new Set(numbers(50)) },
+    { query: "드론 배터리 교체", knownIds: new Set(numbers(20)) },
     KEY,
     fakeFetch((operation, url) => {
       assert.equal(operation, "getAdvancedSearch");
-      assert.equal(url.searchParams.get("numOfRows"), "50");
-      return searchXml(numbers(50), 50);
+      assert.equal(url.searchParams.get("numOfRows"), "20");
+      return searchXml(numbers(20), 20);
     }, repeatLog),
   );
   assert.equal(repeatLog.length, 1);
