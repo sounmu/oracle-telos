@@ -2,6 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import PatentMap from "./PatentMap";
+import ViewControls from "./ViewControls";
+import PhasePanel, { type Location } from "./PhasePanel";
+import Dashboard from "./Dashboard";
+import FeatureBar from "./FeatureBar";
+import { FEATURE_BY_ID, needsIdeaPanel, type FeatureDef } from "@/lib/features";
+import { loadSessions, makeSession, saveSessions, type Session } from "@/lib/sessions";
+import type { Phase } from "@/lib/phaseFeatures";
+import { applyView, DEFAULT_VIEW, type SessionView } from "@/lib/view";
 import SearchPanel from "./SearchPanel";
 import PatentDetail from "./PatentDetail";
 import { ProximityBadge } from "./Comparison";
@@ -40,6 +48,23 @@ const DATASET_LABELS: Record<PatentDataset, { tab: string; title: string; note: 
   },
 };
 
+/** 지도 카메라 이동을 알리는 번호 (이벤트 핸들러에서만 호출) */
+function stampNonce(): number {
+  return Date.now();
+}
+
+/** 세션 생성 시각과 id (이벤트 핸들러에서만 호출) */
+function stampSession(feature: FeatureDef, idea: string, view: SessionView) {
+  const now = Date.now();
+  const id = `s${now.toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  return makeSession(feature.id, idea, now, id, view);
+}
+
+/** 오늘의 랜덤 특허 한 건 (이벤트 핸들러에서만 호출) */
+function pickRandom<T>(items: readonly T[]): T | undefined {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 export default function TelosApp() {
   const [dataset, setDataset] = useState<PatentDataset>("korea");
   const [reloadNonce, setReloadNonce] = useState(0);
@@ -53,6 +78,50 @@ export default function TelosApp() {
   const [idea, setIdea] = useState("");
   const [visible, setVisible] = useState<Set<Decision>>(() => new Set(DECISIONS));
   const [highlights, setHighlights] = useState<Map<string, number> | null>(null);
+  const [phase, setPhase] = useState<Phase>("explore");
+  const [location, setLocation] = useState<Location | null>(null);
+  // 대화 세션: 기능을 고르면 새 대화가 쌓이고, 대시보드에서 다시 열 수 있다
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [sessionsReady, setSessionsReady] = useState(false);
+  // 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다 (서버 렌더링과 어긋나지 않게)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSessions(loadSessions());
+    setSessionsReady(true);
+  }, []);
+  useEffect(() => {
+    if (sessionsReady) saveSessions(sessions);
+  }, [sessions, sessionsReady]);
+  const activeSession = activeId ? sessions.find((s) => s.id === activeId) ?? null : null;
+
+  // 세션을 고르면 그 세션의 단계와 아이디어로 화면을 맞춘다 (클릭 시점에만)
+  function openSession(id: string) {
+    const target = sessions.find((s) => s.id === id);
+    setActiveId(id);
+    if (target) {
+      setPhase(target.phase);
+      if (target.idea) setIdea(target.idea);
+    }
+  }
+
+  /** 세션의 조회 조건을 바꾼다 (노션 보기 설정처럼 바로 반영) */
+  function updateActiveView(next: SessionView) {
+    if (!activeId) return;
+    setSessions((prev) => prev.map((s) => (s.id === activeId ? { ...s, view: next } : s)));
+  }
+
+  /** 기능을 고르거나 문장을 보내면 새 대화(세션)가 열린다 */
+  function openFeature(feature: FeatureDef, text = idea, view: SessionView = DEFAULT_VIEW) {
+    if (text !== idea) setIdea(text);
+    const session = stampSession(feature, text, view);
+    setSessions((prev) => [session, ...prev]);
+    setActiveId(session.id);
+    setPhase(feature.phase);
+    setSelectedId(null);
+  }
+  const [riskOn, setRiskOn] = useState(false);
+  const [edgesOn, setEdgesOn] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
   const [mobileView, setMobileView] = useState<MobileView>("list");
@@ -88,11 +157,16 @@ export default function TelosApp() {
   }, [dataset, reloadNonce]);
 
   const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points]);
+  // 세션을 열면 지도와 개수 모두 세션 안의 특허만 센다
+  const sessionPoints = useMemo(
+    () => (activeSession ? applyView(points, activeSession.view, highlights ?? undefined) : points),
+    [points, activeSession, highlights],
+  );
   const counts = useMemo(() => {
     const c: Record<Decision, number> = { ACCEPTED: 0, REJECTED: 0, PENDING: 0, UNKNOWN: 0 };
-    for (const p of points) c[p.decision]++;
+    for (const p of sessionPoints) c[p.decision]++;
     return c;
-  }, [points]);
+  }, [sessionPoints]);
   const activeDecisions = DECISIONS.filter((d) => counts[d] > 0);
 
   const selected = selectedId ? byId.get(selectedId) ?? null : null;
@@ -207,7 +281,7 @@ export default function TelosApp() {
 
   function pick(id: string) {
     setSelectedId(id);
-    setFocus({ id, nonce: Date.now() });
+    setFocus({ id, nonce: stampNonce() });
     scrollToTop();
   }
 
@@ -235,12 +309,21 @@ export default function TelosApp() {
       ? `${label.note} · 실시간 조회 ${kipris ? (kipris.configured ? "가능" : "꺼짐 (API 키 없음)") : "확인 중"}`
       : label.note;
 
+  // 세션이나 선택한 특허가 있을 때만 왼쪽 열을 보여 준다 (없으면 지도가 홈)
+  const sessionOpen = activeSession !== null || selectedId !== null;
+
   return (
     <main className="flex min-h-full w-full flex-col md:h-full md:flex-row">
+      <Dashboard
+        sessions={sessions}
+        activeId={activeId}
+        onNew={() => setActiveId(null)}
+        onOpen={openSession}
+      />
       {/* 왼쪽 열: 입력 → 결과 → 비교. md 이상에서는 이 열만 스크롤한다 */}
       <div
         ref={leftRef}
-        className={`${mobileView === "map" ? "hidden" : "flex"} w-full flex-col md:flex md:h-full md:w-[520px] md:shrink-0 md:overflow-y-auto lg:w-[640px] xl:w-[720px] 2xl:w-[800px]`}
+        className={`${mobileView === "map" ? "hidden" : "flex"} w-full flex-col ${sessionOpen ? "md:flex" : "md:hidden"} md:h-full md:w-[520px] md:shrink-0 md:overflow-y-auto lg:w-[640px] xl:w-[720px] 2xl:w-[800px]`}
       >
         <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-1 pt-3 md:px-6">
@@ -280,8 +363,45 @@ export default function TelosApp() {
         </header>
 
         <div className="flex-1 px-4 pb-28 md:px-6 md:pb-8">
+          {activeSession && (
+            <div className="mt-4 flex items-start justify-between gap-3 rounded-2xl bg-panel p-4">
+              <div className="min-w-0">
+                <div className="text-[13px] text-muted">{FEATURE_BY_ID[activeSession.feature].summary}</div>
+                <div className="truncate text-[17px] font-semibold">{activeSession.title}</div>
+              </div>
+              <button type="button" onClick={() => setActiveId(null)} className="shrink-0 rounded-full bg-background px-3 py-1 text-[13px] text-muted hover:text-foreground">
+                닫기
+              </button>
+            </div>
+          )}
+          {activeSession && (
+            <div className="mt-3">
+              <ViewControls
+                view={activeSession.view}
+                hasScores={highlights !== null && highlights.size > 0}
+                onChange={updateActiveView}
+              />
+            </div>
+          )}
+          {activeSession && !needsIdeaPanel(activeSession.feature) && (
+            <div className="mt-3">
+              <PhasePanel
+                phase={phase}
+                onPhase={setPhase}
+                points={sessionPoints}
+                idea={idea}
+                dataset={dataset}
+                hitIds={highlights ? Array.from(highlights.keys()) : []}
+                selectedId={selectedId}
+                location={location}
+                onLocated={setLocation}
+                onFocusPoint={pick}
+                onPickTopic={(key) => openFeature(FEATURE_BY_ID.overview, idea, { ...DEFAULT_VIEW, cpc: key })}
+              />
+            </div>
+          )}
           {/* 상세를 여는 동안에도 검색 상태(결과·답변·진행 중 요청)를 유지하려고 숨기기만 한다 */}
-          <div className={selected ? "hidden" : ""}>
+          <div className={selected || !activeSession || !needsIdeaPanel(activeSession.feature) ? "hidden" : "mt-4"}>
             <SearchPanel
               key={dataset}
               dataset={dataset}
@@ -326,23 +446,42 @@ export default function TelosApp() {
       >
         {load === "ready" && points.length > 0 && (
           <PatentMap
-            points={points}
+            points={sessionPoints}
             insetTop={MAP_OVERLAY_INSET}
             visible={visible}
             highlights={highlights}
             selectedId={selectedId}
             focus={focus}
             onSelect={select}
+            riskOn={riskOn}
+            edgesOn={edgesOn}
+            marker={location ? { x: location.x, y: location.y } : null}
           />
         )}
+
+        <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 md:inset-x-4 md:bottom-4">
+          <FeatureBar onPick={(f) => openFeature(f)} onSend={(text) => openFeature(FEATURE_BY_ID.locate, text)} />
+        </div>
 
         <div className="pointer-events-none absolute inset-x-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-10 flex flex-col gap-2 md:inset-x-4 md:top-4">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-panel/90 px-3 py-1.5 text-sm font-bold shadow-sm backdrop-blur-sm">기술 지도</span>
+            <button
+              type="button"
+              onClick={() => {
+                const hit = pickRandom(points);
+                if (hit) pick(hit.id);
+              }}
+              disabled={points.length === 0}
+              className="pointer-events-auto min-h-9 rounded-full bg-foreground px-3 text-sm font-semibold text-panel shadow-sm disabled:opacity-40"
+            >
+              오늘의 랜덤 특허 뽑기
+            </button>
             <span className="rounded-full bg-panel/90 px-3 py-1.5 text-[13px] text-muted shadow-sm backdrop-blur-sm">
               가까울수록 비슷한 기술 · 점을 누르면 비교
             </span>
           </div>
+
 
           {activeDecisions.length > 0 && (
             <div
@@ -370,6 +509,22 @@ export default function TelosApp() {
                   </button>
                 );
               })}
+              {[
+                { label: "위험도 배경", on: riskOn, toggle: () => setRiskOn((v) => !v) },
+                { label: "관계선", on: edgesOn, toggle: () => setEdgesOn((v) => !v) },
+              ].map((layer) => (
+                <button
+                  key={layer.label}
+                  type="button"
+                  aria-pressed={layer.on}
+                  onClick={layer.toggle}
+                  className={`min-h-9 shrink-0 rounded-full px-3 text-[13px] font-semibold shadow-sm backdrop-blur-sm ${
+                    layer.on ? "bg-foreground text-panel" : "bg-panel/95 text-muted hover:text-foreground"
+                  }`}
+                >
+                  {layer.label}
+                </button>
+              ))}
               {highlights && (
                 <button
                   type="button"
