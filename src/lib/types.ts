@@ -143,6 +143,26 @@ export interface LiveSearchResult {
   readonly warnings: string[];
 }
 
+export type EmbedTexts = (texts: string[]) => Promise<Float32Array[]>;
+
+/** 테스트에서 합성 출처·임베딩을 주입할 때만 채운다. 기본값은 환경변수와 실제 모델이다. */
+export interface KoreanSearchOptions {
+  readonly key?: string;
+  readonly fetcher?: typeof fetch;
+  readonly embed?: EmbedTexts;
+  readonly model?: string;
+  readonly dim?: number;
+  readonly timeoutMs?: number;
+  readonly signal?: AbortSignal;
+}
+
+export interface KoreanSearchResult {
+  readonly hits: SearchHit[];
+  /** 이번 검색으로 색인에 새로 들어오거나 좌표가 바뀐 지도 점 */
+  readonly addedPoints: PatentPoint[];
+  readonly warnings: string[];
+}
+
 export interface ResearchChunk {
   readonly id: string;
   readonly documentId: string;

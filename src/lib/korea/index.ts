@@ -5,9 +5,11 @@ import path from "node:path";
 import { UMAP } from "umap-js";
 import { EMBEDDING_DIM, EMBEDDING_MODEL, embedTexts } from "../embeddings";
 import type {
+  EmbedTexts,
   KoreanPatentDocument,
   Decision,
   PatentFull,
+  PatentPoint,
   ResearchChunk,
   ResearchDocument,
   ResearchHit,
@@ -23,9 +25,12 @@ export function researchPath(): string {
 }
 
 let cached: { path: string; mtime: number; index: ResearchIndex } | null = null;
+// 읽기 전용 FS(Vercel 등)에서 파일에 쓰지 못한 실시간 캐시. 프로세스가 살아 있는 동안만 유지된다.
+let memory: { path: string; index: ResearchIndex } | null = null;
 
 export async function readResearchIndex(): Promise<ResearchIndex | null> {
   const file = researchPath();
+  if (memory?.path === file) return memory.index;
   try {
     const stat = await fs.stat(file);
     if (cached?.path === file && cached.mtime === stat.mtimeMs) return cached.index;
@@ -46,7 +51,8 @@ export async function writeResearchIndex(index: ResearchIndex): Promise<void> {
   try {
     await fs.writeFile(temporary, JSON.stringify(index), { mode: 0o600 });
     await fs.rename(temporary, file);
-    cached = null;
+    cached = { path: file, mtime: (await fs.stat(file)).mtimeMs, index };
+    if (memory?.path === file) memory = null;
   } finally {
     await fs.rm(temporary, { force: true });
   }
@@ -102,13 +108,14 @@ export function splitDocument(document: ResearchDocument): string[] {
   return parts.length ? parts : [document.title];
 }
 
-export async function buildResearchIndex(
-  documents: ResearchDocument[],
+/** 청크 해시가 같으면 이전 벡터를 재사용하고 새 청크만 임베딩한다. 모델이 바뀜면 전부 다시 만든다. */
+async function embedChunks(
+  documents: readonly ResearchDocument[],
   previous: ResearchIndex | null,
-  embed: (texts: string[]) => Promise<Float32Array[]> = embedTexts,
-  model = EMBEDDING_MODEL,
-  dim = EMBEDDING_DIM,
-): Promise<ResearchIndex> {
+  embed: EmbedTexts,
+  model: string,
+  dim: number,
+): Promise<ResearchChunk[]> {
   const reusable = new Map<string, number[]>();
   if (previous?.model === model && previous.dim === dim) {
     for (const chunk of previous.chunks) reusable.set(chunk.hash, chunk.vector);
@@ -136,22 +143,30 @@ export async function buildResearchIndex(
       reusable.set(chunk.hash, Array.from(vector));
     });
   }
-  const chunks: ResearchChunk[] = drafts.map((draft) => {
+  return drafts.map((draft) => {
     const vector = reusable.get(draft.hash);
     if (!vector) throw new SourceError("색인", "문서 벡터가 없습니다.");
     return { ...draft, vector };
   });
-  const patents = documents.filter((document): document is KoreanPatentDocument => document.source === "kipris");
+}
+
+/** 지도 좌표와 이웃 탐색은 특허마다 첫 청크의 벡터를 쓴다. */
+function patentVectors(
+  patents: readonly KoreanPatentDocument[],
+  chunks: readonly ResearchChunk[],
+): number[][] {
   const firstVectors = new Map<string, number[]>();
   for (const chunk of chunks) {
     if (!firstVectors.has(chunk.documentId)) firstVectors.set(chunk.documentId, chunk.vector);
   }
-  const vectors = patents.map((document) => {
+  return patents.map((document) => {
     const vector = firstVectors.get(document.id);
     if (!vector) throw new SourceError("지도", "특허 벡터가 없습니다.");
     return vector;
   });
-  let coordinates: number[][];
+}
+
+function layout(vectors: number[][]): number[][] {
   if (vectors.length > 3) {
     let seed = 42;
     const umap = new UMAP({
@@ -163,11 +178,39 @@ export async function buildResearchIndex(
         return seed / 4294967296;
       },
     });
-    coordinates = umap.fit(vectors);
-  } else {
-    // 1~3건은 UMAP 이웃 그래프를 구성할 수 없어 벡터 두 축으로 표시한다.
-    coordinates = vectors.map((vector) => [vector[0] ?? 0, vector[1] ?? 0]);
+    return umap.fit(vectors);
   }
+  // 1~3건은 UMAP 이웃 그래프를 구성할 수 없어 벡터 두 축으로 표시한다.
+  return vectors.map((vector) => [vector[0] ?? 0, vector[1] ?? 0]);
+}
+
+function pointFor(document: KoreanPatentDocument, x: number, y: number): PatentPoint {
+  return {
+    id: document.id,
+    title: document.title,
+    decision: document.patent.decision,
+    cpc: document.patent.cpc[0] ?? "",
+    filed: document.patent.filingDate,
+    x,
+    y,
+    abstract: document.patent.abstract.slice(0, 300),
+  };
+}
+
+function isPatent(document: ResearchDocument): document is KoreanPatentDocument {
+  return document.source === "kipris";
+}
+
+export async function buildResearchIndex(
+  documents: ResearchDocument[],
+  previous: ResearchIndex | null,
+  embed: EmbedTexts = embedTexts,
+  model = EMBEDDING_MODEL,
+  dim = EMBEDDING_DIM,
+): Promise<ResearchIndex> {
+  const chunks = await embedChunks(documents, previous, embed, model, dim);
+  const patents = documents.filter(isPatent);
+  const coordinates = layout(patentVectors(patents, chunks));
   return {
     schemaVersion: 1,
     model,
@@ -175,17 +218,107 @@ export async function buildResearchIndex(
     builtAt: new Date().toISOString(),
     documents,
     chunks,
-    points: patents.map((document, position) => ({
-      id: document.id,
-      title: document.title,
-      decision: document.patent.decision,
-      cpc: document.patent.cpc[0] ?? "",
-      filed: document.patent.filingDate,
-      x: coordinates[position][0],
-      y: coordinates[position][1],
-      abstract: document.patent.abstract.slice(0, 300),
-    })),
+    points: patents.map((document, position) =>
+      pointFor(document, coordinates[position][0], coordinates[position][1])),
   };
+}
+
+const NEIGHBORS = 5;
+
+function cosine(a: readonly number[], b: readonly number[]): number {
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  a.forEach((value, position) => {
+    dot += value * b[position];
+    normA += value * value;
+    normB += b[position] * b[position];
+  });
+  return normA && normB ? dot / Math.sqrt(normA * normB) : 0;
+}
+
+/** UMAP을 다시 돌리지 않고, 코사인 top-5 기존 점 좌표의 유사도 가중 평균에 둔다. */
+function placeNear(vector: readonly number[], anchors: readonly { vector: number[]; point: PatentPoint }[]): [number, number] {
+  const nearest = anchors
+    .map((anchor) => ({ point: anchor.point, similarity: cosine(vector, anchor.vector) }))
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, NEIGHBORS);
+  const positive = nearest.reduce((sum, { similarity }) => sum + Math.max(similarity, 0), 0);
+  // 모든 이웃이 유사도 0 이하이면 단순 평균으로 둔다.
+  const weight = (similarity: number) => (positive > 0 ? Math.max(similarity, 0) / positive : 1 / nearest.length);
+  return [
+    nearest.reduce((sum, { point, similarity }) => sum + point.x * weight(similarity), 0),
+    nearest.reduce((sum, { point, similarity }) => sum + point.y * weight(similarity), 0),
+  ];
+}
+
+let writes: Promise<unknown> = Promise.resolve();
+
+/** 같은 프로세스 안의 색인 읽기-수정-쓰기를 한 줄로 세워 동시 검색이 서로의 병합을 덮어쓰지 않게 한다. */
+function exclusive<T>(task: () => Promise<T>): Promise<T> {
+  const run = writes.then(task, task);
+  writes = run.catch(() => undefined);
+  return run;
+}
+
+/**
+ * 실시간 조회한 특허를 색인에 병합한다. 기존 점 좌표는 그대로 두고 새 점만 이웃 근사로 배치한다.
+ * 기존 점이 3개 이하면 buildResearchIndex와 같은 전체 배치를 쓰며, 이때는 좌표가 바뀐 점도 함께 돌려준다.
+ * 전체 재배치는 pnpm sync:korea --reindex에서만 한다.
+ */
+export function upsertLivePatents(
+  documents: readonly KoreanPatentDocument[],
+  embed: EmbedTexts = embedTexts,
+  model = EMBEDDING_MODEL,
+  dim = EMBEDDING_DIM,
+): Promise<PatentPoint[]> {
+  return exclusive(async () => {
+    if (documents.length === 0) return [];
+    const previous = await readResearchIndex();
+    if (previous && (previous.model !== model || previous.dim !== dim)) {
+      throw new SourceError("색인", "모델이 변경되었습니다. pnpm sync:korea --reindex를 실행하세요.");
+    }
+    const merged = mergeDocuments(previous?.documents ?? [], documents);
+    const chunks = await embedChunks(merged, previous, embed, model, dim);
+    const patents = merged.filter(isPatent);
+    const vectors = patentVectors(patents, chunks);
+    const existing = new Map((previous?.points ?? []).map((point) => [point.id, point]));
+    let points: PatentPoint[];
+    let changed: PatentPoint[];
+    if (existing.size <= 3) {
+      const coordinates = layout(vectors);
+      points = patents.map((document, position) =>
+        pointFor(document, coordinates[position][0], coordinates[position][1]));
+      changed = points;
+    } else {
+      const anchors = patents.flatMap((document, position) => {
+        const point = existing.get(document.id);
+        return point ? [{ vector: vectors[position], point }] : [];
+      });
+      points = patents.map((document, position) => {
+        const old = existing.get(document.id);
+        const [x, y] = old ? [old.x, old.y] : placeNear(vectors[position], anchors);
+        return pointFor(document, x, y);
+      });
+      changed = points.filter((point) => !existing.has(point.id));
+    }
+    const index: ResearchIndex = {
+      schemaVersion: 1,
+      model,
+      dim,
+      builtAt: new Date().toISOString(),
+      documents: merged,
+      chunks,
+      points,
+    };
+    try {
+      await writeResearchIndex(index);
+    } catch (error) {
+      memory = { path: researchPath(), index };
+      console.warn(`[색인] 파일에 저장하지 못해 메모리 캐시로 유지합니다: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    return changed;
+  });
 }
 
 export function patentFromDocument(document: KoreanPatentDocument, index: ResearchIndex): PatentFull {
