@@ -1,37 +1,53 @@
 import OpenAI from "openai";
 import { runPatentAgent } from "@/lib/agent";
 import type { AgentEvent } from "@/lib/types";
+import { z } from "zod";
+
+const agentInput = z.object({
+  idea: z.string().trim().min(5).max(4000),
+  dataset: z.enum(["korea", "sample"]).default("sample"),
+  includeContext: z.boolean().default(false),
+  asOf: z.iso.date().optional(),
+});
 
 export const maxDuration = 300;
 
 export async function POST(request: Request) {
-  let idea: string;
+  let body: unknown;
   try {
-    const body = (await request.json()) as { idea?: unknown };
-    idea = typeof body.idea === "string" ? body.idea.trim() : "";
+    body = await request.json();
   } catch {
     return Response.json({ error: "JSON body가 필요합니다." }, { status: 400 });
   }
-  if (idea.length < 5) {
-    return Response.json({ error: "아이디어를 조금 더 자세히 적어 주세요." }, { status: 400 });
+  const parsed = agentInput.safeParse(body);
+  if (!parsed.success) {
+    return Response.json({ error: "아이디어와 검색 조건을 확인해 주세요. 아이디어는 5~4,000자로 입력하세요." }, { status: 400 });
   }
 
   const encoder = new TextEncoder();
+  const cancellation = new AbortController();
+  const signal = AbortSignal.any([request.signal, cancellation.signal]);
+  let closed = false;
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      let closed = false;
       const emit = (event: AgentEvent) => {
-        if (closed) return;
+        if (closed || signal.aborted) return;
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
       };
       try {
-        await runPatentAgent({ idea, emit, signal: request.signal });
+        await runPatentAgent({ ...parsed.data, emit, signal });
       } catch (err) {
         emit({ type: "error", message: describeError(err) });
       } finally {
-        closed = true;
-        controller.close();
+        if (!closed) {
+          closed = true;
+          controller.close();
+        }
       }
+    },
+    cancel() {
+      closed = true;
+      cancellation.abort();
     },
   });
 
