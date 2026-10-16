@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
-import type { PatentDataset, PatentFull, PatentPoint } from "@/lib/types";
+import type { ComparisonState, PatentDataset, PatentFull, PatentPoint } from "@/lib/types";
+import ComparisonView from "./Comparison";
 import { formatDate, readErrorMessage, scoreLabel } from "./ResearchReferences";
 
 interface Props {
@@ -10,6 +11,9 @@ interface Props {
   dataset: PatentDataset;
   score?: number;
   onClose: () => void;
+  comparison?: ComparisonState;
+  canCompare: boolean;
+  onCompare: () => void;
 }
 
 interface RequestState {
@@ -17,7 +21,15 @@ interface RequestState {
   error: string | null;
 }
 
-export default function PatentDetail({ point, dataset, score, onClose }: Props) {
+export default function PatentDetail({
+  point,
+  dataset,
+  score,
+  onClose,
+  comparison,
+  canCompare,
+  onCompare,
+}: Props) {
   const [full, setFull] = useState<PatentFull | null>(null);
   const [initial, setInitial] = useState<RequestState>({ loading: true, error: null });
   const [refresh, setRefresh] = useState<RequestState & { at: string | null }>({
@@ -165,6 +177,8 @@ export default function PatentDetail({ point, dataset, score, onClose }: Props) 
       <p className="break-words text-xs leading-relaxed text-foreground/80">
         {abstract}
       </p>
+
+      {korean && <ComparisonView state={comparison} canCompare={canCompare} onCompare={onCompare} />}
 
       {initial.loading && <p className="mt-2 text-[11px] text-muted">상세 정보를 불러오는 중…</p>}
       {initial.error && (

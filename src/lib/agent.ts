@@ -313,7 +313,7 @@ export async function runPatentAgent({
       } else {
         return JSON.stringify({ error: "선택한 특허 색인이 없습니다." });
       }
-      emit({ type: "matches", query, hits });
+      emit({ type: "matches", query, hits, ...(warnings.length ? { warnings } : {}) });
       return JSON.stringify({
         warnings,
         results: hits.map((h) => ({

@@ -65,6 +65,7 @@ export function toHit(p: PatentFull, score: number): SearchHit {
     filed: p.filed,
     score,
     abstract: truncate(p.abstract, 400),
+    ...(p.applicants?.length ? { applicant: p.applicants[0] } : {}),
   };
 }
 

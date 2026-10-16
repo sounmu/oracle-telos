@@ -36,13 +36,14 @@ export interface SearchHit {
   filed: string;
   score: number; // 코사인 유사도 0..1
   abstract: string; // 400자 내외
+  applicant?: string; // 대표 출원인 (한국 특허)
 }
 
 export type AgentEvent =
   | { type: "status"; message: string }
   | { type: "tool"; name: string; input: Record<string, unknown> }
   | { type: "points_added"; points: PatentPoint[] }
-  | { type: "matches"; query: string; hits: SearchHit[] }
+  | { type: "matches"; query: string; hits: SearchHit[]; warnings?: string[] }
   | { type: "references"; hits: ResearchHit[] }
   | { type: "text"; delta: string }
   | { type: "done" }
@@ -181,6 +182,21 @@ export interface ComparisonRow {
 }
 
 export type ProximityLevel = "cool" | "warm" | "hot" | "insufficient";
+
+/** 화면에서 특허별 비교 요청 상태 */
+export type ComparisonState =
+  | { readonly status: "loading" }
+  | { readonly status: "ready"; readonly data: PatentComparison }
+  | { readonly status: "error"; readonly message: string };
+
+/** 빠른 검색(POST /api/search) 응답. 한국 경로만 나머지 필드를 채운다. */
+export interface SearchResponse {
+  readonly hits: SearchHit[];
+  readonly addedPoints?: PatentPoint[];
+  readonly warnings?: string[];
+  readonly coverage?: SearchCoverage;
+  readonly elements?: string[];
+}
 
 /** 기술 근접도. 비교표에서 계산하며 법적 위험도나 침해 확률이 아니다. */
 export interface Proximity {

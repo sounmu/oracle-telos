@@ -5,12 +5,16 @@ import ReactMarkdown from "react-markdown";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import type {
   AgentEvent,
+  ComparisonState,
   PatentDataset,
   PatentPoint,
   ResearchHit,
   ResearchStatus,
+  SearchCoverage,
   SearchHit,
+  SearchResponse,
 } from "@/lib/types";
+import { ProximityBadge } from "./Comparison";
 import ResearchReferences, {
   IDLE_REFERENCES,
   readErrorMessage,
@@ -28,7 +32,14 @@ interface Props {
   onPointsAdded: (points: PatentPoint[]) => void;
   onPick: (id: string) => void;
   selectedId: string | null;
+  comparisons: ReadonlyMap<string, ComparisonState>;
+  /** 새 검색을 시작하면 이전 기술 설명으로 만든 비교를 버린다 */
+  onSearchStart: (idea: string) => void;
+  onCompare: (id: string, idea: string) => void;
 }
+
+// MVP: 가장 가까운 3건을 먼저 비교해 보여 준다.
+const AUTO_COMPARE = 3;
 
 type Phase = "idle" | "running" | "done" | "error";
 type Terminal = "done" | "error" | null;
@@ -89,6 +100,9 @@ export default function SearchPanel({
   onPointsAdded,
   onPick,
   selectedId,
+  comparisons,
+  onSearchStart,
+  onCompare,
 }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [statusLine, setStatusLine] = useState("");
@@ -100,6 +114,9 @@ export default function SearchPanel({
   const [asOf, setAsOf] = useState("");
   const [references, setReferences] = useState<ReferencesState>(IDLE_REFERENCES);
   const [sourceStatus, setSourceStatus] = useState<ResearchStatus | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [coverage, setCoverage] = useState<SearchCoverage | null>(null);
+  const [searchedIdea, setSearchedIdea] = useState("");
   const abortRef = useRef<AbortController | null>(null);
   const hitsRef = useRef<SearchHit[]>([]);
   const referencesRef = useRef<ResearchHit[]>([]);
@@ -118,6 +135,8 @@ export default function SearchPanel({
     setError(null);
     hitsRef.current = [];
     setHits([]);
+    setWarnings([]);
+    setCoverage(null);
     onMatches([], true);
     referencesRef.current = [];
     setReferences(IDLE_REFERENCES);
@@ -188,18 +207,38 @@ export default function SearchPanel({
     }
   }
 
+  function startSearch(query: string): AbortController {
+    const ac = begin();
+    setSearchedIdea(query);
+    onSearchStart(query);
+    return ac;
+  }
+
+  function addWarnings(incoming: readonly string[]) {
+    setWarnings((prev) => [...new Set([...prev, ...incoming])]);
+  }
+
+  function compareTop(query: string) {
+    if (dataset !== "korea") return;
+    for (const hit of hitsRef.current.slice(0, AUTO_COMPARE)) onCompare(hit.id, query);
+  }
+
   async function runQuickSearch() {
     const query = idea.trim();
     if (!query) return;
-    const ac = begin();
+    const ac = startSearch(query);
     setPhase("running");
-    setStatusLine("임베딩 유사도로 찾는 중…");
+    setStatusLine(
+      dataset === "korea"
+        ? "기술 요소로 검색어를 만들고 KIPRIS 후보를 찾는 중…"
+        : "임베딩 유사도로 찾는 중…",
+    );
     if (includeContext) void loadReferences(query, ac);
     try {
       const res = await fetch("/api/search", {
         method: "POST",
         headers: JSON_HEADERS,
-        body: JSON.stringify({ query, k: 12, dataset }),
+        body: JSON.stringify({ query, k: 10, dataset }),
         signal: ac.signal,
       });
       const body: unknown = await res.json().catch(() => null);
@@ -209,8 +248,11 @@ export default function SearchPanel({
       }
       if (body.addedPoints?.length) onPointsAdded(body.addedPoints);
       mergeHits(body.hits);
-      setStatusLine(body.warnings?.join(" ") ?? "");
+      addWarnings(body.warnings ?? []);
+      setCoverage(body.coverage ?? null);
+      setStatusLine("");
       setPhase("done");
+      compareTop(query);
     } catch (err) {
       if (ac.signal.aborted) return;
       fail(err);
@@ -220,7 +262,7 @@ export default function SearchPanel({
   async function runAgent() {
     const query = idea.trim();
     if (!query) return;
-    const ac = begin();
+    const ac = startSearch(query);
     setPhase("running");
     setStatusLine("에이전트에 연결하는 중…");
     if (includeContext) void loadReferences(query, ac);
@@ -248,6 +290,7 @@ export default function SearchPanel({
       if (terminal === "done") {
         setStatusLine("");
         setPhase("done");
+        compareTop(query);
       }
     } catch (err) {
       if (ac.signal.aborted) return;
@@ -311,6 +354,7 @@ export default function SearchPanel({
         return null;
       case "matches":
         mergeHits(event.hits);
+        if (event.warnings) addWarnings(event.warnings);
         return null;
       case "references":
         mergeReferences(event.hits);
@@ -459,37 +503,100 @@ export default function SearchPanel({
           </div>
         )}
 
+        {warnings.length > 0 && (
+          <ul
+            aria-label="검색 경고"
+            className="m-4 space-y-1 rounded-lg border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-[11px] text-amber-100"
+          >
+            {warnings.map((w) => (
+              <li key={w} className="break-words">{w}</li>
+            ))}
+          </ul>
+        )}
+
+        {phase === "done" && hits.length === 0 && (
+          <div className="m-4 rounded-lg border border-border px-3 py-2 text-xs">
+            <p className="font-medium">관련 특허를 찾지 못했어요.</p>
+            <p className="mt-1 text-[11px] text-muted">
+              {coverage && coverage.candidates === 0
+                ? "KIPRIS 검색어로 찾은 후보가 없습니다. 핵심 기술을 더 짧고 일반적인 말로 적어 다시 검색해 보세요."
+                : "확보한 후보 안에서 관련 특허가 없었습니다. 다른 표현이나 기술 요소로 다시 검색해 보세요."}
+              {" "}결과가 없다고 해서 관련 특허가 없다는 뜻은 아닙니다.
+            </p>
+          </div>
+        )}
+
         {/* 특허 목록을 답변보다 먼저 둔다: 스트리밍 답변이 목록을 밀어내지 않는다 */}
         {hits.length > 0 && (
           <div className="border-b border-border px-4 py-3">
-            <div className="mb-2 text-xs font-medium text-muted">
-              유사 특허 {hits.length}건 · 지도에 표시됨
+            <div className="mb-1 text-xs font-medium text-muted">
+              관련 특허 {hits.length}건 · 지도에 표시됨
             </div>
-            <ul className="space-y-1" aria-label="유사 특허 목록">
-              {hits.map((h) => (
-                <li key={h.id}>
-                  <button
-                    type="button"
-                    onClick={() => onPick(h.id)}
-                    aria-pressed={selectedId === h.id}
-                    className={`w-full rounded-md px-2 py-1.5 text-left text-xs hover:bg-white/5 ${
+            {coverage && (
+              <p className="mb-2 break-words text-[11px] text-muted/80">
+                검색어 {coverage.queries.map((q) => `“${q}”`).join(" · ")} · 후보{" "}
+                {coverage.candidates}건 중 관련도 순위(국내 전체 검색이 아닙니다)
+              </p>
+            )}
+            <ul className="space-y-1" aria-label="관련 특허 목록">
+              {hits.map((h) => {
+                const comparison = comparisons.get(h.id);
+                return (
+                  <li
+                    key={h.id}
+                    className={`flex items-start gap-1 rounded-md hover:bg-white/5 ${
                       selectedId === h.id ? "bg-white/10" : ""
                     }`}
                   >
-                    <div className="flex min-w-0 items-center gap-2">
-                      <span
-                        className="inline-block h-2 w-2 shrink-0 rounded-full"
-                        style={{ background: DECISION_COLORS[h.decision] }}
-                      />
-                      <span className="shrink-0 text-muted">
-                        {DECISION_LABELS[h.decision]} · {scoreLabel(h.score)}
-                      </span>
-                      <span className="truncate">{h.title}</span>
+                    <button
+                      type="button"
+                      onClick={() => onPick(h.id)}
+                      aria-pressed={selectedId === h.id}
+                      className="min-w-0 flex-1 px-2 py-1.5 text-left text-xs"
+                    >
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span
+                          className="inline-block h-2 w-2 shrink-0 rounded-full"
+                          style={{ background: DECISION_COLORS[h.decision] }}
+                        />
+                        <span className="truncate font-medium">{h.title}</span>
+                      </div>
+                      <div className="mt-0.5 truncate pl-4 text-[11px] text-muted">
+                        {DECISION_LABELS[h.decision]}
+                        {h.applicant ? ` · ${h.applicant}` : ""} · {scoreLabel(h.score)}
+                      </div>
+                      {comparison?.status === "ready" && comparison.data.summary && (
+                        <div className="mt-0.5 line-clamp-2 pl-4 text-[11px] text-foreground/80">
+                          {comparison.data.summary}
+                        </div>
+                      )}
+                    </button>
+                    <div className="flex shrink-0 items-center py-1.5 pr-2">
+                      {comparison ? (
+                        <ProximityBadge state={comparison} />
+                      ) : (
+                        dataset === "korea" &&
+                        searchedIdea && (
+                          <button
+                            type="button"
+                            onClick={() => onCompare(h.id, searchedIdea)}
+                            className="rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted hover:border-accent hover:text-foreground"
+                          >
+                            근접도 보기
+                          </button>
+                        )
+                      )}
                     </div>
-                  </button>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
+            {dataset === "korea" && (
+              <p className="mt-2 text-[10px] text-muted/80">
+                기술 근접도는 원문 근거로 비교한 기술적 거리이며 법적 위험도·침해 확률이 아닙니다. 특허를 누르면 기술
+                요소별 비교를 볼 수 있어요.
+              </p>
+            )}
           </div>
         )}
 
@@ -545,9 +652,7 @@ function parseEvent(raw: string): AgentEvent | null {
   return parsed as AgentEvent;
 }
 
-function isSearchResponse(
-  v: unknown,
-): v is { hits: SearchHit[]; addedPoints?: PatentPoint[]; warnings?: string[] } {
+function isSearchResponse(v: unknown): v is SearchResponse {
   return typeof v === "object" && v !== null && Array.isArray((v as { hits?: unknown }).hits);
 }
 

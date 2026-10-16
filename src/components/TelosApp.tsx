@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PatentMap from "./PatentMap";
 import SearchPanel from "./SearchPanel";
 import PatentDetail from "./PatentDetail";
@@ -8,7 +8,9 @@ import { formatDate, readErrorMessage } from "./ResearchReferences";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import {
   DECISIONS,
+  type ComparisonState,
   type Decision,
+  type PatentComparison,
   type PatentDataset,
   type PatentMapResponse,
   type PatentPoint,
@@ -46,6 +48,13 @@ export default function TelosApp() {
   const [highlights, setHighlights] = useState<Map<string, number> | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
+  // 비교는 마지막으로 검색한 기술 설명 기준이다. 새 검색·데이터셋 전환 시 진행 중 요청과 함께 버린다.
+  const [comparisonIdea, setComparisonIdea] = useState("");
+  const [comparisons, setComparisons] = useState<Map<string, ComparisonState>>(() => new Map());
+  const compareAbortRef = useRef<AbortController | null>(null);
+  const requestedRef = useRef(new Set<string>());
+
+  useEffect(() => () => compareAbortRef.current?.abort(), []);
 
   useEffect(() => {
     const ac = new AbortController();
@@ -80,6 +89,7 @@ export default function TelosApp() {
   const kipris = status?.sources.find((s) => s.source === "kipris") ?? null;
   const label = DATASET_LABELS[dataset];
   const empty = load === "ready" && points.length === 0;
+  const detailIdea = comparisonIdea || idea.trim();
   // 키가 있으면 빈 색인에서도 검색이 실시간 결과로 지도를 채운다.
   const liveSearch = dataset === "korea" && kipris?.configured === true;
 
@@ -94,6 +104,49 @@ export default function TelosApp() {
     setHighlights(null);
     setSelectedId(null);
     setFocus(null);
+    startComparisons("");
+  }
+
+  function startComparisons(nextIdea: string) {
+    compareAbortRef.current?.abort();
+    compareAbortRef.current = null;
+    requestedRef.current = new Set();
+    setComparisonIdea(nextIdea);
+    setComparisons(new Map());
+  }
+
+  function compare(id: string, forIdea: string) {
+    if (requestedRef.current.has(id)) return;
+    requestedRef.current.add(id);
+    compareAbortRef.current ??= new AbortController();
+    const { signal } = compareAbortRef.current;
+    const update = (state: ComparisonState) =>
+      setComparisons((prev) => new Map(prev).set(id, state));
+    update({ status: "loading" });
+    fetch("/api/compare", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idea: forIdea, id }),
+      signal,
+    })
+      .then(async (r) => {
+        const body: unknown = await r.json().catch(() => null);
+        if (!r.ok || !isComparison(body)) throw new Error(readErrorMessage(body) ?? `HTTP ${r.status}`);
+        if (!signal.aborted) update({ status: "ready", data: body });
+      })
+      .catch((err: unknown) => {
+        if (signal.aborted) return;
+        requestedRef.current.delete(id);
+        update({
+          status: "error",
+          message:
+            err instanceof TypeError
+              ? "서버에 연결하지 못했습니다. 네트워크 연결을 확인하세요."
+              : err instanceof Error
+                ? err.message
+                : "비교를 만들지 못했습니다.",
+        });
+      });
   }
 
   function selectDataset(next: PatentDataset) {
@@ -303,6 +356,12 @@ export default function TelosApp() {
             dataset={dataset}
             score={highlights?.get(selected.id)}
             onClose={() => setSelectedId(null)}
+            comparison={comparisons.get(selected.id)}
+            canCompare={detailIdea.length >= 5}
+            onCompare={() => {
+              if (detailIdea !== comparisonIdea) startComparisons(detailIdea);
+              compare(selected.id, detailIdea);
+            }}
           />
         )}
       </section>
@@ -317,12 +376,21 @@ export default function TelosApp() {
           onIdeaChange={setIdea}
           onMatches={handleMatches}
           onPointsAdded={handlePointsAdded}
+          comparisons={comparisons}
+          onSearchStart={startComparisons}
+          onCompare={compare}
           onPick={pick}
           selectedId={selectedId}
         />
       </aside>
     </main>
   );
+}
+
+function isComparison(v: unknown): v is PatentComparison {
+  if (typeof v !== "object" || v === null) return false;
+  const c = v as { patentId?: unknown; rows?: unknown; proximity?: unknown };
+  return typeof c.patentId === "string" && Array.isArray(c.rows) && typeof c.proximity === "object" && c.proximity !== null;
 }
 
 const SECONDARY_BUTTON =
