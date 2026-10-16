@@ -10,7 +10,10 @@ import {
 export const EMBEDDING_MODEL = "Xenova/paraphrase-multilingual-MiniLM-L12-v2";
 export const EMBEDDING_DIM = 384;
 
-env.cacheDir = path.join(process.cwd(), ".cache", "transformers");
+// Vercel 함수는 /tmp 외에는 읽기 전용이라 콜드 스타트마다 모델(~135MB)을 /tmp 로 받는다.
+env.cacheDir = process.env.VERCEL
+  ? "/tmp/transformers"
+  : path.join(process.cwd(), ".cache", "transformers");
 
 let extractorPromise: Promise<FeatureExtractionPipeline> | null = null;
 

@@ -97,6 +97,8 @@ pnpm typecheck            # tsc --noEmit
 pnpm lint
 ```
 
+배포 메모: `onnxruntime-node`는 동적 `require`로 네이티브 바이너리를 불러와 Next 파일 트레이싱이 놓친다. 그래서 `next.config.ts`의 `outputFileTracingIncludes`에서 직접 넣는다 (Vercel·standalone 공통). Vercel에서는 임베딩 모델을 `/tmp`에 받으므로 콜드 스타트 첫 검색이 느리다.
+
 ## 7. 작업 원칙
 
 1. **끝까지 통하는 흐름 먼저.** 지도 → 점 클릭 → 상세, 아이디어 입력 → 에이전트 응답 → 지도 하이라이트. 이 두 흐름이 깨지면 다른 작업을 멈추고 먼저 고친다.
