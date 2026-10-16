@@ -1,154 +1,163 @@
 "use client";
 
-import { PROXIMITY_COLORS, PROXIMITY_LABELS } from "@/lib/proximity";
+import { useState } from "react";
+import { PROXIMITY_LABELS } from "@/lib/proximity";
 import type { ComparisonRow, ComparisonState, PatentComparison, ProximityLevel } from "@/lib/types";
 
-const INK = "#1e293b";
+const INK = "#191f28";
 
-/** 기술 근접도 캐릭터. 서늘=차분, 따뜻=관심, 뜨거움=놀람, 자료 부족=갸웃 */
-export function ProximityFace({ level, size = 28 }: { level: ProximityLevel | "loading"; size?: number }) {
-  const fill = level === "loading" ? "#475569" : PROXIMITY_COLORS[level];
+/** 밝은 바탕용 근접도 색. 특허 상태 색(초록·빨강·회색)과 겹치지 않게 파랑·노랑·주황·보라를 쓴다 */
+export const PROXIMITY_STYLE: Record<ProximityLevel, { fill: string; ink: string; bg: string }> = {
+  cool: { fill: "#6ba7f5", ink: "#1b64da", bg: "#e8f3ff" },
+  warm: { fill: "#ffb547", ink: "#8a5300", bg: "#fff4db" },
+  hot: { fill: "#ff6b3d", ink: "#c2410c", bg: "#ffede5" },
+  insufficient: { fill: "#b9aef5", ink: "#5b4bb7", bg: "#f1eeff" },
+};
+
+/**
+ * 화면 표시용 온도. 근거가 확인된 행 중 공통 비율을 32~40도로 옮긴다(단계 경계 1/3·2/3 = 34.7°·37.3°).
+ * 단계(proximity.level)는 서버 규칙(src/lib/proximity.ts)을 그대로 쓰고, 자료 부족이면 null이다.
+ */
+export function temperatureOf(comparison: PatentComparison): number | null {
+  if (comparison.proximity.level === "insufficient") return null;
+  const confirmed = comparison.rows.filter((row) => row.relation !== "unconfirmed");
+  if (confirmed.length === 0) return null;
+  const common = confirmed.filter((row) => row.relation === "common").length;
+  return 32 + (common / confirmed.length) * 8;
+}
+
+export function formatTemperature(t: number | null): string {
+  return t === null ? "--°" : `${t.toFixed(1)}°`;
+}
+
+/** 근접도 온도계 캐릭터. 서늘=웃음, 따뜻=무덤덤, 뜨거움=걱정, 자료 부족=갸웃 */
+export function ProximityFace({
+  level,
+  size = 28,
+  temperature = null,
+}: {
+  level: ProximityLevel | "loading" | "idle";
+  size?: number;
+  temperature?: number | null;
+}) {
+  const style = level === "loading" || level === "idle" ? null : PROXIMITY_STYLE[level];
+  const fill = style ? style.fill : "#d1d6db";
+  const ratio = temperature === null ? (level === "hot" ? 0.8 : level === "warm" ? 0.55 : level === "cool" ? 0.25 : 0.1) : Math.max(0, Math.min(1, (temperature - 30) / 12));
+  const h = Math.round(14 + ratio * 80);
+  const mouth =
+    level === "cool"
+      ? "M41 125q7 6 14 0"
+      : level === "hot"
+        ? "M41 128q7 -6 14 0"
+        : "M41 126h14";
   return (
     <svg
-      viewBox="0 0 32 32"
-      width={size}
+      viewBox="0 0 96 150"
+      width={Math.round(size * 0.64)}
       height={size}
       aria-hidden="true"
       className={level === "loading" ? "shrink-0 animate-pulse" : "shrink-0"}
     >
-      <path d="M16 3.5c7.4 0 12.5 5.3 12.5 12.3S23.2 28.5 16 28.5 3.5 22.8 3.5 15.8 8.6 3.5 16 3.5z" fill={fill} />
-      <circle cx="9" cy="19.5" r="2" fill="#fff" opacity="0.35" />
-      <circle cx="23" cy="19.5" r="2" fill="#fff" opacity="0.35" />
-      {level === "cool" && (
-        <g fill="none" stroke={INK} strokeWidth="1.6" strokeLinecap="round">
-          <path d="M9.5 15.5q1.8-1.6 3.6 0M18.9 15.5q1.8-1.6 3.6 0" />
-          <path d="M13.8 21q2.2 1.3 4.4 0" />
-        </g>
-      )}
-      {level === "warm" && (
-        <g>
-          <circle cx="11.3" cy="15" r="1.8" fill={INK} />
-          <circle cx="20.7" cy="15" r="1.8" fill={INK} />
-          <circle cx="11.9" cy="14.4" r="0.6" fill="#fff" />
-          <circle cx="21.3" cy="14.4" r="0.6" fill="#fff" />
-          <path d="M12.5 20q3.5 3.4 7 0" fill="none" stroke={INK} strokeWidth="1.6" strokeLinecap="round" />
-        </g>
-      )}
-      {level === "hot" && (
-        <g>
-          <circle cx="11.2" cy="14.6" r="2.7" fill="#fff" stroke={INK} strokeWidth="1.2" />
-          <circle cx="20.8" cy="14.6" r="2.7" fill="#fff" stroke={INK} strokeWidth="1.2" />
-          <circle cx="11.2" cy="14.8" r="1.2" fill={INK} />
-          <circle cx="20.8" cy="14.8" r="1.2" fill={INK} />
-          <ellipse cx="16" cy="21.6" rx="1.8" ry="2.2" fill={INK} />
-          <path d="M26.2 6.5q1.6 2.4 0 3.6q-1.6-1.2 0-3.6z" fill="#7dd3fc" />
-        </g>
-      )}
+      <rect x="33" y="8" width="30" height="100" rx="15" fill="#fff" stroke={INK} strokeWidth="4" />
+      <rect x="42" y={104 - h} width="12" height={h} rx="6" fill={fill} />
+      <circle cx="48" cy="118" r="24" fill={fill} stroke={INK} strokeWidth="4" />
+      <circle cx="40" cy="115" r="3.5" fill={INK} />
+      <circle cx="56" cy="115" r="3.5" fill={INK} />
+      <path d={mouth} fill="none" stroke={INK} strokeWidth="3.5" strokeLinecap="round" />
+      <circle cx="33" cy="123" r="3.6" fill="#ffb4a2" />
+      <circle cx="63" cy="123" r="3.6" fill="#ffb4a2" />
       {level === "insufficient" && (
-        <g>
-          <circle cx="11.3" cy="15.2" r="1.4" fill={INK} />
-          <circle cx="20.7" cy="15.2" r="1.4" fill={INK} />
-          <path d="M13.2 21h5.6" stroke={INK} strokeWidth="1.6" strokeLinecap="round" />
-          <text x="23.5" y="9" fontSize="8" fontWeight="700" fill={INK}>?</text>
-        </g>
-      )}
-      {level === "loading" && (
-        <path d="M9.5 15h3.6M18.9 15h3.6M14 21h4" stroke={INK} strokeWidth="1.6" strokeLinecap="round" />
+        <text x="70" y="40" fontSize="30" fontWeight="800" fill={INK}>?</text>
       )}
     </svg>
   );
 }
 
-/** 결과 목록용 작은 근접도 표시. 상태 색 점과 구분되도록 캐릭터와 이름을 함께 쓴다. */
+/** 결과 목록용 작은 근접도 표시. 상태 색 점과 구분되도록 캐릭터·이름·온도를 함께 쓴다 */
 export function ProximityBadge({ state }: { state: ComparisonState | undefined }) {
   if (!state) return null;
   if (state.status === "loading") {
     return (
-      <span className="flex shrink-0 items-center gap-1 text-[11px] text-muted">
-        <ProximityFace level="loading" size={18} />
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-surface px-2.5 py-1 text-[13px] font-semibold text-muted">
+        <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-border border-t-accent" />
         비교 중
       </span>
     );
   }
-  if (state.status === "error") return <span className="shrink-0 text-[11px] text-red-200">비교 실패</span>;
+  if (state.status === "error") {
+    return <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[13px] font-semibold text-red-600">비교 실패</span>;
+  }
   const { level } = state.data.proximity;
+  const s = PROXIMITY_STYLE[level];
+  const t = temperatureOf(state.data);
   return (
-    <span className="flex shrink-0 items-center gap-1 text-[11px]" title={state.data.proximity.reason}>
-      <ProximityFace level={level} size={18} />
-      <span style={{ color: PROXIMITY_COLORS[level] }}>{PROXIMITY_LABELS[level].title}</span>
+    <span className="inline-flex shrink-0 items-center gap-2" title={state.data.proximity.reason}>
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] font-bold"
+        style={{ background: s.bg, color: s.ink }}
+      >
+        <span className="inline-block h-2 w-2 rounded-full" style={{ background: s.fill }} />
+        {PROXIMITY_LABELS[level].title}
+      </span>
+      {t !== null && <span className="text-[13px] font-bold tabular-nums text-foreground">{formatTemperature(t)}</span>}
     </span>
   );
 }
+
+/** 서버에 OPENAI_API_KEY가 없을 때 비교 자리에 보여 주는 안내 */
+export const AI_KEY_HINT = "OpenAI 키가 없어서 기술 요소 비교를 쓸 수 없어요. .env에 OPENAI_API_KEY를 넣으면 켜져요.";
 
 interface ViewProps {
   state: ComparisonState | undefined;
   canCompare: boolean;
   onCompare: () => void;
+  /** canCompare가 false일 때 보여 줄 안내. 없으면 입력 길이 안내 */
+  disabledReason?: string;
 }
 
-export default function ComparisonView({ state, canCompare, onCompare }: ViewProps) {
+export default function ComparisonView({ state, canCompare, onCompare, disabledReason }: ViewProps) {
   return (
-    <section aria-label="내 기술과 비교" className="mt-3 border-t border-border pt-3">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <h4 className="text-xs font-semibold">내 기술과 얼마나 가까울까요?</h4>
+    <section aria-label="내 기술과 비교" className="rounded-3xl bg-panel p-5 md:p-6">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold tracking-tight">내 기술과 얼마나 가까울까요?</h2>
         {(!state || state.status === "error") && (
           <button
             type="button"
             disabled={!canCompare}
             onClick={onCompare}
-            className="rounded-md border border-border px-2 py-1 text-[11px] hover:border-accent disabled:cursor-not-allowed disabled:opacity-60"
+            className="min-h-10 shrink-0 rounded-xl bg-accent-soft px-3.5 text-sm font-semibold text-accent-strong hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {state ? "다시 비교" : "기술 요소별 비교"}
           </button>
         )}
       </div>
       {!state && !canCompare && (
-        <p className="text-[11px] text-muted">오른쪽에 내 기술 설명을 5자 이상 입력하면 비교할 수 있어요.</p>
+        <p className="text-sm text-muted">{disabledReason ?? "내 기술 설명을 5자 이상 입력하면 비교할 수 있어요."}</p>
       )}
       {state?.status === "loading" && (
-        <p className="flex items-center gap-2 text-[11px] text-muted" aria-live="polite">
-          <ProximityFace level="loading" size={22} />
-          기술 요소별로 원문을 비교하는 중…
-        </p>
+        <div aria-live="polite">
+          <p className="mb-3 flex items-center gap-3 text-sm text-ink-2">
+            <ProximityFace level="loading" size={44} />
+            기술 요소별로 원문을 비교하는 중이에요
+          </p>
+          <div className="space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-20 animate-pulse rounded-2xl bg-surface" />
+            ))}
+          </div>
+        </div>
       )}
       {state?.status === "error" && (
-        <p role="alert" className="text-[11px] text-red-200">{state.message}</p>
+        <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          {state.message}
+        </p>
       )}
       {state?.status === "ready" && <ComparisonTable comparison={state.data} />}
     </section>
   );
 }
 
-function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
-  const { level, reason } = comparison.proximity;
-  return (
-    <div>
-      <div className="mb-2 flex items-start gap-2 rounded-lg bg-background/60 p-2">
-        <ProximityFace level={level} size={40} />
-        <div className="min-w-0 text-[11px] leading-relaxed">
-          <div className="text-xs font-semibold" style={{ color: PROXIMITY_COLORS[level] }}>
-            기술 근접도 · {PROXIMITY_LABELS[level].title}
-          </div>
-          <div className="text-foreground/90">{PROXIMITY_LABELS[level].message}</div>
-          <div className="text-muted">{reason}</div>
-        </div>
-      </div>
-      {comparison.summary && <p className="mb-2 text-[11px] text-foreground/85">{comparison.summary}</p>}
-      <ul className="space-y-1.5" aria-label="기술 요소별 비교">
-        {comparison.rows.map((row) => (
-          <ComparisonItem key={row.element} row={row} />
-        ))}
-      </ul>
-      <p className="mt-2 text-[10px] leading-relaxed text-muted/80">
-        청구항 {comparison.claimsTotal}개 중 처음 {comparison.claimsReviewed}개와 초록만 비교했습니다. 기술 근접도는
-        기술적으로 가까운 정도이며 법적 위험도·침해 확률·등록 가능성이 아닙니다.{" "}
-        <a href={comparison.sourceUrl} target="_blank" rel="noreferrer noopener" className="text-accent hover:underline">
-          원문 보기
-        </a>
-      </p>
-    </div>
-  );
-}
+type RelationFilter = "all" | ComparisonRow["relation"];
 
 const RELATION_LABELS: Record<ComparisonRow["relation"], string> = {
   common: "공통",
@@ -156,34 +165,122 @@ const RELATION_LABELS: Record<ComparisonRow["relation"], string> = {
   unconfirmed: "확인 필요",
 };
 
+const RELATION_STYLE: Record<ComparisonRow["relation"], string> = {
+  common: "bg-[#ffede5] text-[#c2410c]",
+  different: "bg-accent-soft text-accent-strong",
+  unconfirmed: "bg-background text-ink-2",
+};
+
+function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
+  const [filter, setFilter] = useState<RelationFilter>("all");
+  const { level, reason } = comparison.proximity;
+  const s = PROXIMITY_STYLE[level];
+  const t = temperatureOf(comparison);
+  const confirmed = comparison.rows.filter((r) => r.relation !== "unconfirmed");
+  const common = confirmed.filter((r) => r.relation === "common").length;
+  const different = confirmed.length - common;
+  const counts: Record<RelationFilter, number> = {
+    all: comparison.rows.length,
+    common,
+    different,
+    unconfirmed: comparison.rows.length - confirmed.length,
+  };
+  const rows = comparison.rows.filter((r) => filter === "all" || r.relation === filter);
+
+  return (
+    <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-[22px] font-extrabold leading-snug tracking-tight">
+            {confirmed.length > 0 ? (
+              <>
+                근거를 확인한 {confirmed.length}개 요소 중
+                <br />
+                <span style={{ color: s.ink }}>{common}개가 같고</span> {different}개가 달라요
+              </>
+            ) : (
+              "원문에서 근거를 확인한 요소가 없어요"
+            )}
+          </p>
+          <p className="mt-1.5 text-sm text-muted">{reason}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <ProximityFace level={level} temperature={t} size={60} />
+          <div>
+            <div className="text-[28px] font-extrabold leading-none tracking-tight tabular-nums" style={{ color: s.ink }}>
+              {formatTemperature(t)}
+            </div>
+            <div className="mt-1 text-sm font-semibold">{PROXIMITY_LABELS[level].title}</div>
+          </div>
+        </div>
+      </div>
+
+      {comparison.summary && <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{comparison.summary}</p>}
+
+      <div role="group" aria-label="비교 필터" className="mt-4 grid grid-cols-2 gap-1 rounded-2xl bg-background p-1 sm:grid-cols-4">
+        {(["all", "common", "different", "unconfirmed"] as const).map((key) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={filter === key}
+            onClick={() => setFilter(key)}
+            className={`min-h-10 rounded-xl px-2 text-sm font-semibold transition ${
+              filter === key ? "bg-panel text-foreground shadow-sm" : "text-muted hover:text-foreground"
+            }`}
+          >
+            {key === "all" ? "전체" : RELATION_LABELS[key]} {counts[key]}
+          </button>
+        ))}
+      </div>
+
+      <ul className="mt-2 divide-y divide-background" aria-label="기술 요소별 비교">
+        {rows.map((row) => (
+          <ComparisonItem key={row.element} row={row} />
+        ))}
+        {rows.length === 0 && <li className="py-6 text-center text-sm text-muted">이 조건에 맞는 요소가 없어요</li>}
+      </ul>
+
+      <p className="mt-3 text-[13px] leading-relaxed text-muted">
+        청구항 {comparison.claimsTotal}개 중 처음 {comparison.claimsReviewed}개와 초록만 비교했어요. 원문 인용이 확인된 내용만
+        공통·차이로 표시해요. 근접도와 온도는 기술적으로 가까운 정도이며 법적 위험도·침해 확률·등록 가능성이 아니에요.{" "}
+        <a href={comparison.sourceUrl} target="_blank" rel="noreferrer noopener" className="font-semibold text-accent-strong hover:underline">
+          원문 보기
+        </a>
+      </p>
+    </div>
+  );
+}
+
 function ComparisonItem({ row }: { row: ComparisonRow }) {
   return (
-    <li className="rounded-md border border-border/70 bg-background/40 p-2 text-[11px] leading-relaxed">
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <span className="font-medium">{row.element}</span>
-        <span
-          className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] ${
-            row.relation === "common"
-              ? "bg-accent/20 text-accent"
-              : row.relation === "different"
-                ? "bg-white/10 text-foreground/80"
-                : "bg-white/5 text-muted"
-          }`}
-        >
+    <li className="py-4">
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <span className="text-[17px] font-bold">{row.element}</span>
+        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[13px] font-bold ${RELATION_STYLE[row.relation]}`}>
           {RELATION_LABELS[row.relation]}
         </span>
       </div>
-      <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
-        <dt className="text-muted">내 기술</dt>
-        <dd className={row.mine ? "text-foreground/85" : "text-muted"}>{row.mine ?? "미기재"}</dd>
-        <dt className="text-muted">찾은 특허</dt>
-        <dd className={row.theirs ? "text-foreground/85" : "text-muted"}>{row.theirs ?? "확인되지 않음"}</dd>
-        <dt className="text-muted">{row.relation === "unconfirmed" ? "확인할 점" : "비교"}</dt>
-        <dd className="text-foreground/85">{row.note}</dd>
-      </dl>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <div className="min-w-0 rounded-2xl bg-background px-4 py-3">
+          <div className="text-[13px] font-semibold text-muted">내 기술</div>
+          <div className={`mt-0.5 text-[15px] font-semibold ${row.mine ? "" : "font-normal text-muted"}`}>
+            {row.mine ?? "설명에 없어요"}
+          </div>
+        </div>
+        <div className="min-w-0 rounded-2xl bg-background px-4 py-3">
+          <div className="text-[13px] font-semibold text-muted">찾은 특허</div>
+          <div className={`mt-0.5 text-[15px] font-semibold ${row.theirs ? "" : "font-normal text-muted"}`}>
+            {row.theirs ?? "확인되지 않았어요"}
+          </div>
+        </div>
+      </div>
+      <p className="mt-2.5 text-[15px] leading-relaxed text-ink-2">
+        {row.relation === "unconfirmed" && <span className="font-semibold text-foreground">확인할 점 · </span>}
+        {row.note}
+      </p>
       {row.evidence && (
-        <blockquote className="mt-1 border-l-2 border-accent/50 pl-2 text-[10px] text-foreground/70">
-          원문: “{row.evidence}”
+        <blockquote className="mt-2 rounded-xl bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-ink-2">
+          <span className="font-semibold text-muted">원문 인용 · </span>“{row.evidence}”
         </blockquote>
       )}
     </li>

@@ -137,9 +137,9 @@ export default function PatentMap({
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 0.35;
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.9;
+        ctx.strokeStyle = "#191f28";
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
     }
@@ -151,8 +151,8 @@ export default function PatentMap({
         const x = t.applyX(n.bx);
         const y = t.applyY(n.by);
         ctx.globalAlpha = 1;
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#3182f6";
+        ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(x, y, baseR * 2.6, 0, Math.PI * 2);
         ctx.stroke();
@@ -221,14 +221,16 @@ export default function PatentMap({
         aria-label="특허 임베딩 지도. 가까울수록 비슷한 기술이며 검색 결과 목록에서 같은 특허를 선택할 수 있습니다."
         style={{ width: size.w, height: size.h }}
         className={hover ? "cursor-pointer" : "cursor-grab"}
-        onMouseMove={(e) => {
+        // 터치에서는 미리보기 카드가 툴팁 역할을 하므로 마우스일 때만 띄운다
+        onPointerMove={(e) => {
+          if (e.pointerType !== "mouse") return;
           const n = findAt(e.clientX, e.clientY);
           const rect = wrapRef.current?.getBoundingClientRect();
           setHover(
             n && rect ? { p: n.p, x: e.clientX - rect.left, y: e.clientY - rect.top } : null,
           );
         }}
-        onMouseLeave={() => setHover(null)}
+        onPointerLeave={() => setHover(null)}
         onClick={(e) => {
           const n = findAt(e.clientX, e.clientY);
           onSelect(n ? n.p.id : null);
@@ -236,7 +238,7 @@ export default function PatentMap({
       />
       {hover && (
         <div
-          className="pointer-events-none absolute z-10 max-w-xs rounded-md border border-border bg-panel/95 px-3 py-2 text-xs shadow-xl backdrop-blur"
+          className="pointer-events-none absolute z-10 max-w-xs rounded-xl border border-border bg-panel/95 px-3 py-2 text-[13px] shadow-lg backdrop-blur"
           style={{
             left: Math.min(hover.x + 14, size.w - 300),
             top: Math.min(hover.y + 14, size.h - 80),

@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   }
   try {
     const status = await researchStatus();
+    const aiConfigured = Boolean(process.env.OPENAI_API_KEY?.trim());
     if (dataset === "korea") {
       const index = await readResearchIndex();
       return Response.json({
@@ -16,6 +17,7 @@ export async function GET(request: Request) {
         points: index?.points ?? [],
         builtAt: index?.builtAt ?? null,
         status,
+        aiConfigured,
       } satisfies PatentMapResponse);
     }
     const index = await getPatentIndex();
@@ -26,6 +28,7 @@ export async function GET(request: Request) {
       })) ?? [],
       builtAt: index?.meta.builtAt ?? null,
       status,
+      aiConfigured,
     } satisfies PatentMapResponse);
   } catch {
     return Response.json({ error: "특허 색인을 읽지 못했습니다. 서버의 데이터 파일을 확인하세요." }, { status: 500 });

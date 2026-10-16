@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
+import { DECISION_LABELS, DECISION_TAG_STYLES } from "@/lib/colors";
+import { PROXIMITY_LABELS } from "@/lib/proximity";
 import type {
   AgentEvent,
   ComparisonState,
@@ -15,6 +16,8 @@ import type {
   SearchResponse,
 } from "@/lib/types";
 import { ProximityBadge } from "./Comparison";
+import ProximitySummary from "./ProximitySummary";
+import DisputeCases, { matchCases } from "./DisputeCases";
 import ResearchReferences, {
   IDLE_REFERENCES,
   readErrorMessage,
@@ -26,6 +29,8 @@ interface Props {
   dataset: PatentDataset;
   status: ResearchStatus | null;
   disabled: boolean;
+  /** 서버에 OpenAI 키가 있는지. false면 AI 분석과 자동 비교를 끈다 */
+  aiReady: boolean;
   idea: string;
   onIdeaChange: (idea: string) => void;
   onMatches: (hits: SearchHit[], replace: boolean) => void;
@@ -45,10 +50,35 @@ type Phase = "idle" | "running" | "done" | "error";
 type Terminal = "done" | "error" | null;
 
 const EXAMPLES = [
+  "생분해성 고분자 미립구에 GLP-1 유사체를 담아 4주 동안 방출하는 서방형 주사제",
+  "PDLLA 미세입자를 다공성으로 만들어 콜라겐 생성을 유도하는 주사제",
   "반려동물 사진을 찍으면 AI가 건강 상태를 분석해 맞춤 사료를 추천하는 앱",
   "스마트 거울이 사용자의 피부 상태를 매일 기록하고 화장품을 추천",
   "드론이 농지를 촬영해 병충해를 조기에 탐지하는 서비스",
 ];
+
+type InputMode = "text" | "question" | "patent" | "category";
+
+const INPUT_MODES: { id: InputMode; label: string; field: string; placeholder: string }[] = [
+  { id: "text", label: "기술 설명", field: "내 기술을 한두 문장으로 적어 주세요", placeholder: "예) 생분해성 고분자 미립구에 GLP-1 유사체를 담아 4주 동안 방출하는 서방형 주사제" },
+  { id: "question", label: "질문", field: "궁금한 걸 편하게 물어보세요", placeholder: "예) 미세유체 칩으로 미립구를 만드는 공정에 비슷한 특허가 있을까요?" },
+  { id: "patent", label: "특허·회사", field: "특허 제목이나 회사의 핵심 기술을 적어 주세요", placeholder: "예) 경쟁사 특허 제목이나 우리 회사 대표 기술" },
+  { id: "category", label: "카테고리", field: "", placeholder: "" },
+];
+
+const CATEGORIES: { name: string; sub: string; idea: string }[] = [
+  { name: "톡신", sub: "균주 · 정제 · 제형", idea: "보툴리눔 톡신 균주를 배양하고 정제해 주사제로 만드는 공정" },
+  { name: "필러", sub: "HA · PLLA · PCL · 가교", idea: "가교 히알루론산에 리도카인을 섞은 피부 주입용 필러" },
+  { name: "스킨부스터", sub: "PDRN · PN · 엑소좀", idea: "연어 정소에서 추출한 PDRN을 정제해 피부에 주입하는 스킨부스터" },
+  { name: "콜라겐부스터", sub: "고분자 미세입자 · 제조공정", idea: "PDLLA 미세입자를 다공성으로 만들어 콜라겐 생성을 유도하는 주사제" },
+  { name: "서방형 주사제", sub: "미립구 · 방출 제어", idea: "생분해성 고분자 미립구에 GLP-1 유사체를 담아 4주 동안 방출하는 서방형 주사제" },
+  { name: "에너지 장비", sub: "HIFU · RF · 레이저", idea: "고강도 집속 초음파로 피부 진피층을 가열하는 리프팅 장비" },
+];
+
+type ResultTab = "patents" | "cases";
+type LevelFilter = "all" | "hot" | "warm" | "cool" | "insufficient" | "none";
+
+const LEVEL_FILTERS: LevelFilter[] = ["all", "hot", "warm", "cool", "insufficient", "none"];
 
 const DATASET_NOTES: Record<PatentDataset, string> = {
   korea: "KIPRIS를 실시간 조회해 로컬 색인에 더한 뒤 찾습니다.",
@@ -94,6 +124,7 @@ export default function SearchPanel({
   dataset,
   status,
   disabled,
+  aiReady,
   idea,
   onIdeaChange,
   onMatches,
@@ -117,6 +148,10 @@ export default function SearchPanel({
   const [warnings, setWarnings] = useState<string[]>([]);
   const [coverage, setCoverage] = useState<SearchCoverage | null>(null);
   const [searchedIdea, setSearchedIdea] = useState("");
+  const [elements, setElements] = useState<string[]>([]);
+  const [mode, setMode] = useState<InputMode>("text");
+  const [tab, setTab] = useState<ResultTab>("patents");
+  const [levelFilter, setLevelFilter] = useState<LevelFilter>("all");
   const abortRef = useRef<AbortController | null>(null);
   const hitsRef = useRef<SearchHit[]>([]);
   const referencesRef = useRef<ResearchHit[]>([]);
@@ -137,6 +172,9 @@ export default function SearchPanel({
     setHits([]);
     setWarnings([]);
     setCoverage(null);
+    setElements([]);
+    setTab("patents");
+    setLevelFilter("all");
     onMatches([], true);
     referencesRef.current = [];
     setReferences(IDLE_REFERENCES);
@@ -219,7 +257,7 @@ export default function SearchPanel({
   }
 
   function compareTop(query: string) {
-    if (dataset !== "korea") return;
+    if (dataset !== "korea" || !aiReady) return;
     for (const hit of hitsRef.current.slice(0, AUTO_COMPARE)) onCompare(hit.id, query);
   }
 
@@ -250,6 +288,7 @@ export default function SearchPanel({
       mergeHits(body.hits);
       addWarnings(body.warnings ?? []);
       setCoverage(body.coverage ?? null);
+      setElements(body.elements ?? []);
       setStatusLine("");
       setPhase("done");
       compareTop(query);
@@ -261,7 +300,7 @@ export default function SearchPanel({
 
   async function runAgent() {
     const query = idea.trim();
-    if (!query) return;
+    if (!query || !aiReady) return;
     const ac = startSearch(query);
     setPhase("running");
     setStatusLine("에이전트에 연결하는 중…");
@@ -382,71 +421,168 @@ export default function SearchPanel({
   const running = phase === "running";
   const canRun = !disabled && !running && idea.trim().length > 0;
   const idle = phase === "idle" && !answer && hits.length === 0;
+  const korean = dataset === "korea";
+  const currentMode = INPUT_MODES.find((m) => m.id === mode) ?? INPUT_MODES[0];
+  const caseMatches = searchedIdea
+    ? matchCases([searchedIdea, ...elements, ...(coverage?.queries ?? []), ...hits.map((h) => h.title)], 6)
+    : [];
 
-  // 폰은 페이지 전체가 하나의 스크롤, md 이상은 결과 영역만 스크롤한다
+  function levelOf(id: string): LevelFilter {
+    const c = comparisons.get(id);
+    if (!c || c.status !== "ready") return "none";
+    return c.data.proximity.level;
+  }
+  const levelCounts = Object.fromEntries(
+    LEVEL_FILTERS.map((key) => [key, key === "all" ? hits.length : hits.filter((h) => levelOf(h.id) === key).length]),
+  ) as Record<LevelFilter, number>;
+  const shownHits = levelFilter === "all" ? hits : hits.filter((h) => levelOf(h.id) === levelFilter);
+  const showLevelFilters = korean && [...comparisons.values()].some((c) => c.status === "ready");
+
+  // 폰은 페이지 전체가 하나의 스크롤, md 이상은 왼쪽 열 전체가 스크롤한다
   return (
-    <div className="flex flex-col md:h-full md:min-h-0">
-      <div className="border-b border-border p-3 md:p-4">
-        <label htmlFor="idea" className="mb-2 block text-xs font-medium text-muted">
-          구상 중인 아이디어를 적어 주세요
-        </label>
-        <textarea
-          id="idea"
-          value={idea}
-          onChange={(e) => onIdeaChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && canRun) runAgent();
-          }}
-          placeholder="예) AI가 반려동물 사진으로 건강 상태를 분석해 사료를 추천하는 앱"
-          rows={3}
-          className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none placeholder:text-muted focus:border-accent"
-        />
-        <p className="mt-1 text-[11px] text-muted/80">{DATASET_NOTES[dataset]}</p>
+    <div className="flex flex-col gap-3">
+      {idle && (
+        <div className="px-1 pb-2 pt-3">
+          <h1 className="text-[28px] font-extrabold leading-tight tracking-tight">
+            어떤 기술을
+            <br />
+            확인해 볼까요?
+          </h1>
+          <p className="mt-2 text-base leading-relaxed text-ink-2">
+            비슷한 특허와 분쟁 사례를 찾아서
+            <br />내 기술과 얼마나 가까운지 온도로 알려드려요
+          </p>
+        </div>
+      )}
+
+      <section aria-label="기술 입력" className="rounded-3xl bg-panel p-5 md:p-6">
+        <div role="group" aria-label="입력 방식" className="scroll-row -mx-5 flex gap-2 overflow-x-auto px-5 md:-mx-6 md:px-6">
+          {INPUT_MODES.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              aria-pressed={mode === m.id}
+              onClick={() => setMode(m.id)}
+              className={`min-h-10 shrink-0 rounded-full px-4 text-[15px] font-semibold transition ${
+                mode === m.id ? "bg-foreground text-white" : "bg-background text-ink-2 hover:text-foreground"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+        {mode === "category" ? (
+          <ul className="mt-3 divide-y divide-background" aria-label="제품군">
+            {CATEGORIES.map((c) => (
+              <li key={c.name}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onIdeaChange(c.idea);
+                    setMode("text");
+                  }}
+                  className="flex min-h-14 w-full items-center justify-between gap-3 py-3 text-left"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[17px] font-semibold">{c.name}</span>
+                    <span className="block text-sm text-muted">{c.sub}</span>
+                  </span>
+                  <svg viewBox="0 0 20 20" className="h-5 w-5 shrink-0 text-muted" aria-hidden="true">
+                    <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="mt-4">
+            <label htmlFor="idea" className="mb-2 block text-[15px] font-semibold text-ink-2">
+              {currentMode.field}
+            </label>
+            <textarea
+              id="idea"
+              value={idea}
+              onChange={(e) => onIdeaChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && canRun) {
+                  if (aiReady) runAgent();
+                  else runQuickSearch();
+                }
+              }}
+              placeholder={currentMode.placeholder}
+              rows={4}
+              maxLength={4000}
+              className="w-full resize-y rounded-2xl border-0 bg-background px-4 py-3.5 text-[17px] leading-relaxed outline-none placeholder:text-muted focus:bg-panel focus:ring-2 focus:ring-accent"
+            />
+            <div className="mt-1.5 flex justify-between gap-3 text-[13px] text-muted">
+              <span>{DATASET_NOTES[dataset]}</span>
+              <span className="shrink-0 tabular-nums">{idea.trim().length.toLocaleString()} / 4,000</span>
+            </div>
+          </div>
+        )}
+
         {/* 예시를 항상 두어 입력 후 버튼이 포인터 아래로 옮겨가지 않게 한다 (더블클릭 오실행 방지) */}
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-4">
+          <span className="text-[13px] text-muted">예시로 채우기</span>
+          <div className="scroll-row -mx-5 mt-1.5 flex gap-2 overflow-x-auto px-5 md:-mx-6 md:flex-wrap md:overflow-visible md:px-6">
             {EXAMPLES.map((ex) => (
               <button
                 key={ex}
                 type="button"
                 title={ex}
-                onClick={() => onIdeaChange(ex)}
-                className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted hover:border-accent hover:text-foreground"
+                onClick={() => {
+                  onIdeaChange(ex);
+                  setMode("text");
+                }}
+                className="min-h-9 shrink-0 rounded-full border border-border bg-panel px-3 text-sm text-ink-2 hover:border-accent hover:text-foreground"
               >
-                {ex.slice(0, 22)}…
+                {ex.length > 20 ? `${ex.slice(0, 20)}…` : ex}
               </button>
             ))}
+          </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            disabled={!canRun}
-            onClick={runAgent}
-            className="min-h-11 flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-background hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 md:min-h-0"
-          >
-            AI 분석 <span className="font-normal opacity-80">⌘↵</span>
-          </button>
+
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <button
             type="button"
             disabled={!canRun}
             onClick={runQuickSearch}
-            className="min-h-11 rounded-lg border border-border px-3 py-2 text-sm hover:border-accent disabled:cursor-not-allowed disabled:opacity-60 md:min-h-0"
+            className="min-h-14 flex-1 rounded-2xl bg-accent px-4 text-[17px] font-bold text-white transition hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
           >
-            유사 특허만 찾기
+            찾아보기
+          </button>
+          <button
+            type="button"
+            disabled={!canRun || !aiReady}
+            title={aiReady ? undefined : "OpenAI 키가 있어야 쓸 수 있어요"}
+            onClick={runAgent}
+            className="min-h-14 rounded-2xl bg-accent-soft px-5 text-base font-bold text-accent-strong transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            AI 분석까지 <span className="font-medium opacity-70">⌘↵</span>
           </button>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-          <label className="flex items-center gap-1.5">
+        {!aiReady && (
+          <p className="mt-2 rounded-2xl bg-background px-4 py-3 text-[13px] leading-relaxed text-ink-2">
+            OpenAI 키가 없어서 AI 분석과 근접도 온도는 꺼져 있어요. 찾아보기는 키 없이도 돼요. 켜려면{" "}
+            <code className="rounded bg-panel px-1">.env</code>에 <code className="rounded bg-panel px-1">OPENAI_API_KEY</code>를
+            넣어 주세요.
+          </p>
+        )}
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <label className="flex min-h-10 items-center gap-2">
             <input
               type="checkbox"
               checked={includeContext}
               disabled={running}
               onChange={(e) => setIncludeContext(e.target.checked)}
-              className="h-3.5 w-3.5 accent-accent"
+              className="h-4 w-4 accent-accent"
             />
             법령·공시 참고 자료도 찾기 <span className="text-muted">(선택)</span>
           </label>
           {includeContext && (
-            <label className="flex items-center gap-1.5 text-muted">
+            <label className="flex min-h-10 items-center gap-2 text-muted">
               기준일
               <input
                 type="date"
@@ -454,187 +590,272 @@ export default function SearchPanel({
                 disabled={running}
                 onChange={(e) => setAsOf(e.target.value)}
                 aria-label="참고 자료 기준일 (선택)"
-                className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground [color-scheme:dark] focus:border-accent"
+                className="rounded-lg border border-border bg-panel px-2 py-1.5 text-sm text-foreground focus:border-accent"
               />
             </label>
           )}
         </div>
-      </div>
+      </section>
 
-      <div className="md:min-h-0 md:flex-1 md:overflow-y-auto">
-        {(statusLine || toolLog.length > 0) && (
-          <div className="border-b border-border px-4 py-3 text-xs" aria-live="polite">
-            {/* 중지는 상태 줄에 둔다: 눌러도 다른 버튼이 포인터 아래로 밀려오지 않는다 */}
-            {statusLine && (
-              <div className={`flex items-center gap-2 ${running ? "text-accent" : "text-muted"}`}>
-                {running && (
-                  <span className="inline-block h-2 w-2 shrink-0 animate-pulse rounded-full bg-accent" />
-                )}
-                <span className="min-w-0 flex-1 break-words">{statusLine}</span>
-                {running && (
-                  <button
-                    type="button"
-                    onClick={stop}
-                    className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs text-foreground hover:border-accent"
-                  >
-                    중지
-                  </button>
-                )}
-              </div>
-            )}
-            {toolLog.length > 0 && (
-              <ul className="mt-1.5 space-y-0.5 text-muted">
-                {toolLog.map((t, i) => (
-                  <li key={i} className="break-words">
-                    · {t}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {error && (
-          <div
-            role="alert"
-            className="m-4 rounded-lg border border-red-400/40 bg-red-400/10 px-3 py-2 text-xs text-red-200"
-          >
-            {error}
-          </div>
-        )}
-
-        {warnings.length > 0 && (
-          <ul
-            aria-label="검색 경고"
-            className="m-4 space-y-1 rounded-lg border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-[11px] text-amber-100"
-          >
-            {warnings.map((w) => (
-              <li key={w} className="break-words">{w}</li>
-            ))}
-          </ul>
-        )}
-
-        {phase === "done" && hits.length === 0 && (
-          <div className="m-4 rounded-lg border border-border px-3 py-2 text-xs">
-            <p className="font-medium">관련 특허를 찾지 못했어요.</p>
-            <p className="mt-1 text-[11px] text-muted">
-              {coverage && coverage.candidates === 0
-                ? "KIPRIS 검색어로 찾은 후보가 없습니다. 핵심 기술을 더 짧고 일반적인 말로 적어 다시 검색해 보세요."
-                : "확보한 후보 안에서 관련 특허가 없었습니다. 다른 표현이나 기술 요소로 다시 검색해 보세요."}
-              {" "}결과가 없다고 해서 관련 특허가 없다는 뜻은 아닙니다.
-            </p>
-          </div>
-        )}
-
-        {/* 특허 목록을 답변보다 먼저 둔다: 스트리밍 답변이 목록을 밀어내지 않는다 */}
-        {hits.length > 0 && (
-          <div className="border-b border-border px-4 py-3">
-            <div className="mb-1 text-xs font-medium text-muted">
-              관련 특허 {hits.length}건 · 지도에 표시됨
+      {(statusLine || toolLog.length > 0) && (
+        <section aria-live="polite" className="rounded-3xl bg-panel px-5 py-4 text-[15px]">
+          {/* 중지는 상태 줄에 둔다: 눌러도 다른 버튼이 포인터 아래로 밀려오지 않는다 */}
+          {statusLine && (
+            <div className={`flex items-center gap-3 ${running ? "text-foreground" : "text-muted"}`}>
+              {running && (
+                <span className="inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-border border-t-accent" />
+              )}
+              <span className="min-w-0 flex-1 break-words">{statusLine}</span>
+              {running && (
+                <button
+                  type="button"
+                  onClick={stop}
+                  className="min-h-10 shrink-0 rounded-xl bg-background px-3.5 text-sm font-semibold hover:bg-border"
+                >
+                  중지
+                </button>
+              )}
             </div>
-            {coverage && (
-              <p className="mb-2 break-words text-[11px] text-muted/80">
-                검색어 {coverage.queries.map((q) => `“${q}”`).join(" · ")} · 후보{" "}
-                {coverage.candidates}건 중 관련도 순위(국내 전체 검색이 아닙니다)
-              </p>
-            )}
-            <ul className="space-y-1" aria-label="관련 특허 목록">
-              {hits.map((h) => {
-                const comparison = comparisons.get(h.id);
-                return (
-                  <li
-                    key={h.id}
-                    className={`flex items-start gap-1 rounded-md hover:bg-white/5 ${
-                      selectedId === h.id ? "bg-white/10" : ""
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => onPick(h.id)}
-                      aria-pressed={selectedId === h.id}
-                      className="min-w-0 flex-1 px-2 py-1.5 text-left text-xs"
-                    >
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span
-                          className="inline-block h-2 w-2 shrink-0 rounded-full"
-                          style={{ background: DECISION_COLORS[h.decision] }}
-                        />
-                        <span className="truncate font-medium">{h.title}</span>
-                      </div>
-                      <div className="mt-0.5 truncate pl-4 text-[11px] text-muted">
-                        {DECISION_LABELS[h.decision]}
-                        {h.applicant ? ` · ${h.applicant}` : ""} · {scoreLabel(h.score)}
-                      </div>
-                      {comparison?.status === "ready" && comparison.data.summary && (
-                        <div className="mt-0.5 line-clamp-2 pl-4 text-[11px] text-foreground/80">
-                          {comparison.data.summary}
-                        </div>
-                      )}
-                    </button>
-                    <div className="flex shrink-0 items-center py-1.5 pr-2">
-                      {comparison ? (
-                        <ProximityBadge state={comparison} />
-                      ) : (
-                        dataset === "korea" &&
-                        searchedIdea && (
-                          <button
-                            type="button"
-                            onClick={() => onCompare(h.id, searchedIdea)}
-                            className="rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted hover:border-accent hover:text-foreground"
-                          >
-                            근접도 보기
-                          </button>
-                        )
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
+          )}
+          {toolLog.length > 0 && (
+            <ul className="mt-2 space-y-0.5 text-[13px] text-muted">
+              {toolLog.map((t, i) => (
+                <li key={i} className="break-words">
+                  · {t}
+                </li>
+              ))}
             </ul>
-            {dataset === "korea" && (
-              <p className="mt-2 text-[10px] text-muted/80">
-                기술 근접도는 원문 근거로 비교한 기술적 거리이며 법적 위험도·침해 확률이 아닙니다. 특허를 누르면 기술
-                요소별 비교를 볼 수 있어요.
-              </p>
-            )}
-          </div>
-        )}
+          )}
+        </section>
+      )}
 
-        {answer && (
-          <div className="prose-telos break-words border-b border-border px-4 py-4 text-sm">
+      {error && (
+        <div role="alert" className="rounded-3xl bg-red-50 px-5 py-4 text-[15px] leading-relaxed text-red-700">
+          {error}
+        </div>
+      )}
+
+      {warnings.length > 0 && (
+        <ul aria-label="검색 경고" className="space-y-1 rounded-3xl bg-amber-50 px-5 py-4 text-sm leading-relaxed text-amber-900">
+          {warnings.map((w) => (
+            <li key={w} className="break-words">
+              {w}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {korean && <ProximitySummary hits={hits} comparisons={comparisons} onPick={onPick} />}
+
+      {(elements.length > 0 || coverage) && (
+        <section aria-label="검색 요약" className="rounded-3xl bg-panel p-5 md:p-6">
+          <h2 className="text-lg font-bold tracking-tight">이렇게 나눠서 찾았어요</h2>
+          {elements.length > 0 && (
+            <div className="mt-3">
+              <span className="text-[13px] text-muted">기술 요소</span>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {elements.map((e) => (
+                  <span key={e} className="inline-flex min-h-8 items-center rounded-full border border-border px-3 text-sm">
+                    {e}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {coverage && coverage.queries.length > 0 && (
+            <div className="mt-3">
+              <span className="text-[13px] text-muted">검색어 묶음</span>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {coverage.queries.map((q) => (
+                  <span key={q} className="inline-flex min-h-8 items-center rounded-full bg-background px-3 text-sm text-ink-2">
+                    {q}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {coverage && (
+            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+              후보 {coverage.candidates.toLocaleString()}건 중 관련도 순위예요. 국내 전체 검색이 아니에요.
+              {coverage.detailed ? ` 이번 검색으로 상세를 새로 받은 특허는 ${coverage.detailed}건이에요.` : ""}
+            </p>
+          )}
+        </section>
+      )}
+
+      {phase === "done" && hits.length === 0 && (
+        <section className="rounded-3xl bg-panel px-5 py-5">
+          <p className="text-[17px] font-bold">관련 특허를 찾지 못했어요</p>
+          <p className="mt-1 text-[15px] leading-relaxed text-ink-2">
+            {coverage && coverage.candidates === 0
+              ? "KIPRIS 검색어로 찾은 후보가 없어요. 핵심 기술을 더 짧고 일반적인 말로 적어 다시 찾아보세요."
+              : "확보한 후보 안에서 관련 특허가 없었어요. 다른 표현이나 기술 요소로 다시 찾아보세요."}{" "}
+            결과가 없다고 해서 관련 특허가 없다는 뜻은 아니에요.
+          </p>
+        </section>
+      )}
+
+      {/* 특허 목록을 답변보다 먼저 둔다: 스트리밍 답변이 목록을 밀어내지 않는다 */}
+      {hits.length > 0 && (
+        <section aria-label="찾기 결과" className="rounded-3xl bg-panel p-5 md:p-6">
+          <div role="tablist" aria-label="결과 종류" className="grid grid-cols-2 gap-1 rounded-2xl bg-background p-1">
+            {(
+              [
+                ["patents", `관련 특허 ${hits.length}`],
+                ["cases", `분쟁 사례 ${caseMatches.length}`],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                onClick={() => setTab(key)}
+                className={`min-h-11 rounded-xl text-[15px] font-semibold transition ${
+                  tab === key ? "bg-panel text-foreground shadow-sm" : "text-muted hover:text-foreground"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {tab === "patents" ? (
+            <>
+              {showLevelFilters && (
+                <div role="group" aria-label="근접도 필터" className="scroll-row -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 md:-mx-6 md:px-6">
+                  {LEVEL_FILTERS.filter((k) => k === "all" || levelCounts[k] > 0).map((k) => (
+                    <button
+                      key={k}
+                      type="button"
+                      aria-pressed={levelFilter === k}
+                      onClick={() => setLevelFilter(k)}
+                      className={`min-h-10 shrink-0 rounded-full px-3.5 text-sm font-semibold transition ${
+                        levelFilter === k ? "bg-foreground text-white" : "bg-background text-ink-2 hover:text-foreground"
+                      }`}
+                    >
+                      {k === "all" ? "전체" : k === "none" ? "비교 전" : PROXIMITY_LABELS[k].title} {levelCounts[k]}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <p className="mt-3 text-[13px] leading-relaxed text-muted">
+                지도에 표시돼요.{" "}
+                {korean
+                  ? "뜨거움·따뜻은 부딪힐 수 있는 특허, 서늘은 확장에 참고할 특허로 보면 돼요. 상위 3건은 자동으로 비교해요."
+                  : "특허를 누르면 상세를 볼 수 있어요."}
+              </p>
+              <ul className="mt-1 divide-y divide-background" aria-label="관련 특허 목록">
+                {shownHits.map((h) => {
+                  const comparison = comparisons.get(h.id);
+                  const tag = DECISION_TAG_STYLES[h.decision];
+                  return (
+                    <li key={h.id} className={`-mx-2 rounded-2xl px-2 ${selectedId === h.id ? "bg-accent-soft/60" : ""}`}>
+                      <div className="flex flex-col gap-2.5 py-4 sm:flex-row sm:items-start">
+                        <button
+                          type="button"
+                          onClick={() => onPick(h.id)}
+                          aria-pressed={selectedId === h.id}
+                          className="group min-w-0 flex-1 text-left"
+                        >
+                          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted">
+                            <span className="rounded-md px-1.5 py-0.5 font-bold" style={{ background: tag.bg, color: tag.ink }}>
+                              {DECISION_LABELS[h.decision]}
+                            </span>
+                            {h.applicant && <span>{h.applicant}</span>}
+                            <span className="break-all">
+                              {h.id.startsWith("kipris:") ? `출원번호 ${h.id.slice(7)}` : `#${h.id}`}
+                            </span>
+                            {h.filed && <span>{h.filed}</span>}
+                          </span>
+                          <span className="mt-1 block text-[17px] font-semibold leading-snug group-hover:text-accent-strong">
+                            {h.title}
+                          </span>
+                          <span className="mt-1 line-clamp-2 block text-sm leading-relaxed text-muted">
+                            {comparison?.status === "ready" && comparison.data.summary ? comparison.data.summary : h.abstract}
+                          </span>
+                        </button>
+                        <div className="flex shrink-0 items-center justify-between gap-3 sm:flex-col sm:items-end">
+                          {comparison ? (
+                            <ProximityBadge state={comparison} />
+                          ) : (
+                            korean &&
+                            aiReady &&
+                            searchedIdea && (
+                              <button
+                                type="button"
+                                onClick={() => onCompare(h.id, searchedIdea)}
+                                className="min-h-10 rounded-xl bg-background px-3.5 text-sm font-semibold text-ink-2 hover:bg-border"
+                              >
+                                근접도 보기
+                              </button>
+                            )
+                          )}
+                          <span className="text-[13px] text-muted">{scoreLabel(h.score)}</span>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+                {shownHits.length === 0 && <li className="py-6 text-center text-sm text-muted">이 조건에 맞는 특허가 없어요</li>}
+              </ul>
+              {korean && (
+                <p className="mt-2 text-[13px] leading-relaxed text-muted">
+                  기술 근접도는 원문 근거로 비교한 기술적 거리이며 법적 위험도·침해 확률이 아니에요. 특허를 누르면 기술 요소별
+                  비교를 볼 수 있어요.
+                </p>
+              )}
+            </>
+          ) : (
+            <div className="mt-3">
+              <p className="mb-3 text-[13px] leading-relaxed text-muted">
+                내 기술 설명, 기술 요소, 찾은 특허 제목과 키워드가 겹치는 분쟁이에요. 어떤 기술 차이가 결론을 갈랐는지 보여
+                드려요.
+              </p>
+              <DisputeCases matches={caseMatches} />
+            </div>
+          )}
+        </section>
+      )}
+
+      {answer && (
+        <section aria-label="AI 분석" className="rounded-3xl bg-panel p-5 md:p-6">
+          <h2 className="mb-3 text-lg font-bold tracking-tight">AI 분석</h2>
+          <div className="prose-telos break-words text-[15px]">
             <ReactMarkdown>{readableKorean(answer)}</ReactMarkdown>
           </div>
-        )}
+        </section>
+      )}
 
-        {includeContext && references.requested && (
+      {includeContext && references.requested && (
+        <div className="overflow-hidden rounded-3xl bg-panel">
           <ResearchReferences state={references} status={sourceStatus ?? status} />
-        )}
+        </div>
+      )}
 
-        {idle && (
-          <div className="px-4 py-6 text-xs leading-relaxed text-muted">
-            {disabled && (
-              <p className="mb-2 text-foreground">
-                지도 데이터가 준비되면 검색할&nbsp;수&nbsp;있습니다. 지도 상단에서
-                데이터셋을 바꿀&nbsp;수&nbsp;있습니다.
-              </p>
-            )}
-            <p>
-              <b className="text-foreground">AI 분석</b>: GPT 에이전트가 특허를 여러 번 검색하고
-              청구항까지 읽은 뒤 유사점·차이점·거절 사례·방향을 정리합니다.
-              OPENAI_API_KEY가&nbsp;필요합니다.
+      {idle && (
+        <section aria-label="Telos 사용법" className="rounded-3xl bg-panel px-5 py-2 md:px-6">
+          {disabled && (
+            <p className="border-b border-background py-4 text-[15px] text-foreground">
+              지도 데이터가 준비되면 찾을&nbsp;수&nbsp;있어요. 위에서 데이터셋을 바꿀&nbsp;수&nbsp;있어요.
             </p>
-            <p className="mt-2">
-              <b className="text-foreground">유사 특허만 찾기</b>: 임베딩 유사도만으로 즉시
-              찾습니다. OpenAI&nbsp;키&nbsp;없이&nbsp;동작합니다.
-            </p>
-            <p className="mt-2">
-              <b className="text-foreground">법령·공시 참고 자료</b>: 켜면 법령과 기업 공시를 보조
-              근거로 함께 찾습니다. 특허 결과와 별개이며, 자료가 없다고 해서 관련 법령이나
-              경쟁사가 없다는 뜻은 아닙니다.
-            </p>
-          </div>
-        )}
-      </div>
+          )}
+          <ul className="divide-y divide-background">
+            {[
+              ["찾기", "기술을 요소로 나눠 여러 검색어로 특허를 찾아요. OpenAI 키가 없으면 입력 문장으로 바로 찾아요."],
+              ["비교", "원문 인용으로 확인한 공통점과 차이만 보여줘요. 특허를 누르면 기술 요소별로 나란히 놓아요."],
+              ["근접도 온도", "겹치는 기술 요소 비율을 온도로 알려줘요. 법적 위험도가 아니에요."],
+              ["AI 분석까지", "GPT 에이전트가 특허를 여러 번 찾고 청구항까지 읽은 뒤 유사점·차이점·방향을 정리해요. OPENAI_API_KEY가 필요해요."],
+              ["법령·공시 참고 자료", "켜면 법령과 기업 공시를 보조 근거로 함께 찾아요. 자료가 없다고 해서 관련 법령이나 경쟁사가 없다는 뜻은 아니에요."],
+            ].map(([title, body]) => (
+              <li key={title} className="py-4">
+                <div className="text-[17px] font-semibold">{title}</div>
+                <p className="mt-0.5 text-sm leading-relaxed text-muted">{body}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
