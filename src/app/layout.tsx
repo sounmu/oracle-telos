@@ -23,7 +23,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="h-full overflow-hidden">{children}</body>
+      {/* 폰은 페이지 전체가 스크롤되고, md 이상은 패널 안만 스크롤한다 */}
+      <body className="h-full md:overflow-hidden">{children}</body>
     </html>
   );
 }

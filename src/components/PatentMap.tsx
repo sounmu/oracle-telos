@@ -17,6 +17,8 @@ interface Props {
   /** 바뀔 때마다 해당 점으로 카메라 이동 */
   focus: { id: string; nonce: number } | null;
   onSelect: (id: string | null) => void;
+  /** 지도 위를 덮는 헤더·범례 높이(px). 점을 그 아래 영역에 맞춘다 */
+  insetTop?: number;
 }
 
 interface Node {
@@ -34,6 +36,7 @@ export default function PatentMap({
   selectedId,
   focus,
   onSelect,
+  insetTop = PAD,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -54,15 +57,17 @@ export default function PatentMap({
     }
     const spanX = maxX - minX || 1;
     const spanY = maxY - minY || 1;
-    const scale = Math.min((size.w - PAD * 2) / spanX, (size.h - PAD * 2) / spanY);
+    const top = Math.max(PAD, insetTop);
+    const usableH = Math.max(1, size.h - top - PAD);
+    const scale = Math.min((size.w - PAD * 2) / spanX, usableH / spanY);
     const offX = (size.w - spanX * scale) / 2;
-    const offY = (size.h - spanY * scale) / 2;
+    const offY = top + (usableH - spanY * scale) / 2;
     return points.map((p) => ({
       p,
       bx: offX + (p.x - minX) * scale,
       by: offY + (maxY - p.y) * scale,
     }));
-  }, [points, size]);
+  }, [points, size, insetTop]);
 
   const byId = useMemo(() => new Map(nodes.map((n) => [n.p.id, n])), [nodes]);
 
@@ -167,6 +172,7 @@ export default function PatentMap({
     if (!canvas) return;
     const z = zoom<HTMLCanvasElement, unknown>()
       .scaleExtent([0.6, 60])
+      .duration(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250)
       .on("zoom", (event) => {
         transformRef.current = event.transform;
         requestAnimationFrame(draw);
@@ -187,11 +193,12 @@ export default function PatentMap({
     if (!n) return;
     const k = Math.max(transformRef.current.k, 4);
     const target = zoomIdentity
-      .translate(size.w / 2, size.h / 2)
+      .translate(size.w / 2, (Math.min(insetTop, size.h / 2) + size.h) / 2)
       .scale(k)
       .translate(-n.bx, -n.by);
-    select(canvas).transition().duration(650).call(z.transform, target);
-  }, [focus, byId, size]);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    select(canvas).transition().duration(reduce ? 0 : 650).call(z.transform, target);
+  }, [focus, byId, size, insetTop]);
 
   const findAt = useCallback(
     (clientX: number, clientY: number): Node | null => {
@@ -210,6 +217,8 @@ export default function PatentMap({
     <div ref={wrapRef} className="relative h-full w-full select-none">
       <canvas
         ref={canvasRef}
+        role="img"
+        aria-label="특허 임베딩 지도. 가까울수록 비슷한 기술이며 검색 결과 목록에서 같은 특허를 선택할 수 있습니다."
         style={{ width: size.w, height: size.h }}
         className={hover ? "cursor-pointer" : "cursor-grab"}
         onMouseMove={(e) => {
