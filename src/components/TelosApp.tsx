@@ -355,7 +355,7 @@ export default function TelosApp() {
                 if (hit) pick(hit.id);
               }}
               disabled={points.length === 0}
-              className="pointer-events-auto min-h-9 rounded-full bg-foreground px-3 text-sm font-semibold text-panel shadow-sm disabled:opacity-40"
+              className="pointer-events-auto min-h-9 rounded-full bg-foreground px-3 text-sm font-semibold text-panel shadow-sm disabled:opacity-40 transition-colors enabled:hover:bg-foreground/80"
             >
               오늘의 랜덤 특허 뽑기
             </button>
@@ -365,7 +365,7 @@ export default function TelosApp() {
             <button
               type="button"
               onClick={() => setRegion(null)}
-              className="pointer-events-auto min-h-9 rounded-full bg-[#3182f6] px-3 text-[13px] font-semibold text-white shadow-sm"
+              className="pointer-events-auto min-h-9 rounded-full bg-[#3182f6] px-3 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#1b64da]"
             >
               {activeRegion.label} · {activeRegion.ids.size}건 강조 해제
             </button>
@@ -381,7 +381,7 @@ export default function TelosApp() {
                   type="button"
                   aria-pressed={on}
                   onClick={() => toggleDecision(d)}
-                  className={`flex min-h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold shadow-sm backdrop-blur-sm transition ${
+                  className={`flex min-h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold shadow-sm backdrop-blur-sm transition hover:bg-background ${
                     on ? "bg-panel/95 text-foreground" : "bg-panel/60 text-muted line-through"
                   }`}
                 >
@@ -394,7 +394,7 @@ export default function TelosApp() {
               type="button"
               aria-pressed={riskOn}
               onClick={() => setRiskOn((v) => !v)}
-              className={`min-h-9 rounded-full px-3 text-[13px] font-semibold shadow-sm ${riskOn ? "bg-foreground text-panel" : "bg-panel/95 text-muted"}`}
+              className={`min-h-9 rounded-full px-3 text-[13px] font-semibold shadow-sm transition-colors ${riskOn ? "bg-foreground text-panel hover:bg-foreground/80" : "bg-panel/95 text-muted hover:bg-background"}`}
             >
               위험도 배경
             </button>
@@ -403,12 +403,12 @@ export default function TelosApp() {
               aria-pressed={edgesOn}
               title="실선은 KIPRIS에서 확인한 실제 인용, 점선은 더미가 낀 가짜 인용입니다"
               onClick={() => setEdgesOn((v) => !v)}
-              className={`min-h-9 rounded-full px-3 text-[13px] font-semibold shadow-sm ${edgesOn ? "bg-foreground text-panel" : "bg-panel/95 text-muted"}`}
+              className={`min-h-9 rounded-full px-3 text-[13px] font-semibold shadow-sm transition-colors ${edgesOn ? "bg-foreground text-panel hover:bg-foreground/80" : "bg-panel/95 text-muted hover:bg-background"}`}
             >
               인용선
             </button>
             {highlights && (
-              <button type="button" onClick={() => setHighlights(null)} className="min-h-9 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm">
+              <button type="button" onClick={() => setHighlights(null)} className="min-h-9 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm transition-colors hover:bg-background">
                 하이라이트 해제 ({highlights.size})
               </button>
             )}
@@ -507,7 +507,7 @@ export default function TelosApp() {
                       type="button"
                       disabled={queryBusy || !activeSession.tpl}
                       onClick={() => activeSession.tpl && void runQuery(activeSession.id, activeSession.tpl)}
-                      className="min-h-9 rounded-full bg-foreground px-3 font-semibold text-panel disabled:opacity-40"
+                      className="min-h-9 rounded-full bg-foreground px-3 font-semibold text-panel disabled:opacity-40 transition-colors enabled:hover:bg-foreground/80"
                     >
                       {queryBusy ? "조회 중…" : results ? "다시 조회" : "조회 실행"}
                     </button>
@@ -546,7 +546,7 @@ export default function TelosApp() {
                   />
                 )}
                 <div className="flex justify-end">
-                  <button type="button" disabled={!results} onClick={() => goStep(2)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40">검증으로 →</button>
+                  <button type="button" disabled={!results} onClick={() => goStep(2)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40 transition-colors enabled:hover:bg-foreground/80">검증으로 →</button>
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col">{mapSection}</div>
@@ -562,8 +562,8 @@ export default function TelosApp() {
                   <VerifyReport results={resultPoints} selectedDensity={selectedDensity} />
                 )}
                 <div className="flex justify-between">
-                  <button type="button" onClick={() => goStep(1)} className="min-h-11 rounded-xl bg-background px-4 font-semibold">← 탐색</button>
-                  <button type="button" onClick={() => goStep(3)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel">요약 만들기 →</button>
+                  <button type="button" onClick={() => goStep(1)} className="min-h-11 rounded-xl bg-background px-4 font-semibold transition-colors enabled:hover:bg-border">← 탐색</button>
+                  <button type="button" onClick={() => goStep(3)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel transition-colors enabled:hover:bg-foreground/80">요약 만들기 →</button>
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col">{mapSection}</div>
@@ -574,7 +574,7 @@ export default function TelosApp() {
             <div className="flex-1 overflow-y-auto p-4 md:p-6">
               <ReportPanel session={activeSession} hits={resultPoints} cases={caseList} location={location ? { x: location.x, y: location.y } : null} />
               <div className="mx-auto mt-4 flex max-w-2xl justify-start">
-                <button type="button" onClick={() => goStep(2)} className="min-h-10 rounded-xl bg-background px-4 font-semibold">← 검증</button>
+                <button type="button" onClick={() => goStep(2)} className="min-h-10 rounded-xl bg-background px-4 font-semibold transition-colors enabled:hover:bg-border">← 검증</button>
               </div>
             </div>
           )}
