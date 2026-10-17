@@ -69,6 +69,8 @@ export default function TelosApp() {
   const [edgesOn, setEdgesOn] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
+  // 탐색 리포트에서 고른 밀집 영역. 고를 때의 조회 결과에 묶어 두고, 결과가 바뀌면 자동으로 풀린다
+  const [region, setRegion] = useState<{ label: string; ids: ReadonlySet<string>; centerId: string; results: unknown } | null>(null);
   const [comparisonIdea, setComparisonIdea] = useState("");
   const [comparisons, setComparisons] = useState<Map<string, ComparisonState>>(() => new Map());
   const compareAbortRef = useRef<AbortController | null>(null);
@@ -173,6 +175,7 @@ export default function TelosApp() {
     if (!results) return [];
     return results.ids.map((id) => byId.get(id)).filter((p): p is PatentPoint => Boolean(p));
   }, [results, byId]);
+  const activeRegion = region && results && region.results === results ? region : null;
 
   useEffect(() => {
     const ac = new AbortController();
@@ -284,6 +287,8 @@ export default function TelosApp() {
 
   function select(id: string | null) {
     setSelectedId(id);
+    // 영역 밖을 누르면 영역 강조를 푼다
+    if (!id || !region?.ids.has(id)) setRegion(null);
     if (id) leftRef.current?.scrollTo({ top: 0 });
   }
 
@@ -335,6 +340,7 @@ export default function TelosApp() {
           riskOn={riskOn || (activeSession !== null && step === 2)}
           edgesOn={edgesOn}
           marker={location ? { x: location.x, y: location.y } : null}
+          group={activeSession ? activeRegion : null}
         />
       )}
 
@@ -355,6 +361,15 @@ export default function TelosApp() {
             </button>
           )}
           <span className="rounded-full bg-panel/90 px-3 py-1.5 text-[13px] text-muted shadow-sm backdrop-blur-sm">{subtitle}</span>
+          {activeSession && activeRegion && (
+            <button
+              type="button"
+              onClick={() => setRegion(null)}
+              className="pointer-events-auto min-h-9 rounded-full bg-[#3182f6] px-3 text-[13px] font-semibold text-white shadow-sm"
+            >
+              {activeRegion.label} · {activeRegion.ids.size}건 강조 해제
+            </button>
+          )}
         </div>
         {activeDecisions.length > 0 && (
           <div role="group" aria-label="심사 결과 필터" className="pointer-events-auto flex flex-wrap gap-1.5">
@@ -507,9 +522,9 @@ export default function TelosApp() {
                     scores={resultScores ?? new Map()}
                     location={location ? { x: location.x, y: location.y } : null}
                     onPick={pick}
-                    onRegion={(r) => {
-                      const nearest = [...resultPoints].sort((p, q) => Math.hypot(p.x - r.x, p.y - r.y) - Math.hypot(q.x - r.x, q.y - r.y))[0];
-                      if (nearest) pick(nearest.id);
+                    onRegion={(r, i) => {
+                      setRegion({ label: `영역 ${i + 1}`, ids: new Set(r.ids), centerId: r.centerId, results });
+                      pick(r.centerId);
                     }}
                   />
                 )}

@@ -32,6 +32,8 @@ test("밀집 영역은 점이 2건 이상 모인 칸만 센다", () => {
   assert.equal(regions.length, 1);
   assert.equal(regions[0].count, 2);
   assert.equal(regions[0].topCpc, "A61B");
+  assert.deepEqual(regions[0].ids, ["a", "b"]);
+  assert.ok(["a", "b"].includes(regions[0].centerId));
 });
 
 test("유사도는 퍼센트로 보인다", () => {
