@@ -10,7 +10,7 @@ import { countWithin } from "@/lib/phaseFeatures";
 import { formatDate, readErrorMessage } from "./ResearchReferences";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { linkedCases } from "@/lib/phaseFeatures";
-import { loadSessions, makeSession, saveSessions, sortSessions, type Session, type StepIndex, type Template } from "@/lib/sessions";
+import { describeSession, loadSessions, makeSession, saveSessions, sortSessions, type Session, type StepIndex, type Template } from "@/lib/sessions";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import {
   DECISIONS,
@@ -57,7 +57,6 @@ export default function TelosApp() {
   const [aiConfigured, setAiConfigured] = useState<boolean | null>(null);
   const [load, setLoad] = useState<LoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [idea, setIdea] = useState("");
   const [visible, setVisible] = useState<Set<Decision>>(() => new Set(DECISIONS));
   const [highlights, setHighlights] = useState<Map<string, number> | null>(null);
   // 조회·위치 계산의 진행 상태와 오류는 요청한 세션 id에 묶는다
@@ -97,7 +96,6 @@ export default function TelosApp() {
     const session = makeSession(text, Date.now(), newSessionId());
     setSessions((prev) => [session, ...prev]);
     setActiveId(session.id);
-    setIdea(session.idea);
     setSelectedId(null);
   }
   /** 홈(새 대화)으로 돌아간다. 세션에서 고른 특허가 홈 상세로 따라오지 않게 선택도 비운다 */
@@ -106,10 +104,8 @@ export default function TelosApp() {
     setSelectedId(null);
   }
   function openSession(id: string) {
-    const target = sessions.find((s) => s.id === id);
     setActiveId(id);
     setSelectedId(null);
-    if (target) setIdea(target.tpl?.item ?? target.idea);
   }
   function goStep(i: StepIndex) {
     if (!activeSession) return;
@@ -117,7 +113,6 @@ export default function TelosApp() {
   }
   function confirmTemplate(tpl: Template) {
     if (!activeSession) return;
-    setIdea(tpl.item);
     // 조건이 바뀌므로 이전 결과와 위치는 버린다
     updateSession(activeSession.id, { tpl, name: tpl.item.slice(0, 18), idea: tpl.item, step: 1, results: null, location: null });
     void runQuery(activeSession.id, tpl);
@@ -141,7 +136,8 @@ export default function TelosApp() {
       // 응답을 기다리는 사이 다른 세션으로 옮겨도 요청한 세션에 붙인다
       const scores = Object.fromEntries(body.hits.map((h) => [h.id, h.score] as const));
       updateSession(sessionId, { results: { ids: body.hits.map((h) => h.id), scores, query, at: Date.now() } });
-      if (tpl.item.trim().length >= 5) void runLocate(sessionId, tpl.item);
+      // 위치도 검색에 쓴 기술 설명 그대로 계산한다 (아이템 칸만 쓰지 않는다)
+      if (query.length >= 5) void runLocate(sessionId, query);
     } catch (err) {
       setQueryError({ id: sessionId, message: err instanceof Error ? err.message : "조회하지 못했습니다." });
     } finally {
@@ -159,7 +155,9 @@ export default function TelosApp() {
   const selected = selectedId ? byId.get(selectedId) ?? null : null;
   const kipris = status?.sources.find((s) => s.source === "kipris") ?? null;
   const empty = load === "ready" && points.length === 0;
-  const detailIdea = comparisonIdea || idea.trim();
+  // 비교 입력도 검색·위치와 같은 기술 설명을 쓴다. 비교표는 같은 설명으로 만든 것만 보여준다
+  const detailIdea = activeSession ? describeSession(activeSession) : "";
+  const sessionComparisons = comparisonIdea === detailIdea ? comparisons : null;
   const liveSearch = dataset === "korea" && kipris?.configured === true;
   const aiReady = aiConfigured !== false;
   // 탐색 결과와 내 위치는 세션에 저장된 값에서 계산한다
@@ -520,7 +518,7 @@ export default function TelosApp() {
                     dataset={dataset}
                     score={resultScores?.get(selected.id)}
                     onClose={() => setSelectedId(null)}
-                    comparison={comparisons.get(selected.id)}
+                    comparison={sessionComparisons?.get(selected.id)}
                     canCompare={detailIdea.length >= 5 && aiReady}
                     aiReady={aiReady}
                     idea={detailIdea}

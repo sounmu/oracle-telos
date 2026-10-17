@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { makeSession, parseSessions, sortSessions, STEP_LABELS } from "../src/lib/sessions";
+import { describeSession, makeSession, parseSessions, sortSessions, STEP_LABELS } from "../src/lib/sessions";
 
 test("네 단계이고 입력 문장은 아이템 칸으로 들어간다", () => {
   assert.deepEqual([...STEP_LABELS], ["입력", "탐색", "검증", "요약"]);
@@ -41,4 +41,12 @@ test("results·location이 없던 예전 데이터는 null로 읽힌다", () => 
   assert.equal(read.id, "old");
   assert.equal(read.results, null);
   assert.equal(read.location, null);
+});
+
+test("조회·위치·비교에 쓰는 기술 설명은 템플릿 네 칸을 합친 것이다", () => {
+  const s = makeSession("PLA 필러", 1, "d");
+  assert.equal(describeSession(s), "PLA 필러");
+  s.tpl = { item: "PLA 필러", tech: "망상구조 미세입자 제조", target: "환자", risk: "" };
+  assert.equal(describeSession(s), "PLA 필러 망상구조 미세입자 제조 환자");
+  assert.equal(describeSession({ idea: "  원문  ", tpl: null }), "원문");
 });

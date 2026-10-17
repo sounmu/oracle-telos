@@ -1,4 +1,5 @@
 // 클라이언트 전용. 세션 = 사업 아이템 하나. 입력 → 탐색 → 검증 → 요약 4단계로 진행한다.
+import { queryOf } from "./explore";
 
 export const SESSION_KEY = "telos.sessions.v2";
 export const STEP_LABELS = ["입력", "탐색", "검증", "요약"] as const;
@@ -47,6 +48,11 @@ export function makeSession(text: string, now: number, id: string): Session {
     results: null,
     location: null,
   };
+}
+
+/** 조회·위치 계산·비교에 똑같이 쓰는 기술 설명. 템플릿이 확정됐으면 네 칸을 합치고, 아니면 입력 원문 */
+export function describeSession(session: Pick<Session, "idea" | "tpl">): string {
+  return session.tpl ? queryOf(session.tpl) : session.idea.trim();
 }
 
 /** 최신 세션이 위로 오게 정렬 */
