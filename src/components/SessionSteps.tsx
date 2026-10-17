@@ -87,7 +87,7 @@ export function InputStep({ session, onConfirm }: { session: Session; onConfirm:
         <Field id="tpl-tech" label="핵심 기술" value={draft.tech} onChange={set("tech")} placeholder="예: 미세입자 제조공법" />
         <Field id="tpl-target" label="대상 고객" value={draft.target} onChange={set("target")} placeholder="예: 성형외과, 피부과" />
         <Field id="tpl-risk" label="우려하는 분쟁 분야" value={draft.risk} onChange={set("risk")} placeholder="예: 제조공법 특허" />
-        <p className="mt-3 text-[12px] text-muted">빈 칸은 조회에서 무시합니다. 이 값으로 탐색 단계에서 DB를 조회합니다.</p>
+        <p className="mt-3 text-[12px] text-muted">네 칸을 모두 이어 붙여 탐색 단계에서 DB를 조회합니다. 빈 칸은 건너뜁니다.</p>
       </div>
       <div className="flex justify-end">
         <button type="button" disabled={!ready} onClick={() => onConfirm({ ...draft, item: draft.item.trim() })} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40">

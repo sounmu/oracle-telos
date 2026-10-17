@@ -10,8 +10,9 @@ test("입력 문장은 아이템과 핵심 기술, 대상, 분야 칸으로 나�
   assert.ok(t.tech.length > 0);
 });
 
-test("조회 검색어는 빈 칸을 건너뛴다", () => {
-  assert.equal(queryOf({ item: "미세입자", tech: "", target: "", risk: "" }), "미세입자");
+test("조회 검색어는 네 칸을 모두 쓰고 빈 칸은 건너뛴다", () => {
+  assert.equal(queryOf({ item: "PLA 필러", tech: "냉동 분사", target: "환자", risk: "제조공법" }), "PLA 필러 냉동 분사 환자 제조공법");
+  assert.equal(queryOf({ item: "미세입자", tech: "  ", target: "", risk: "제조공법" }), "미세입자 제조공법");
 });
 
 test("추세는 출원 연도별로 센다", () => {

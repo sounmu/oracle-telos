@@ -23,3 +23,22 @@ test("저장된 값은 검증해서 읽고 깨진 항목은 버린다", () => {
   assert.deepEqual(parseSessions(raw).map((s) => s.id), ["ok"]);
   assert.deepEqual(parseSessions("not json"), []);
 });
+
+test("탐색 결과와 위치는 저장했다가 다시 읽어도 그대로다", () => {
+  const s = {
+    ...makeSession("아이템", 1, "r"),
+    results: { ids: ["p1", "p2"], scores: { p1: 0.7, p2: 0.4 }, query: "아이템 기술", at: 9 },
+    location: { x: 1.5, y: -2 },
+  };
+  assert.deepEqual(parseSessions(JSON.stringify([s])), [s]);
+});
+
+test("results·location이 없던 예전 데이터는 null로 읽힌다", () => {
+  const old: Record<string, unknown> = { ...makeSession("예전 아이템", 1, "old") };
+  delete old.results;
+  delete old.location;
+  const [read] = parseSessions(JSON.stringify([old]));
+  assert.equal(read.id, "old");
+  assert.equal(read.results, null);
+  assert.equal(read.location, null);
+});

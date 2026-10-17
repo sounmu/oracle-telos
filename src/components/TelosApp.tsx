@@ -25,7 +25,6 @@ import {
 } from "@/lib/types";
 
 type LoadState = "loading" | "ready" | "error";
-type Location = { x: number; y: number; neighbors: { id: string; title: string; x: number; y: number; score: number }[] };
 
 // 지금 데이터셋은 한국 KIPRIS 하나다. 시연 모드에서는 시연 마스터(sample 경로)를 쓴다
 const DATASET_LABEL = {
@@ -61,13 +60,11 @@ export default function TelosApp() {
   const [idea, setIdea] = useState("");
   const [visible, setVisible] = useState<Set<Decision>>(() => new Set(DECISIONS));
   const [highlights, setHighlights] = useState<Map<string, number> | null>(null);
-  const [location, setLocation] = useState<Location | null>(null);
-  const [locateError, setLocateError] = useState<string | null>(null);
-  const [locating, setLocating] = useState(false);
-  // 탐색: 템플릿으로 조회한 결과만 지도에 남긴다. 점수는 내 아이템과의 유사도
-  const [results, setResults] = useState<{ ids: string[]; scores: Map<string, number> } | null>(null);
-  const [queryBusy, setQueryBusy] = useState(false);
-  const [queryError, setQueryError] = useState<string | null>(null);
+  // 조회·위치 계산의 진행 상태와 오류는 요청한 세션 id에 묶는다
+  const [locateError, setLocateError] = useState<{ id: string; message: string } | null>(null);
+  const [locatingId, setLocatingId] = useState<string | null>(null);
+  const [queryBusyId, setQueryBusyId] = useState<string | null>(null);
+  const [queryError, setQueryError] = useState<{ id: string; message: string } | null>(null);
   const [riskOn, setRiskOn] = useState(false);
   const [edgesOn, setEdgesOn] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -101,17 +98,11 @@ export default function TelosApp() {
     setActiveId(session.id);
     setIdea(session.idea);
     setSelectedId(null);
-    setLocation(null);
-    setResults(null);
-    setQueryError(null);
   }
   function openSession(id: string) {
     const target = sessions.find((s) => s.id === id);
     setActiveId(id);
     setSelectedId(null);
-    setLocation(null);
-    setResults(null);
-    setQueryError(null);
     if (target) setIdea(target.tpl?.item ?? target.idea);
   }
   function goStep(i: StepIndex) {
@@ -121,16 +112,16 @@ export default function TelosApp() {
   function confirmTemplate(tpl: Template) {
     if (!activeSession) return;
     setIdea(tpl.item);
-    updateSession(activeSession.id, { tpl, name: tpl.item.slice(0, 18), idea: tpl.item, step: 1 });
-    setResults(null);
-    void runQuery(tpl);
+    // 조건이 바뀌므로 이전 결과와 위치는 버린다
+    updateSession(activeSession.id, { tpl, name: tpl.item.slice(0, 18), idea: tpl.item, step: 1, results: null, location: null });
+    void runQuery(activeSession.id, tpl);
   }
 
   /** 템플릿 값으로 DB를 조회한다. 결과가 지도와 리포트의 대상이 된다 */
-  async function runQuery(tpl: Template) {
+  async function runQuery(sessionId: string, tpl: Template) {
     const query = queryOf(tpl);
     if (query.length < 2) return;
-    setQueryBusy(true);
+    setQueryBusyId(sessionId);
     setQueryError(null);
     try {
       const res = await fetch("/api/search", {
@@ -141,21 +132,16 @@ export default function TelosApp() {
       const body = (await res.json().catch(() => null)) as { hits?: SearchHit[]; addedPoints?: PatentPoint[]; error?: string } | null;
       if (!res.ok || !body?.hits) throw new Error(body?.error ?? `HTTP ${res.status}`);
       if (body.addedPoints?.length) handlePointsAdded(body.addedPoints);
-      const scores = new Map(body.hits.map((h) => [h.id, h.score] as const));
-      setResults({ ids: body.hits.map((h) => h.id), scores });
-      if (tpl.item.trim().length >= 5) void runLocate(tpl.item);
+      // 응답을 기다리는 사이 다른 세션으로 옮겨도 요청한 세션에 붙인다
+      const scores = Object.fromEntries(body.hits.map((h) => [h.id, h.score] as const));
+      updateSession(sessionId, { results: { ids: body.hits.map((h) => h.id), scores, query, at: Date.now() } });
+      if (tpl.item.trim().length >= 5) void runLocate(sessionId, tpl.item);
     } catch (err) {
-      setQueryError(err instanceof Error ? err.message : "조회하지 못했습니다.");
+      setQueryError({ id: sessionId, message: err instanceof Error ? err.message : "조회하지 못했습니다." });
     } finally {
-      setQueryBusy(false);
+      setQueryBusyId((cur) => (cur === sessionId ? null : cur));
     }
   }
-
-  // 세션의 아이템이 바뀌면 이전 위치는 버린다
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLocation(null);
-  }, [activeSession?.tpl?.item]);
 
   const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points]);
   const counts = useMemo(() => {
@@ -170,6 +156,14 @@ export default function TelosApp() {
   const detailIdea = comparisonIdea || idea.trim();
   const liveSearch = dataset === "korea" && kipris?.configured === true;
   const aiReady = aiConfigured !== false;
+  // 탐색 결과와 내 위치는 세션에 저장된 값에서 계산한다
+  const results = activeSession?.results ?? null;
+  const location = activeSession?.location ?? null;
+  const queryBusy = activeSession !== null && queryBusyId === activeSession.id;
+  const locating = activeSession !== null && locatingId === activeSession.id;
+  const sessionQueryError = queryError && queryError.id === activeSession?.id ? queryError.message : null;
+  const sessionLocateError = locateError && locateError.id === activeSession?.id ? locateError.message : null;
+  const resultScores = useMemo(() => (results ? new Map(Object.entries(results.scores)) : null), [results]);
   const resultPoints = useMemo(() => {
     if (!results) return [];
     return results.ids.map((id) => byId.get(id)).filter((p): p is PatentPoint => Boolean(p));
@@ -288,16 +282,16 @@ export default function TelosApp() {
     if (id) leftRef.current?.scrollTo({ top: 0 });
   }
 
-  async function runLocate(text: string) {
-    setLocating(true);
+  async function runLocate(sessionId: string, text: string) {
+    setLocatingId(sessionId);
     setLocateError(null);
     try {
       const pos = await locateIdea(text, dataset);
-      setLocation(pos);
+      updateSession(sessionId, { location: { x: pos.x, y: pos.y } });
     } catch (err) {
-      setLocateError(err instanceof Error ? err.message : "위치를 계산하지 못했습니다.");
+      setLocateError({ id: sessionId, message: err instanceof Error ? err.message : "위치를 계산하지 못했습니다." });
     } finally {
-      setLocating(false);
+      setLocatingId((cur) => (cur === sessionId ? null : cur));
     }
   }
 
@@ -320,7 +314,7 @@ export default function TelosApp() {
           points={activeSession ? resultPoints : points}
           insetTop={96}
           visible={visible}
-          highlights={activeSession ? results?.scores ?? null : highlights}
+          highlights={activeSession ? resultScores : highlights}
           selectedId={selectedId}
           focus={focus}
           onSelect={select}
@@ -446,25 +440,25 @@ export default function TelosApp() {
                 <div className="rounded-2xl bg-panel p-4 text-[13px]">
                   <div className="text-[12px] text-muted">조회 조건 (입력 단계의 템플릿)</div>
                   <div className="mt-1 font-semibold">{activeSession.tpl?.item ?? "-"}</div>
-                  <div className="text-muted">핵심 기술: {activeSession.tpl?.tech || "-"} · 대상: {activeSession.tpl?.target || "-"}</div>
+                  <div className="text-muted">핵심 기술: {activeSession.tpl?.tech || "-"} · 대상: {activeSession.tpl?.target || "-"} · 우려 분야: {activeSession.tpl?.risk || "-"}</div>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       disabled={queryBusy || !activeSession.tpl}
-                      onClick={() => activeSession.tpl && void runQuery(activeSession.tpl)}
+                      onClick={() => activeSession.tpl && void runQuery(activeSession.id, activeSession.tpl)}
                       className="min-h-9 rounded-full bg-foreground px-3 font-semibold text-panel disabled:opacity-40"
                     >
                       {queryBusy ? "조회 중…" : results ? "다시 조회" : "조회 실행"}
                     </button>
                     {locating && <span className="text-muted">내 위치 계산 중…</span>}
                   </div>
-                  {queryError && <p role="alert" className="mt-2 text-[#d22030]">{queryError}</p>}
-                  {locateError && <p className="mt-2 text-muted">내 위치: {locateError}</p>}
+                  {sessionQueryError && <p role="alert" className="mt-2 text-[#d22030]">{sessionQueryError}</p>}
+                  {sessionLocateError && <p className="mt-2 text-muted">내 위치: {sessionLocateError}</p>}
                 </div>
                 {results && (
                   <ExploreReport
                     results={resultPoints}
-                    scores={results.scores}
+                    scores={resultScores ?? new Map()}
                     location={location ? { x: location.x, y: location.y } : null}
                     onPick={pick}
                     onRegion={(r) => {
@@ -478,7 +472,7 @@ export default function TelosApp() {
                     key={selected.id}
                     point={selected}
                     dataset={dataset}
-                    score={results?.scores.get(selected.id)}
+                    score={resultScores?.get(selected.id)}
                     onClose={() => setSelectedId(null)}
                     comparison={comparisons.get(selected.id)}
                     canCompare={detailIdea.length >= 5 && aiReady}

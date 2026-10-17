@@ -21,6 +21,17 @@ export interface Session {
   tpl: Template | null;
   step: StepIndex;
   createdAt: number;
+  /** 탐색 조회 결과. 템플릿을 다시 확정하면 비운다. 저장해야 하므로 Map 대신 Record */
+  results: SessionResults | null;
+  /** 지도 위 내 아이템 추정 위치 */
+  location: { x: number; y: number } | null;
+}
+
+export interface SessionResults {
+  ids: string[];
+  scores: Record<string, number>;
+  query: string;
+  at: number;
 }
 
 /** 입력 문장으로 새 세션을 만든다. 템플릿은 문장을 아이템 칸에 넣은 상태로 시작한다 */
@@ -33,6 +44,8 @@ export function makeSession(text: string, now: number, id: string): Session {
     tpl: idea ? { item: idea, tech: "", target: "", risk: "" } : null,
     step: 0,
     createdAt: now,
+    results: null,
+    location: null,
   };
 }
 
@@ -47,7 +60,10 @@ export function parseSessions(raw: string | null): Session[] {
   try {
     const data: unknown = JSON.parse(raw);
     if (!Array.isArray(data)) return [];
-    return data.filter(isSession);
+    // results·location이 없던 예전 데이터는 null로 채워 읽는다
+    return data
+      .map((v: unknown) => (typeof v === "object" && v !== null ? { results: null, location: null, ...v } : v))
+      .filter(isSession);
   } catch {
     return [];
   }
@@ -64,8 +80,30 @@ function isSession(v: unknown): v is Session {
     s.step >= 0 &&
     s.step <= 3 &&
     typeof s.createdAt === "number" &&
-    (s.tpl === null || isTemplate(s.tpl))
+    (s.tpl === null || isTemplate(s.tpl)) &&
+    (s.results === null || isResults(s.results)) &&
+    (s.location === null || isXY(s.location))
   );
+}
+
+function isResults(v: unknown): v is SessionResults {
+  if (typeof v !== "object" || v === null) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    Array.isArray(r.ids) &&
+    r.ids.every((id) => typeof id === "string") &&
+    typeof r.scores === "object" &&
+    r.scores !== null &&
+    Object.values(r.scores).every((n) => typeof n === "number") &&
+    typeof r.query === "string" &&
+    typeof r.at === "number"
+  );
+}
+
+function isXY(v: unknown): v is { x: number; y: number } {
+  if (typeof v !== "object" || v === null) return false;
+  const p = v as Record<string, unknown>;
+  return typeof p.x === "number" && typeof p.y === "number";
 }
 
 function isTemplate(v: unknown): v is Template {

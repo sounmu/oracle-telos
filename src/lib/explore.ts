@@ -32,9 +32,9 @@ export function toTemplate(text: string): TemplateDraft {
   return { item, tech, target, risk };
 }
 
-/** 조회에 쓸 검색어: 아이템, 핵심 기술을 이어 붙인다 (비어 있는 칸은 건너뛴다) */
+/** 조회에 쓸 검색어: 아이템, 핵심 기술, 대상, 우려 분야를 이어 붙인다 (비어 있는 칸은 건너뛴다) */
 export function queryOf(tpl: TemplateDraft): string {
-  return [tpl.item, tpl.tech].map((s) => s.trim()).filter(Boolean).join(" ");
+  return [tpl.item, tpl.tech, tpl.target, tpl.risk].map((s) => s.trim()).filter(Boolean).join(" ");
 }
 
 /** 출원 연도별 개수 (추세) */
