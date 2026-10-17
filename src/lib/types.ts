@@ -22,12 +22,14 @@ export interface PatentFull {
   /** 시연 마스터에서만 쓴다. real=실제 자료, dummy=더미 (화면에서 구분 표시) */
   source?: "real" | "dummy";
   claims?: string[];
+  /** 이 특허가 인용한 특허 id (같은 지도 안에 있는 것만). 시연 마스터에서만 채운다 */
+  cites?: string[];
 }
 
 /** 클라이언트가 받는 가벼운 점 (public/data/sample/embedding.json) */
 export type PatentPoint = Pick<
   PatentFull,
-  "id" | "title" | "decision" | "cpc" | "filed" | "x" | "y" | "source"
+  "id" | "title" | "decision" | "cpc" | "filed" | "x" | "y" | "source" | "cites"
 > & { abstract: string /* 300자 내외 */ };
 
 export interface SearchHit {

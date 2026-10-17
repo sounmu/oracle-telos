@@ -1,9 +1,10 @@
 {
   "model": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
   "dim": 384,
-  "count": 60,
-  "real": 12,
-  "dummy": 48,
+  "count": 506,
+  "real": 96,
+  "dummy": 410,
+  "citations": 509,
   "source": "data/raw/demo (실제 자료 + 더미)",
-  "builtAt": "2026-10-17T03:07:46.700Z"
+  "builtAt": "2026-10-17T03:20:06.794Z"
 }

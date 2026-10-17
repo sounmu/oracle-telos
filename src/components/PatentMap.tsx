@@ -8,7 +8,7 @@ import "d3-transition";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import { caseHits, riskField } from "@/lib/riskField";
-import { sameCpcEdges } from "@/lib/relations";
+import { citationEdges, citationPasses } from "@/lib/relations";
 import type { Decision, PatentPoint } from "@/lib/types";
 
 interface Props {
@@ -194,7 +194,7 @@ export default function PatentMap({
     return riskField(nodes, caseHits(points, ACTIVE_CASES));
   }, [riskOn, nodes, points]);
 
-  const edges = useMemo(() => (edgesOn ? sameCpcEdges(points) : []), [edgesOn, points]);
+  const edges = useMemo(() => (edgesOn ? citationEdges(points) : []), [edgesOn, points]);
 
   const tree = useMemo<Quadtree<Node> | null>(() => {
     if (!nodes.length) return null;
@@ -251,19 +251,24 @@ export default function PatentMap({
       ctx.globalAlpha = 1;
     }
 
-    // 0-1) 관계선: 같은 CPC 하위 분류끼리
+    // 0-1) 인용선: 실제 인용은 실선, 더미가 낀 가짜 인용은 점선. 선택한 특허의 인용은 진하게
     if (edgesOn && nodes.length === points.length) {
-      ctx.lineWidth = 0.6;
-      ctx.strokeStyle = "#4e5968";
-      ctx.globalAlpha = 0.12;
-      ctx.beginPath();
-      for (const [i, j] of edges) {
-        const a = nodes[i], b = nodes[j];
-        if (!visible.has(a.p.decision) || !visible.has(b.p.decision)) continue;
-        ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
-        ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+      // 선택 강조도 실제/가짜에 따라 실선/점선을 유지하고, 숨긴 상태의 점에 닿는 선은 그리지 않는다
+      for (const pass of citationPasses(edges, points, visible, selectedId)) {
+        if (!pass.edges.length) continue;
+        ctx.setLineDash(pass.real ? [] : pass.selected ? [4, 3] : [3, 3]);
+        ctx.lineWidth = pass.selected ? 1.6 : pass.real ? 0.9 : 0.6;
+        ctx.strokeStyle = pass.selected ? "#3182f6" : "#3d4a5c";
+        ctx.globalAlpha = pass.selected ? (pass.real ? 0.85 : 0.6) : pass.real ? 0.42 : 0.16;
+        ctx.beginPath();
+        for (const e of pass.edges) {
+          const a = nodes[e.from], b = nodes[e.to];
+          ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
+          ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
+      ctx.setLineDash([]);
       ctx.globalAlpha = 1;
     }
 
@@ -296,10 +301,6 @@ export default function PatentMap({
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 0.9;
-        ctx.strokeStyle = "#191f28";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
       }
     }
 
