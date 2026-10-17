@@ -27,6 +27,7 @@
 - **데이터: HUPD (Harvard USPTO Patent Dataset)** 2016년 1월 샘플. §4.
 - **한국 데이터:** KIPRIS Plus, 국가법령정보 공동활용, Open DART. Node 런타임 XML 파싱은 `fast-xml-parser`, ZIP 파싱은 `fflate`, 스크립트 환경변수 로딩은 `@next/env`.
 - **한국 색인:** 비공개 파일 기반 MVP (`data/raw/kipris/index.json`), 키워드·벡터 순위 결합. PostgreSQL/pgvector는 아직 도입하지 않았다.
+- **한국 어휘 검색:** `src/lib/korea/bm25.ts`의 BM25(k1=1.2, b=0.75). Node `Intl.Segmenter` 단어 분할 + 한글 2/3글자 토큰, NFKC·소문자 정규화. 형태소 분석기는 아니다. 질의·청크에 같은 토크나이저를 쓰며, 조회 범위에 포함된 청크로 IDF·평균 길이를 계산한다. 청크 객체별 토큰 빈도를 WeakMap으로 캐시하고 BM25 순위와 임베딩 순위를 RRF로 결합한다. 추가 의존성·재임베딩은 필요 없다.
 - **한국 검색은 하이브리드:** 검색할 때 KIPRIS를 키워드로 실시간 조회 → 색인에 없는 특허만 상세 수신(질의당 최대 20건, 에이전트는 2~3회 검색) → 로컬 색인에 캐시 → 임베딩+키워드 재정렬. `pnpm sync:korea`는 기본 지도 시드와 `--reindex` 전체 재배치용이다.
 
 Next.js는 학습 데이터와 다른 부분이 많다. **코드를 쓰기 전에 `node_modules/next/dist/docs/`의 관련 문서를 읽는다** (아래 자동 생성 블록 참고).
@@ -125,6 +126,8 @@ cp .env.example .env      # OPENAI_API_KEY 채우기
 pnpm build:data           # 데이터 파이프라인 (첫 실행 시 모델 ~120MB + 특허 수십 MB 다운로드)
 pnpm sync:korea --help    # 한국 수집·증분 색인·삭제 방법
 pnpm test                 # 합성 출처 응답과 검색/API 회귀 테스트
+pnpm experiment:search --dry-run # 다섯 검색 방식 비교 입력·예상 호출 확인 (호출 없음)
+pnpm experiment:search    # 임베딩/기존 키워드/BM25/최종 하이브리드/기술 비교; OpenAI 호출, KIPRIS 호출 없음
 pnpm dev                  # http://localhost:3000
 pnpm typecheck            # tsc --noEmit
 pnpm lint
@@ -133,6 +136,8 @@ pnpm lint
 배포 메모: `onnxruntime-node`는 동적 `require`로 네이티브 바이너리를 불러와 Next 파일 트레이싱이 놓친다. 그래서 `next.config.ts`의 `outputFileTracingIncludes`에서 직접 넣는다 (Vercel·standalone 공통). Vercel에서는 임베딩 모델을 `/tmp`에 받으므로 콜드 스타트 첫 검색이 느리다.
 
 ## 7. 작업 원칙
+
+발표용 검색 실험은 `scripts/experiments/compare-search-methods.ts`, 설명은 `docs/research/search-comparison-presentation.md`에 있다. 서비스 UI에 검색 모드를 추가하지 않는다. 동일 색인·청크에서 임베딩 단독, 기존 부분 문자열 단독, BM25 단독, 최종 RRF(임베딩+BM25), RRF 상위 후보 기술 요소 재정렬을 비교한다. 기술 재정렬은 공통/전체 요소 비율을 쓰며 확인된 요소가 2개 미만인 후보는 자리를 유지한다. 독립 정답이 없으면 정확도·상관성·우월성을 주장하지 않는다. 한국 색인 스냅샷·원문 인용·실험 결과는 `.cache/experiments/`에만 저장하고 커밋하지 않는다.
 
 1. **끝까지 통하는 흐름 먼저.** 지도 → 점 클릭 → 상세, 아이디어 입력 → 에이전트 응답 → 지도 하이라이트. 이 두 흐름이 깨지면 다른 작업을 멈추고 먼저 고친다.
 2. **데이터 산출물 없이도 앱이 떠야 한다.** `public/data/sample/embedding.json`이 없으면 빈 지도 + "pnpm build:data를 실행하세요" 안내를 보여준다. 크래시 금지.

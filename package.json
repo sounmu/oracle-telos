@@ -12,6 +12,7 @@
     "build:demo": "tsx scripts/build/build-demo.ts",
     "sync:korea": "tsx scripts/build/ingest-kipris.ts",
     "embed:cases": "tsx scripts/build/embed-cases.ts",
+    "experiment:search": "tsx scripts/experiments/compare-search-methods.ts",
     "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
