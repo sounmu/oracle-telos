@@ -37,12 +37,12 @@ const COMPLETE: ClaimCompleteness = { truncated: false, uncovered: [] };
 
 /**
  * 판정 순서는 법리 순서를 따른다. 화면의 PROXIMITY_RULES와 같은 순서여야 한다.
- * 1. 내 설명에 없는 구성이 하나라도 있으면 서늘 — 구성요소 완비 원칙(98후836): 구성이 모두 있어야 권리범위에 속한다.
- *    원문에서 확인한 구성이 하나뿐이어도 그 구성이 없으면 서늘이다.
+ * 1. 내 설명에 없는 구성이 하나라도 있으면 빠진 구성 있음 — 구성요소 완비 원칙(98후836): 구성이 모두 있어야 권리범위에 속한다.
+ *    원문에서 확인한 구성이 하나뿐이어도 그 구성이 없으면 빠진 구성 있음이다.
  * 2. 판단 근거가 부족하면 자료 부족 — 구성이 2개 미만, 청구항 1이 잘림, 대비표에 담기지 않은 원문이 남음, 대응 미확인 구성.
  *    1번을 배제할 수 없으므로 단정하지 않는다.
- * 3. 다른 수단으로 바뀐 구성이 있으면 따뜻 — 균등 여부를 따로 따져야 하는 경우(2017후424).
- * 4. 모든 구성이 같으면 뜨거움.
+ * 3. 다른 수단으로 바뀐 구성이 있으면 다른 수단 포함 — 균등 여부를 따로 따져야 하는 경우(2017후424).
+ * 4. 모든 구성이 같으면 모두 대응.
  * 수치 구간·가중치는 쓰지 않는다.
  */
 export function proximityOf(chart: readonly ClaimElementRow[], input: ProximityInput = {}): Proximity {
@@ -117,9 +117,9 @@ export function coverageOf(proximity: Proximity): { matched: number; total: numb
 }
 
 export const PROXIMITY_LABELS: Record<ProximityLevel, { title: string; message: string }> = {
-  cool: { title: "서늘", message: "청구항 구성 중 내 설명에 없는 것이 있어요" },
-  warm: { title: "따뜻", message: "구성은 모두 대응되지만 다른 수단이 섞여 있어요" },
-  hot: { title: "뜨거움", message: "청구항 구성이 모두 내 설명에 있어요. 자세히 비교해 봐요" },
+  cool: { title: "빠진 구성 있음", message: "청구항 구성 중 내 설명에 없는 것이 있어요" },
+  warm: { title: "다른 수단 포함", message: "구성은 모두 대응되지만 다른 수단이 섞여 있어요" },
+  hot: { title: "모두 대응", message: "청구항 구성이 모두 내 설명에 있어요. 자세히 비교해 봐요" },
   insufficient: { title: "자료 부족", message: "판단할 근거가 부족해요" },
 };
 

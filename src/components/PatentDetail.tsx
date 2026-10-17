@@ -253,7 +253,7 @@ export default function PatentDetail({
               type="button"
               aria-expanded={showClaims}
               onClick={() => setShowClaims((v) => !v)}
-              className="flex min-h-12 w-full items-center justify-between rounded-2xl bg-background px-4 text-[15px] font-semibold"
+              className="flex min-h-12 w-full items-center justify-between rounded-2xl bg-background px-4 text-[15px] font-semibold transition-colors enabled:hover:bg-border"
             >
               {showClaims ? `청구항 ${claims.length}건 접기` : `청구항 ${claims.length}건 보기`}
               <svg viewBox="0 0 20 20" className={`h-5 w-5 text-muted transition ${showClaims ? "rotate-180" : ""}`} aria-hidden="true">

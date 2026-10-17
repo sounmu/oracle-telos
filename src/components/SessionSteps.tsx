@@ -57,7 +57,7 @@ export function NewChatBar({ onSubmit }: { onSubmit: (text: string) => void }) {
         aria-label="새 대화 입력"
         className="min-h-10 min-w-0 flex-1 rounded-xl bg-background px-3 text-[15px] text-foreground placeholder:text-muted"
       />
-      <button type="submit" disabled={text.trim().length < 5} className="min-h-10 shrink-0 rounded-xl bg-foreground px-4 font-semibold text-panel disabled:opacity-40">
+      <button type="submit" disabled={text.trim().length < 5} className="min-h-10 shrink-0 rounded-xl bg-foreground px-4 font-semibold text-panel disabled:opacity-40 transition-colors enabled:hover:bg-foreground/80">
         시작
       </button>
     </form>
@@ -76,7 +76,7 @@ export function InputStep({ session, onConfirm }: { session: Session; onConfirm:
         <label className="block text-[13px] font-semibold text-muted" htmlFor="idea-text">검색하고 싶은 특허 아이디어</label>
         <textarea id="idea-text" value={text} onChange={(e) => setText(e.target.value)} rows={3} className="mt-1 w-full rounded-xl bg-background p-3 text-[15px]" />
         <div className="mt-3 flex justify-end">
-          <button type="button" disabled={text.trim().length < 5} onClick={() => setDraft({ ...toTemplate(text), item: text.trim() })} className="min-h-9 rounded-xl bg-background px-4 text-[13px] font-semibold text-ink-2 disabled:opacity-40">
+          <button type="button" disabled={text.trim().length < 5} onClick={() => setDraft({ ...toTemplate(text), item: text.trim() })} className="min-h-9 rounded-xl bg-background px-4 text-[13px] font-semibold text-ink-2 disabled:opacity-40 transition-colors enabled:hover:bg-border">
             템플릿으로 바꾸기
           </button>
         </div>
@@ -90,7 +90,7 @@ export function InputStep({ session, onConfirm }: { session: Session; onConfirm:
         <p className="mt-3 text-[12px] text-muted">네 칸을 모두 이어 붙여 탐색 단계에서 DB를 조회합니다. 빈 칸은 건너뜁니다.</p>
       </div>
       <div className="flex justify-end">
-        <button type="button" disabled={!ready} onClick={() => onConfirm({ ...draft, item: draft.item.trim() })} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40">
+        <button type="button" disabled={!ready} onClick={() => onConfirm({ ...draft, item: draft.item.trim() })} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40 transition-colors enabled:hover:bg-foreground/80">
           탐색으로 →
         </button>
       </div>
@@ -140,7 +140,7 @@ export function ReportPanel({
     <article className="report mx-auto max-w-2xl space-y-4 rounded-2xl bg-panel p-6 text-[14px] leading-relaxed">
       <div className="flex items-center justify-between gap-3 noprint">
         <h2 className="text-[17px] font-bold">사업 아이템 리포트</h2>
-        <button type="button" onClick={() => window.print()} className="min-h-9 rounded-xl bg-background px-3 font-semibold">인쇄 / PDF 저장</button>
+        <button type="button" onClick={() => window.print()} className="min-h-9 rounded-xl bg-background px-3 font-semibold transition-colors enabled:hover:bg-border">인쇄 / PDF 저장</button>
       </div>
       <section>
         <h3 className="font-bold">① 입력</h3>
