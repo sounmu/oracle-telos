@@ -208,6 +208,19 @@ test("uncovered claim text ignores preamble, connectives and the closing subject
     ["각각의 상기 전극부(110)에 연결된 펌프"],
   );
   assert.deepEqual(uncoveredClaimText(`1. 복수의 ${ELECTRODE}; 및 제 1 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title), []);
+  // 단위가 붙은 수치·범위는 짧아도 미검토 조건으로 남긴다. 순번과 도면 부호는 수치 조건이 아니다.
+  const power = "전압을 상기 전극부에 공급하는 전원부";
+  assert.deepEqual(uncoveredClaimText(`1. ${ELECTRODE}; 5V의 ${power}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, power, CONTROLLER], title), ["5V의"]);
+  assert.deepEqual(uncoveredClaimText(`1. ${ELECTRODE}; 5V의 ${power}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, `5V의 ${power}`, CONTROLLER], title), []);
+  assert.deepEqual(uncoveredClaimText(`1. 1~5mm 두께의 전극 패드; 및 ${CONTROLLER}를 포함하는 기기.`, ["두께의 전극 패드", CONTROLLER], title), ["1~5mm"]);
+  assert.deepEqual(uncoveredClaimText(`1. 40℃ 이상에서 출력을 멈추는 제어부; 및 ${ELECTRODE}를 포함하는 기기.`, ["출력을 멈추는 제어부", ELECTRODE], title), ["40°C 이상에서"]);
+  assert.deepEqual(uncoveredClaimText(`1. 10% 이상의 농도로 약물을 담는 저장부; 및 ${ELECTRODE}를 포함하는 기기.`, ["농도로 약물을 담는 저장부", ELECTRODE], title), ["10% 이상의"]);
+  assert.deepEqual(uncoveredClaimText(`1. 2개의 ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title), ["2개의"]);
+  assert.deepEqual(
+    uncoveredClaimText(`1. 복수의 ${ELECTRODE}; 각각의 상기 전극부(110)에 연결된 펌프(120); 및 제 1 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, "상기 전극부(110)에 연결된 펌프(120)", CONTROLLER], title),
+    [],
+  );
+  assert.deepEqual(uncoveredClaimText(`1. 제1 ${ELECTRODE}; 제 2 전극부; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, "제 2 전극부", CONTROLLER], title), []);
   // "포함하되, 상기 …" 뒤의 한정은 종결 주어가 아니라 구성이다.
   const wherein = uncoveredClaimText(
     `1. ${ELECTRODE}; 및 ${CONTROLLER}를 포함하되, 상기 제어부는 피부 온도가 40도를 넘으면 출력을 차단하는 피부 미용 장치.`,
@@ -215,6 +228,29 @@ test("uncovered claim text ignores preamble, connectives and the closing subject
   );
   assert.equal(wherein.length, 1);
   assert.match(wherein[0], /40도를 넘으면 출력을 차단/);
+});
+
+test("a claim element quoted without its numeric limit is not counted as fully present", () => {
+  const power = "전압을 상기 전극부에 공급하는 전원부";
+  const doc = withFirstClaim(`1. ${ELECTRODE}; 5V의 ${power}; 및 ${CONTROLLER}를 포함하는 기기.`);
+  const twelveVolt = `${idea}. 12V 전원부가 전극부에 전압을 공급한다`;
+  // 모델이 "5V의"를 빼고 인용하고 내 설명의 12V 전원부를 '같음'으로 돌려준 경우
+  const dropped = finalizeComparison(
+    chartDraft([electrodeRow, { element: power, status: "present", mine: "12V 전원부", note: "전원부 있음" }, controllerRow]),
+    elements, doc, twelveVolt,
+  );
+  assert.deepEqual(dropped.claimChart.map((r) => r.status), ["present", "present", "present"]);
+  assert.deepEqual(dropped.proximity.completeness.uncovered, ["5V의"]);
+  assert.equal(dropped.proximity.level, "insufficient");
+  assert.match(dropped.proximity.reason, /5V/);
+  assert.equal(coverageOf(dropped.proximity), null);
+
+  // 수치까지 인용하고 다른 수단으로 판정하면 따뜻이다.
+  const kept = finalizeComparison(
+    chartDraft([electrodeRow, { element: `5V의 ${power}`, status: "modified", mine: "12V 전원부", note: "전압이 달라요" }, controllerRow]),
+    elements, doc, twelveVolt,
+  );
+  assert.equal(kept.proximity.level, "warm");
 });
 
 test("duplicate claim rows collapse to one element and the cautious status wins", () => {

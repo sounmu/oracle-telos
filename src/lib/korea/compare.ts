@@ -83,8 +83,19 @@ const PREAMBLE = /^\s*(?:\d+\s*\.\s*)?(?:[^;,]*?(?:에\s*있어서|에\s*관한\
 /** "…를 포함하는 X."처럼 마지막 구성 뒤에 붙는 종결 주어. 쉼표·세미콜론으로 이어지는 추가 한정이 없을 때만 */
 const CLOSING_SUBJECT = /^(?:[을를이가은는]|으로|로)?\s*(?:것을\s*)?(?:특징으로\s*하는|포함하는|포함하여\s*(?:구성되는|이루어지는|된)|구비하는|구성되는|이루어지는|이루어진)\s*[^;,]*$/u;
 
+/**
+ * 단위가 붙은 수치나 범위("5V", "40℃", "1~5mm", "10% 이상", "2개"). 순번("제1")과 도면 부호("(110)")는 제외.
+ * 모델이 숫자를 빼고 구성을 인용하면 미검토 수치 조건이 남으므로 길이와 무관하게 누락으로 본다.
+ */
+const NUMERIC_CONDITION =
+  /(?<!제\s?)\d+(?:[.,]\d+)?\s*(?:~|∼|－|-|내지|이상|이하|초과|미만|배|개|회|도|%|℃|°|㎜|㎝|㎞|㎎|㎏|㎖|㎕|Ω|[a-zA-Zµμ]+)/u;
+
 function substantive(segment: string): string {
   return comparable(segment).replace(CONNECTIVE_PATTERN, "");
+}
+
+function isUncovered(segment: string): boolean {
+  return NUMERIC_CONDITION.test(segment) || substantive(segment).length >= MIN_UNCOVERED_CHARS;
 }
 
 /** 화면용: 앞뒤의 문장부호와 "및·또는"을 떼어 낸다 */
@@ -96,7 +107,7 @@ function tidy(segment: string): string {
  * 청구항 1 원문에서 대비표의 구성 문구와 발명의 명칭을 지운 뒤 남는 문구.
  * 첫 구성 앞에서는 청구항 번호와 "…에 있어서," 꼴 전제 문구만 지우고(그 뒤에 남는 구성은 누락으로 본다),
  * "…를 포함하는 X." 꼴의 종결 주어는 구성으로 세지 않는다.
- * 연결 문구를 빼고도 MIN_UNCOVERED_CHARS 이상 남으면 모델이 빠뜨린 구성일 수 있어 돌려준다(전체 대응 판정을 막는 데 쓴다).
+ * 연결 문구를 빼고도 MIN_UNCOVERED_CHARS 이상 남거나 단위가 붙은 수치·범위가 있으면 모델이 빠뜨린 구성일 수 있어 돌려준다(전체 대응 판정을 막는 데 쓴다).
  */
 export function uncoveredClaimText(claim: string, elements: readonly string[], title: string): string[] {
   const MARK = "\u0000";
@@ -113,7 +124,7 @@ export function uncoveredClaimText(claim: string, elements: readonly string[], t
   const last = segments[segments.length - 1].replace(/[.。]\s*$/u, "").trim();
   if (CLOSING_SUBJECT.test(last)) segments.pop();
   return segments
-    .filter((segment) => substantive(segment).length >= MIN_UNCOVERED_CHARS)
+    .filter(isUncovered)
     .slice(0, MAX_UNCOVERED)
     .map((segment) => truncate(tidy(segment), 80));
 }
