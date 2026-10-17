@@ -6,6 +6,7 @@ import { denseRegions, similarityText, toTemplate, yearTrend, type DenseRegion }
 import { estimatePosition, linkedCases, type Neighbor } from "@/lib/phaseFeatures";
 import { DECISION_LABELS } from "@/lib/colors";
 import { STEP_LABELS, type Session, type StepIndex, type Template } from "@/lib/sessions";
+import { demoTemplate } from "@/lib/demoSessions";
 import type { PatentDataset, PatentPoint } from "@/lib/types";
 
 /** 4단계 스텝퍼. 지금까지 도달한 단계만 눌러서 갈 수 있다 */
@@ -76,7 +77,7 @@ export function InputStep({ session, onConfirm }: { session: Session; onConfirm:
         <label className="block text-[13px] font-semibold text-muted" htmlFor="idea-text">검색하고 싶은 특허 아이디어</label>
         <textarea id="idea-text" value={text} onChange={(e) => setText(e.target.value)} rows={3} className="mt-1 w-full rounded-xl bg-background p-3 text-[15px]" />
         <div className="mt-3 flex justify-end">
-          <button type="button" disabled={text.trim().length < 5} onClick={() => setDraft({ ...toTemplate(text), item: text.trim() })} className="min-h-9 rounded-xl bg-background px-4 text-[13px] font-semibold text-ink-2 disabled:opacity-40 transition-colors enabled:hover:bg-border">
+          <button type="button" disabled={text.trim().length < 5} onClick={() => setDraft(demoTemplate(text) ?? { ...toTemplate(text), item: text.trim() })} className="min-h-9 rounded-xl bg-background px-4 text-[13px] font-semibold text-ink-2 disabled:opacity-40 transition-colors enabled:hover:bg-border">
             템플릿으로 바꾸기
           </button>
         </div>

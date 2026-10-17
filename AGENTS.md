@@ -64,6 +64,8 @@ src/
     agent.ts                ← OpenAI 도구 정의 + 시스템 프롬프트 + runPatentAgent(), planPatentSearch(), comparePatent()
     types.ts                ← Patent, PatentPoint, AgentEvent 등 공용 타입
     colors.ts               ← 결정별 색/라벨 (클라이언트·서버 공용)
+    sessions.ts             ← 세션 타입·localStorage 저장/검증 (클라이언트 전용)
+    demoSessions.ts         ← 발표 시연용 세션 3개. 페이지 진입마다 입력 단계로 다시 심고 '템플릿으로 바꾸기'에 미리 정한 값을 준다
     proximity.ts            ← 기술 근접도 단계 규칙·근거 판례·문구·색 (클라이언트·서버 공용)
     korea/                  ← 수집기, XML 경계, 스키마, 버전 색인·검색 (서버 전용)
       search.ts             ← searchKoreanPatents: 검색어 묶음 → KIPRIS 후보 → 제목·초록 선별 → 상위 상세 → 색인 캐시 → 재정렬

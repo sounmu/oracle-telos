@@ -11,6 +11,7 @@ import { formatDate, readErrorMessage } from "./ResearchReferences";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { linkedCases } from "@/lib/phaseFeatures";
 import { describeSession, loadSessions, makeSession, saveSessions, sortSessions, type Session, type StepIndex, type Template } from "@/lib/sessions";
+import { seedDemoSessions } from "@/lib/demoSessions";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import {
   DECISIONS,
@@ -78,13 +79,14 @@ export default function TelosApp() {
   const leftRef = useRef<HTMLDivElement>(null);
   const homeDetailRef = useRef<HTMLDivElement>(null);
 
-  // 세션: 사업 아이템 하나. 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다
+  // 세션: 사업 아이템 하나. 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다.
+  // 시연 세션 3개는 읽을 때마다 입력 단계 상태로 다시 심는다
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sessionsReady, setSessionsReady] = useState(false);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSessions(loadSessions());
+    setSessions(seedDemoSessions(loadSessions()));
     setSessionsReady(true);
   }, []);
   useEffect(() => {
@@ -117,7 +119,9 @@ export default function TelosApp() {
   function confirmTemplate(tpl: Template) {
     if (!activeSession) return;
     // 조건이 바뀌므로 이전 결과와 위치는 버린다
-    updateSession(activeSession.id, { tpl, name: tpl.item.slice(0, 18), idea: tpl.item, step: 1, results: null, location: null });
+    // 이름은 아이템 문장이 바뀌었을 때만 새로 짓는다 (시연 세션의 이름을 유지)
+    const name = tpl.item === activeSession.idea ? activeSession.name : tpl.item.slice(0, 18);
+    updateSession(activeSession.id, { tpl, name, idea: tpl.item, step: 1, results: null, location: null });
     void runQuery(activeSession.id, tpl);
   }
 
