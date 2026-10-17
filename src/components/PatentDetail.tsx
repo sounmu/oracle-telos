@@ -132,7 +132,7 @@ export default function PatentDetail({
 
   async function copySummary() {
     const lines = [
-      `[Telos 상담용 요약] ${new Date().toLocaleDateString("ko-KR")}`,
+      `[PatenTrace 상담용 요약] ${new Date().toLocaleDateString("ko-KR")}`,
       `내 기술: ${idea || "(입력 없음)"}`,
       `비교 특허: ${title} (${point.id.startsWith("kipris:") ? `출원번호 ${point.id.slice(7)}` : `#${point.id}`}, ${DECISION_LABELS[decision]})`,
     ];

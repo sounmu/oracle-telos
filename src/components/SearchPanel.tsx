@@ -845,7 +845,7 @@ export default function SearchPanel({
       )}
 
       {idle && (
-        <section aria-label="Telos 사용법" className="rounded-3xl bg-panel px-5 py-2 md:px-6">
+        <section aria-label="PatenTrace 사용법" className="rounded-3xl bg-panel px-5 py-2 md:px-6">
           {disabled && (
             <p className="border-b border-background py-4 text-[15px] text-foreground">
               지도 데이터가 준비되면 찾을&nbsp;수&nbsp;있어요. 위에서 데이터셋을 바꿀&nbsp;수&nbsp;있어요.
