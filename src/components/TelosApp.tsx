@@ -11,6 +11,7 @@ import { formatDate, readErrorMessage } from "./ResearchReferences";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { linkedCases } from "@/lib/phaseFeatures";
 import { describeSession, loadSessions, makeSession, saveSessions, sortSessions, type Session, type StepIndex, type Template } from "@/lib/sessions";
+import { seedDemoSessions } from "@/lib/demoSessions";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import {
   DECISIONS,
@@ -78,13 +79,14 @@ export default function TelosApp() {
   const leftRef = useRef<HTMLDivElement>(null);
   const homeDetailRef = useRef<HTMLDivElement>(null);
 
-  // 세션: 사업 아이템 하나. 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다
+  // 세션: 사업 아이템 하나. 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다.
+  // 시연 세션 3개는 읽을 때마다 입력 단계 상태로 다시 심는다
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sessionsReady, setSessionsReady] = useState(false);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSessions(loadSessions());
+    setSessions(seedDemoSessions(loadSessions()));
     setSessionsReady(true);
   }, []);
   useEffect(() => {
