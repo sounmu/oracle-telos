@@ -2273,6 +2273,7 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
 },
 {
   "id": "samsung-boe-oled",
+  "source": "real",
   "kind": "tech",
   "title": "OLED 특허·영업비밀 분쟁 (ITC 337-TA-1351·1378)",
   "plaintiff": "삼성디스플레이",
@@ -2289,7 +2290,10 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
     "영업비밀",
     "display",
     "pixel",
-    "trade secret"
+    "trade secret",
+    "유기 발광",
+    "화소 배열",
+    "서브 화소"
   ],
   "relation": "전 직원 이직",
   "procedures": [
@@ -2440,6 +2444,7 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
 },
 {
   "id": "lgenergy-sunwoda-separator",
+  "source": "real",
   "kind": "tech",
   "title": "배터리 분리막·전극조립체 특허 침해소송 (LG에너지솔루션 공동보유 vs 신왕다, 뮌헨)",
   "plaintiff": "Tulip Innovation (LG에너지솔루션·파나소닉 특허 라이선스 대리인)",
@@ -2455,7 +2460,9 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
     "리튬이온",
     "배터리",
     "battery",
-    "electrode assembly"
+    "electrode assembly",
+    "무기물 입자",
+    "다공성"
   ],
   "relation": "경쟁사 간 분쟁",
   "procedures": [
@@ -2488,7 +2495,8 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
     "patents": [
       "EP 1 829 139 B1",
       "EP 2 528 141 B1",
-      "EP 2 378 595 B1"
+      "EP 2 378 595 B1",
+      "KR 10-0775310 (EP 1 829 139와 같은 계열, 국내 원천 특허)"
     ],
     "cases": []
   },
