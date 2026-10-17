@@ -1,0 +1,6822 @@
+[
+  {
+    "id": "GEN-0001",
+    "publication": "",
+    "title": "PLA 미세입자 필러 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2019-08-14",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "REAL-2022-0072130"
+    ]
+  },
+  {
+    "id": "GEN-0002",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 방법",
+    "decision": "PENDING",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2022-12-04",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0001"
+    ]
+  },
+  {
+    "id": "GEN-0003",
+    "publication": "",
+    "title": "동결건조 필러 분말 장치",
+    "decision": "ACCEPTED",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2020-03-23",
+    "applicant": "(더미)",
+    "abstract": "동결건조 필러 분말에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "동결건조 필러 분말에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0001"
+    ]
+  },
+  {
+    "id": "GEN-0004",
+    "publication": "",
+    "title": "PLA 미세입자 필러 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2015-04-14",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": []
+  },
+  {
+    "id": "GEN-0005",
+    "publication": "",
+    "title": "히알루론산 복합 필러 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2022-03-03",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "히알루론산 복합 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": []
+  },
+  {
+    "id": "GEN-0006",
+    "publication": "",
+    "title": "동결건조 필러 분말 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2021-04-05",
+    "applicant": "(더미)",
+    "abstract": "동결건조 필러 분말에서 다공성 표면을 만드는 상분리 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "동결건조 필러 분말에서 다공성 표면을 만드는 상분리 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0003",
+      "GEN-0001",
+      "REAL-2022-0072130"
+    ]
+  },
+  {
+    "id": "GEN-0007",
+    "publication": "",
+    "title": "PLLA 주사제 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2017-12-27",
+    "applicant": "(더미)",
+    "abstract": "PLLA 주사제에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "PLLA 주사제에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0004"
+    ]
+  },
+  {
+    "id": "GEN-0008",
+    "publication": "",
+    "title": "PLA 미세입자 필러 방법",
+    "decision": "PENDING",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2013-02-15",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLA 미세입자 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": []
+  },
+  {
+    "id": "GEN-0009",
+    "publication": "",
+    "title": "히알루론산 복합 필러 구조",
+    "decision": "PENDING",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2021-09-19",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "히알루론산 복합 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0008"
+    ]
+  },
+  {
+    "id": "GEN-0010",
+    "publication": "",
+    "title": "PLLA 주사제 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2013-12-26",
+    "applicant": "(더미)",
+    "abstract": "PLLA 주사제에서 가교도를 조절하는 혼합 공정. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "PLLA 주사제에서 가교도를 조절하는 혼합 공정. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0008"
+    ]
+  },
+  {
+    "id": "GEN-0011",
+    "publication": "",
+    "title": "히알루론산 복합 필러 방법",
+    "decision": "UNKNOWN",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2025-04-12",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "히알루론산 복합 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "REAL-1725279"
+    ]
+  },
+  {
+    "id": "GEN-0012",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2008-10-13",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": []
+  },
+  {
+    "id": "GEN-0013",
+    "publication": "",
+    "title": "히알루론산 복합 필러 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2021-10-02",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "히알루론산 복합 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0010",
+      "GEN-0008",
+      "REAL-1725279"
+    ]
+  },
+  {
+    "id": "GEN-0014",
+    "publication": "",
+    "title": "PLA 미세입자 필러 시스템",
+    "decision": "PENDING",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2013-02-23",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "firstClaim": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0008",
+      "GEN-0012"
+    ]
+  },
+  {
+    "id": "GEN-0015",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 구조",
+    "decision": "REJECTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2024-06-08",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0005",
+      "GEN-0002",
+      "GEN-0006",
+      "REAL-1481441"
+    ]
+  },
+  {
+    "id": "GEN-0016",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 시스템",
+    "decision": "PENDING",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2013-03-07",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0014",
+      "GEN-0008"
+    ]
+  },
+  {
+    "id": "GEN-0017",
+    "publication": "",
+    "title": "PLA 미세입자 필러 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2013-04-19",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 멸균 후 응집을 막는 분산 처리. 이를 통해 콜라겐 생성을 촉진한다.",
+    "firstClaim": "PLA 미세입자 필러에서 멸균 후 응집을 막는 분산 처리. 이를 통해 콜라겐 생성을 촉진한다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "REAL-2022-0072130"
+    ]
+  },
+  {
+    "id": "GEN-0018",
+    "publication": "",
+    "title": "PLA 미세입자 필러 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2016-11-20",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0017"
+    ]
+  },
+  {
+    "id": "GEN-0019",
+    "publication": "",
+    "title": "PLLA 주사제 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2024-04-27",
+    "applicant": "(더미)",
+    "abstract": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0006"
+    ]
+  },
+  {
+    "id": "GEN-0020",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 구조",
+    "decision": "PENDING",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2012-11-25",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0012"
+    ]
+  },
+  {
+    "id": "GEN-0021",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2015-01-28",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0010",
+      "GEN-0014"
+    ]
+  },
+  {
+    "id": "GEN-0022",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 조성물",
+    "decision": "REJECTED",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2021-03-23",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0014"
+    ]
+  },
+  {
+    "id": "GEN-0023",
+    "publication": "",
+    "title": "히알루론산 복합 필러 방법",
+    "decision": "REJECTED",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2024-04-12",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "firstClaim": "히알루론산 복합 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 콜라겐 생성을 촉진한다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0007",
+      "GEN-0017",
+      "GEN-0008"
+    ]
+  },
+  {
+    "id": "GEN-0024",
+    "publication": "",
+    "title": "PLA 미세입자 필러 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2014-12-15",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "PLA 미세입자 필러에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0016"
+    ]
+  },
+  {
+    "id": "GEN-0025",
+    "publication": "",
+    "title": "PCL 미립구 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2025-02-20",
+    "applicant": "(더미)",
+    "abstract": "PCL 미립구에서 가교도를 조절하는 혼합 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PCL 미립구에서 가교도를 조절하는 혼합 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0015",
+      "REAL-2022-0072130"
+    ]
+  },
+  {
+    "id": "GEN-0026",
+    "publication": "",
+    "title": "PLA 미세입자 필러 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2008-11-23",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "PLA 미세입자 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0012"
+    ]
+  },
+  {
+    "id": "GEN-0027",
+    "publication": "",
+    "title": "PLLA 주사제 장치",
+    "decision": "UNKNOWN",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2012-07-21",
+    "applicant": "(더미)",
+    "abstract": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "REAL-2013-0006379"
+    ]
+  },
+  {
+    "id": "GEN-0028",
+    "publication": "",
+    "title": "PCL 미립구 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2024-12-25",
+    "applicant": "(더미)",
+    "abstract": "PCL 미립구에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "PCL 미립구에서 가교도를 조절하는 혼합 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "REAL-1725279"
+    ]
+  },
+  {
+    "id": "GEN-0029",
+    "publication": "",
+    "title": "히알루론산 복합 필러 방법",
+    "decision": "ACCEPTED",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2009-05-15",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "히알루론산 복합 필러에서 가교도를 조절하는 혼합 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0026"
+    ]
+  },
+  {
+    "id": "GEN-0030",
+    "publication": "",
+    "title": "PLLA 주사제 시스템",
+    "decision": "PENDING",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2011-02-18",
+    "applicant": "(더미)",
+    "abstract": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLLA 주사제에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0012",
+      "GEN-0029",
+      "REAL-1481441"
+    ]
+  },
+  {
+    "id": "GEN-0031",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2017-11-01",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0012",
+      "GEN-0021",
+      "GEN-0017"
+    ]
+  },
+  {
+    "id": "GEN-0032",
+    "publication": "",
+    "title": "생분해성 고분자 미세입자 장치",
+    "decision": "REJECTED",
+    "cpc": "A61L27/48",
+    "cpcLabels": [
+      "A61L27/48"
+    ],
+    "filed": "2009-02-02",
+    "applicant": "(더미)",
+    "abstract": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "생분해성 고분자 미세입자에서 용매를 저온에서 제거하는 냉동 건조. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0029"
+    ]
+  },
+  {
+    "id": "GEN-0033",
+    "publication": "",
+    "title": "PCL 미립구 방법",
+    "decision": "REJECTED",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2021-10-09",
+    "applicant": "(더미)",
+    "abstract": "PCL 미립구에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "PCL 미립구에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0003",
+      "REAL-1481441"
+    ]
+  },
+  {
+    "id": "GEN-0034",
+    "publication": "",
+    "title": "PCL 미립구 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2023-04-04",
+    "applicant": "(더미)",
+    "abstract": "PCL 미립구에서 멸균 후 응집을 막는 분산 처리. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PCL 미립구에서 멸균 후 응집을 막는 분산 처리. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0003",
+      "GEN-0021",
+      "REAL-1725279"
+    ]
+  },
+  {
+    "id": "GEN-0035",
+    "publication": "",
+    "title": "동결건조 필러 분말 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/58",
+    "cpcLabels": [
+      "A61L27/58"
+    ],
+    "filed": "2019-01-08",
+    "applicant": "(더미)",
+    "abstract": "동결건조 필러 분말에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "firstClaim": "동결건조 필러 분말에서 다공성 표면을 만드는 상분리 공정. 이를 통해 부종 부작용을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0018",
+      "GEN-0008",
+      "GEN-0004"
+    ]
+  },
+  {
+    "id": "GEN-0036",
+    "publication": "",
+    "title": "동결건조 필러 분말 구조",
+    "decision": "UNKNOWN",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2017-11-15",
+    "applicant": "(더미)",
+    "abstract": "동결건조 필러 분말에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "동결건조 필러 분말에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0004"
+    ]
+  },
+  {
+    "id": "GEN-0037",
+    "publication": "",
+    "title": "PLA 미세입자 필러 장치",
+    "decision": "REJECTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2014-04-08",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "PLA 미세입자 필러에서 다공성 표면을 만드는 상분리 공정. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": []
+  },
+  {
+    "id": "GEN-0038",
+    "publication": "",
+    "title": "동결건조 필러 분말 시스템",
+    "decision": "PENDING",
+    "cpc": "C08J3/12",
+    "cpcLabels": [
+      "C08J3/12"
+    ],
+    "filed": "2022-11-10",
+    "applicant": "(더미)",
+    "abstract": "동결건조 필러 분말에서 멸균 후 응집을 막는 분산 처리. 이를 통해 제조 수율을 높인다.",
+    "firstClaim": "동결건조 필러 분말에서 멸균 후 응집을 막는 분산 처리. 이를 통해 제조 수율을 높인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0007",
+      "GEN-0033"
+    ]
+  },
+  {
+    "id": "GEN-0039",
+    "publication": "",
+    "title": "히알루론산 복합 필러 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/85",
+    "cpcLabels": [
+      "A61K8/85"
+    ],
+    "filed": "2010-07-22",
+    "applicant": "(더미)",
+    "abstract": "히알루론산 복합 필러에서 멸균 후 응집을 막는 분산 처리. 이를 통해 주입 시 막힘을 줄인다.",
+    "firstClaim": "히알루론산 복합 필러에서 멸균 후 응집을 막는 분산 처리. 이를 통해 주입 시 막힘을 줄인다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0012",
+      "GEN-0032",
+      "GEN-0026"
+    ]
+  },
+  {
+    "id": "GEN-0040",
+    "publication": "",
+    "title": "PLA 미세입자 필러 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61L27/18",
+    "cpcLabels": [
+      "A61L27/18"
+    ],
+    "filed": "2025-11-18",
+    "applicant": "(더미)",
+    "abstract": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "firstClaim": "PLA 미세입자 필러에서 입자 크기 분포를 좁히는 분사 공정. 이를 통해 체내 분해 기간을 늘린다.",
+    "source": "dummy",
+    "field": "의료용 필러",
+    "cites": [
+      "GEN-0029",
+      "GEN-0024",
+      "GEN-0037",
+      "REAL-1725279"
+    ]
+  },
+  {
+    "id": "GEN-0041",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2024-12-28",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0042",
+    "publication": "",
+    "title": "전고체 전해질 층 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2021-02-05",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "전고체 전해질 층에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0043",
+    "publication": "",
+    "title": "파우치형 배터리 셀 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2017-02-06",
+    "applicant": "(더미)",
+    "abstract": "파우치형 배터리 셀에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "파우치형 배터리 셀에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0044",
+    "publication": "",
+    "title": "파우치형 배터리 셀 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2015-08-11",
+    "applicant": "(더미)",
+    "abstract": "파우치형 배터리 셀에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "파우치형 배터리 셀에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "REAL-0727248"
+    ]
+  },
+  {
+    "id": "GEN-0045",
+    "publication": "",
+    "title": "리튬이온 배터리 전극 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2024-04-11",
+    "applicant": "(더미)",
+    "abstract": "리튬이온 배터리 전극에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "리튬이온 배터리 전극에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0041",
+      "GEN-0042",
+      "REAL-2026-0003145"
+    ]
+  },
+  {
+    "id": "GEN-0046",
+    "publication": "",
+    "title": "전극 조립체 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2024-05-20",
+    "applicant": "(더미)",
+    "abstract": "전극 조립체에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "전극 조립체에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0047",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2020-10-14",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0048",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2014-07-18",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "REAL-0727248"
+    ]
+  },
+  {
+    "id": "GEN-0049",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/446",
+    "cpcLabels": [
+      "H01M50/446"
+    ],
+    "filed": "2025-06-08",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0045",
+      "REAL-0727248"
+    ]
+  },
+  {
+    "id": "GEN-0050",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 시스템",
+    "decision": "PENDING",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2022-10-02",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0043"
+    ]
+  },
+  {
+    "id": "GEN-0051",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 조성물",
+    "decision": "PENDING",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2021-07-27",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0042",
+      "REAL-0775310"
+    ]
+  },
+  {
+    "id": "GEN-0052",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2008-04-04",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0053",
+    "publication": "",
+    "title": "전극 조립체 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2009-05-18",
+    "applicant": "(더미)",
+    "abstract": "전극 조립체에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "전극 조립체에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0052"
+    ]
+  },
+  {
+    "id": "GEN-0054",
+    "publication": "",
+    "title": "전고체 전해질 층 조성물",
+    "decision": "PENDING",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2019-06-22",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0053"
+    ]
+  },
+  {
+    "id": "GEN-0055",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2011-04-22",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0053"
+    ]
+  },
+  {
+    "id": "GEN-0056",
+    "publication": "",
+    "title": "전고체 전해질 층 장치",
+    "decision": "UNKNOWN",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2010-10-01",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0052",
+      "REAL-2026-0003145"
+    ]
+  },
+  {
+    "id": "GEN-0057",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2010-05-03",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0053",
+      "REAL-2026-0003145"
+    ]
+  },
+  {
+    "id": "GEN-0058",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 방법",
+    "decision": "REJECTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2018-08-24",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0056"
+    ]
+  },
+  {
+    "id": "GEN-0059",
+    "publication": "",
+    "title": "전극 조립체 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2010-03-13",
+    "applicant": "(더미)",
+    "abstract": "전극 조립체에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "전극 조립체에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0056",
+      "GEN-0053",
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0060",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 시스템",
+    "decision": "REJECTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2014-10-25",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0061",
+    "publication": "",
+    "title": "전고체 전해질 층 장치",
+    "decision": "REJECTED",
+    "cpc": "H01M50/446",
+    "cpcLabels": [
+      "H01M50/446"
+    ],
+    "filed": "2015-10-12",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0044"
+    ]
+  },
+  {
+    "id": "GEN-0062",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2023-05-01",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0042",
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0063",
+    "publication": "",
+    "title": "리튬이온 배터리 전극 조성물",
+    "decision": "REJECTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2025-11-05",
+    "applicant": "(더미)",
+    "abstract": "리튬이온 배터리 전극에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "리튬이온 배터리 전극에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0059",
+      "GEN-0045",
+      "GEN-0050"
+    ]
+  },
+  {
+    "id": "GEN-0064",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2021-03-07",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0055",
+      "GEN-0054",
+      "GEN-0058"
+    ]
+  },
+  {
+    "id": "GEN-0065",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2011-06-28",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0066",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2012-01-25",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0067",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2021-08-26",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0057",
+      "GEN-0051",
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0068",
+    "publication": "",
+    "title": "전고체 전해질 층 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2010-11-19",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "전고체 전해질 층에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0056",
+      "GEN-0053",
+      "GEN-0057"
+    ]
+  },
+  {
+    "id": "GEN-0069",
+    "publication": "",
+    "title": "파우치형 배터리 셀 시스템",
+    "decision": "PENDING",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2017-07-06",
+    "applicant": "(더미)",
+    "abstract": "파우치형 배터리 셀에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "firstClaim": "파우치형 배터리 셀에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 셀 두께 편차를 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0044"
+    ]
+  },
+  {
+    "id": "GEN-0070",
+    "publication": "",
+    "title": "전고체 전해질 층 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/446",
+    "cpcLabels": [
+      "H01M50/446"
+    ],
+    "filed": "2025-02-22",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 열폭주 확산을 늦춘다.",
+    "firstClaim": "전고체 전해질 층에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 열폭주 확산을 늦춘다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0066",
+      "GEN-0044",
+      "GEN-0060",
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0071",
+    "publication": "",
+    "title": "리튬이온 배터리 전극 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2016-06-10",
+    "applicant": "(더미)",
+    "abstract": "리튬이온 배터리 전극에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "리튬이온 배터리 전극에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0065",
+      "REAL-0727248"
+    ]
+  },
+  {
+    "id": "GEN-0072",
+    "publication": "",
+    "title": "전극 조립체 조성물",
+    "decision": "REJECTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2014-01-25",
+    "applicant": "(더미)",
+    "abstract": "전극 조립체에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 출력 저하를 막는다.",
+    "firstClaim": "전극 조립체에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 출력 저하를 막는다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0066"
+    ]
+  },
+  {
+    "id": "GEN-0073",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2012-01-01",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0066",
+      "REAL-2026-0003145"
+    ]
+  },
+  {
+    "id": "GEN-0074",
+    "publication": "",
+    "title": "파우치형 배터리 셀 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2011-07-27",
+    "applicant": "(더미)",
+    "abstract": "파우치형 배터리 셀에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "파우치형 배터리 셀에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0055",
+      "GEN-0065",
+      "REAL-0666821"
+    ]
+  },
+  {
+    "id": "GEN-0075",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 방법",
+    "decision": "PENDING",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2019-03-24",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 접착층을 패턴으로 인쇄하는 공정. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0058",
+      "GEN-0061"
+    ]
+  },
+  {
+    "id": "GEN-0076",
+    "publication": "",
+    "title": "세라믹 코팅 분리막 방법",
+    "decision": "PENDING",
+    "cpc": "H01M4/62",
+    "cpcLabels": [
+      "H01M4/62"
+    ],
+    "filed": "2015-12-08",
+    "applicant": "(더미)",
+    "abstract": "세라믹 코팅 분리막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "세라믹 코팅 분리막에서 양면 코팅 두께를 다르게 하는 구조. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0061",
+      "GEN-0074",
+      "GEN-0059",
+      "REAL-0775310"
+    ]
+  },
+  {
+    "id": "GEN-0077",
+    "publication": "",
+    "title": "폴리올레핀 다공성 막 구조",
+    "decision": "REJECTED",
+    "cpc": "H01M4/13",
+    "cpcLabels": [
+      "H01M4/13"
+    ],
+    "filed": "2009-02-18",
+    "applicant": "(더미)",
+    "abstract": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "폴리올레핀 다공성 막에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0078",
+    "publication": "",
+    "title": "전고체 전해질 층 방법",
+    "decision": "REJECTED",
+    "cpc": "H01M50/446",
+    "cpcLabels": [
+      "H01M50/446"
+    ],
+    "filed": "2015-07-09",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "전고체 전해질 층에서 열융착 온도를 낮추는 바인더 설계. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0048"
+    ]
+  },
+  {
+    "id": "GEN-0079",
+    "publication": "",
+    "title": "전고체 전해질 층 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2024-06-06",
+    "applicant": "(더미)",
+    "abstract": "전고체 전해질 층에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 전극 접착력을 높인다.",
+    "firstClaim": "전고체 전해질 층에서 무기물 입자와 바인더 비율을 조절한 코팅. 이를 통해 전극 접착력을 높인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": [
+      "GEN-0054",
+      "GEN-0075",
+      "GEN-0048"
+    ]
+  },
+  {
+    "id": "GEN-0080",
+    "publication": "",
+    "title": "리튬이온 배터리 전극 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/451",
+    "cpcLabels": [
+      "H01M50/451"
+    ],
+    "filed": "2017-09-07",
+    "applicant": "(더미)",
+    "abstract": "리튬이온 배터리 전극에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 고온 열수축을 줄인다.",
+    "firstClaim": "리튬이온 배터리 전극에서 건식 연신으로 기공을 균일하게 만드는 방법. 이를 통해 고온 열수축을 줄인다.",
+    "source": "dummy",
+    "field": "이차전지",
+    "cites": []
+  },
+  {
+    "id": "GEN-0081",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2018-07-14",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0082",
+    "publication": "",
+    "title": "서브 화소 개구부 조성물",
+    "decision": "PENDING",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2016-02-17",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 개구부를 다각형으로 만드는 구조. 이를 통해 패널 수명을 늘린다.",
+    "firstClaim": "서브 화소 개구부에서 개구부를 다각형으로 만드는 구조. 이를 통해 패널 수명을 늘린다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0083",
+    "publication": "",
+    "title": "화소 정의막 스페이서 방법",
+    "decision": "PENDING",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2016-01-02",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0082",
+      "REAL-1014275930"
+    ]
+  },
+  {
+    "id": "GEN-0084",
+    "publication": "",
+    "title": "OLED 구동 회로 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2022-12-14",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0082"
+    ]
+  },
+  {
+    "id": "GEN-0085",
+    "publication": "",
+    "title": "미세 금속 마스크 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2015-08-27",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 개구부를 다각형으로 만드는 구조. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "미세 금속 마스크에서 개구부를 다각형으로 만드는 구조. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0086",
+    "publication": "",
+    "title": "서브 화소 개구부 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2010-11-15",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "서브 화소 개구부에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1017552710"
+    ]
+  },
+  {
+    "id": "GEN-0087",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2019-12-13",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0083",
+      "GEN-0086",
+      "GEN-0081",
+      "REAL-1025853020"
+    ]
+  },
+  {
+    "id": "GEN-0088",
+    "publication": "",
+    "title": "미세 금속 마스크 장치",
+    "decision": "PENDING",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2023-09-14",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "미세 금속 마스크에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0086"
+    ]
+  },
+  {
+    "id": "GEN-0089",
+    "publication": "",
+    "title": "OLED 구동 회로 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2010-03-20",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "OLED 구동 회로에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0090",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2018-04-24",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0089"
+    ]
+  },
+  {
+    "id": "GEN-0091",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 방법",
+    "decision": "REJECTED",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2023-12-11",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0087",
+      "GEN-0082",
+      "GEN-0088"
+    ]
+  },
+  {
+    "id": "GEN-0092",
+    "publication": "",
+    "title": "화소 정의막 스페이서 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2011-10-02",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0086"
+    ]
+  },
+  {
+    "id": "GEN-0093",
+    "publication": "",
+    "title": "화소 정의막 스페이서 시스템",
+    "decision": "REJECTED",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2010-03-06",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "화소 정의막 스페이서에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0086",
+      "REAL-1025853020"
+    ]
+  },
+  {
+    "id": "GEN-0094",
+    "publication": "",
+    "title": "OLED 구동 회로 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2010-05-19",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0089",
+      "REAL-1014275930"
+    ]
+  },
+  {
+    "id": "GEN-0095",
+    "publication": "",
+    "title": "서브 화소 개구부 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2019-02-25",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "서브 화소 개구부에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0096",
+    "publication": "",
+    "title": "서브 화소 개구부 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2012-10-17",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 개구부를 다각형으로 만드는 구조. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "서브 화소 개구부에서 개구부를 다각형으로 만드는 구조. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0092",
+      "GEN-0094"
+    ]
+  },
+  {
+    "id": "GEN-0097",
+    "publication": "",
+    "title": "OLED 화소 배열 방법",
+    "decision": "REJECTED",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2015-10-28",
+    "applicant": "(더미)",
+    "abstract": "OLED 화소 배열에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "OLED 화소 배열에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0098",
+    "publication": "",
+    "title": "화소 정의막 스페이서 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2022-12-08",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "화소 정의막 스페이서에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0094",
+      "GEN-0089"
+    ]
+  },
+  {
+    "id": "GEN-0099",
+    "publication": "",
+    "title": "OLED 화소 배열 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2014-10-03",
+    "applicant": "(더미)",
+    "abstract": "OLED 화소 배열에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "OLED 화소 배열에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0089",
+      "REAL-1025853020"
+    ]
+  },
+  {
+    "id": "GEN-0100",
+    "publication": "",
+    "title": "OLED 구동 회로 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2025-03-18",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "OLED 구동 회로에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0101",
+    "publication": "",
+    "title": "서브 화소 개구부 조성물",
+    "decision": "REJECTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2017-02-01",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "서브 화소 개구부에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0085",
+      "GEN-0092"
+    ]
+  },
+  {
+    "id": "GEN-0102",
+    "publication": "",
+    "title": "미세 금속 마스크 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2025-07-10",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 패널 수명을 늘린다.",
+    "firstClaim": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 패널 수명을 늘린다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0103",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 조성물",
+    "decision": "PENDING",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2009-09-28",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0104",
+    "publication": "",
+    "title": "화소 정의막 스페이서 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2010-11-22",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "화소 정의막 스페이서에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0086",
+      "GEN-0094"
+    ]
+  },
+  {
+    "id": "GEN-0105",
+    "publication": "",
+    "title": "화소 정의막 스페이서 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2008-04-26",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "화소 정의막 스페이서에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1014275930"
+    ]
+  },
+  {
+    "id": "GEN-0106",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 방법",
+    "decision": "PENDING",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2013-07-12",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 개구부를 다각형으로 만드는 구조. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 개구부를 다각형으로 만드는 구조. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0093",
+      "GEN-0103"
+    ]
+  },
+  {
+    "id": "GEN-0107",
+    "publication": "",
+    "title": "화소 정의막 스페이서 방법",
+    "decision": "PENDING",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2018-02-08",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "화소 정의막 스페이서에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0097",
+      "GEN-0082"
+    ]
+  },
+  {
+    "id": "GEN-0108",
+    "publication": "",
+    "title": "OLED 구동 회로 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2020-05-26",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 개구부를 다각형으로 만드는 구조. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "OLED 구동 회로에서 개구부를 다각형으로 만드는 구조. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0109",
+    "publication": "",
+    "title": "서브 화소 개구부 시스템",
+    "decision": "PENDING",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2016-02-06",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "서브 화소 개구부에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0104",
+      "GEN-0089",
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0110",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 방법",
+    "decision": "UNKNOWN",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2013-05-08",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0094",
+      "GEN-0086",
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0111",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2012-06-18",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0093",
+      "GEN-0096",
+      "GEN-0089"
+    ]
+  },
+  {
+    "id": "GEN-0112",
+    "publication": "",
+    "title": "언더 디스플레이 카메라 영역 장치",
+    "decision": "PENDING",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2023-03-01",
+    "applicant": "(더미)",
+    "abstract": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "언더 디스플레이 카메라 영역에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0090"
+    ]
+  },
+  {
+    "id": "GEN-0113",
+    "publication": "",
+    "title": "미세 금속 마스크 장치",
+    "decision": "REJECTED",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2009-08-16",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0114",
+    "publication": "",
+    "title": "서브 화소 개구부 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2023-09-21",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "firstClaim": "서브 화소 개구부에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 색 번짐을 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0089",
+      "GEN-0096",
+      "GEN-0098"
+    ]
+  },
+  {
+    "id": "GEN-0115",
+    "publication": "",
+    "title": "OLED 구동 회로 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2020-12-14",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 증착 위치 오차를 줄인다.",
+    "firstClaim": "OLED 구동 회로에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 증착 위치 오차를 줄인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0101"
+    ]
+  },
+  {
+    "id": "GEN-0116",
+    "publication": "",
+    "title": "OLED 화소 배열 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2016-02-18",
+    "applicant": "(더미)",
+    "abstract": "OLED 화소 배열에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "OLED 화소 배열에서 녹색 서브 화소를 마름모 꼭지점에 두는 배열. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0093",
+      "REAL-1017552710"
+    ]
+  },
+  {
+    "id": "GEN-0117",
+    "publication": "",
+    "title": "미세 금속 마스크 구조",
+    "decision": "UNKNOWN",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2019-10-14",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "미세 금속 마스크에서 마스크 개구 패턴을 보정하는 방법. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0118",
+    "publication": "",
+    "title": "미세 금속 마스크 장치",
+    "decision": "UNKNOWN",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2021-08-16",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "미세 금속 마스크에서 스페이서 높이를 영역별로 다르게 하는 설계. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0093",
+      "GEN-0108",
+      "GEN-0116",
+      "REAL-1020612830"
+    ]
+  },
+  {
+    "id": "GEN-0119",
+    "publication": "",
+    "title": "OLED 구동 회로 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2019-07-04",
+    "applicant": "(더미)",
+    "abstract": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "firstClaim": "OLED 구동 회로에서 구동 트랜지스터 열화를 감지하는 회로. 이를 통해 해상도 대비 발광 면적을 넓힌다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": []
+  },
+  {
+    "id": "GEN-0120",
+    "publication": "",
+    "title": "화소 정의막 스페이서 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2021-11-06",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 스페이서에서 개구부를 다각형으로 만드는 구조. 이를 통해 휘도 균일도를 높인다.",
+    "firstClaim": "화소 정의막 스페이서에서 개구부를 다각형으로 만드는 구조. 이를 통해 휘도 균일도를 높인다.",
+    "source": "dummy",
+    "field": "디스플레이",
+    "cites": [
+      "GEN-0116",
+      "GEN-0093",
+      "GEN-0108",
+      "REAL-1017552710"
+    ]
+  },
+  {
+    "id": "GEN-0121",
+    "publication": "",
+    "title": "외국어 말하기 평가 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "G09B5/06",
+    "cpcLabels": [
+      "G09B5/06"
+    ],
+    "filed": "2008-09-01",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "외국어 말하기 평가에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0122",
+    "publication": "",
+    "title": "수학 풀이 피드백 방법",
+    "decision": "REJECTED",
+    "cpc": "G09B7/02",
+    "cpcLabels": [
+      "G09B7/02"
+    ],
+    "filed": "2016-05-10",
+    "applicant": "(더미)",
+    "abstract": "수학 풀이 피드백에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "수학 풀이 피드백에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0121"
+    ]
+  },
+  {
+    "id": "GEN-0123",
+    "publication": "",
+    "title": "온라인 학습 플랫폼 조성물",
+    "decision": "PENDING",
+    "cpc": "G09B5/06",
+    "cpcLabels": [
+      "G09B5/06"
+    ],
+    "filed": "2008-01-14",
+    "applicant": "(더미)",
+    "abstract": "온라인 학습 플랫폼에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 개인별 난이도를 맞춘다.",
+    "firstClaim": "온라인 학습 플랫폼에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 개인별 난이도를 맞춘다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0124",
+    "publication": "",
+    "title": "외국어 말하기 평가 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/20",
+    "cpcLabels": [
+      "G06Q50/20"
+    ],
+    "filed": "2009-01-15",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 교사의 채점 부담을 줄인다.",
+    "firstClaim": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 교사의 채점 부담을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0121",
+      "GEN-0123"
+    ]
+  },
+  {
+    "id": "GEN-0125",
+    "publication": "",
+    "title": "학습 진도 대시보드 방법",
+    "decision": "UNKNOWN",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2013-01-07",
+    "applicant": "(더미)",
+    "abstract": "학습 진도 대시보드에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "학습 진도 대시보드에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0126",
+    "publication": "",
+    "title": "외국어 말하기 평가 구조",
+    "decision": "UNKNOWN",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2015-06-26",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "firstClaim": "외국어 말하기 평가에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0123"
+    ]
+  },
+  {
+    "id": "GEN-0127",
+    "publication": "",
+    "title": "수학 풀이 피드백 방법",
+    "decision": "UNKNOWN",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2020-12-01",
+    "applicant": "(더미)",
+    "abstract": "수학 풀이 피드백에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 성취를 예측한다.",
+    "firstClaim": "수학 풀이 피드백에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 성취를 예측한다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0128",
+    "publication": "",
+    "title": "외국어 말하기 평가 장치",
+    "decision": "PENDING",
+    "cpc": "G06Q50/20",
+    "cpcLabels": [
+      "G06Q50/20"
+    ],
+    "filed": "2013-03-03",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0129",
+    "publication": "",
+    "title": "코딩 교육 키트 장치",
+    "decision": "PENDING",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2009-06-21",
+    "applicant": "(더미)",
+    "abstract": "코딩 교육 키트에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "코딩 교육 키트에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0121"
+    ]
+  },
+  {
+    "id": "GEN-0130",
+    "publication": "",
+    "title": "코딩 교육 키트 장치",
+    "decision": "REJECTED",
+    "cpc": "G06Q50/20",
+    "cpcLabels": [
+      "G06Q50/20"
+    ],
+    "filed": "2024-04-01",
+    "applicant": "(더미)",
+    "abstract": "코딩 교육 키트에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 참여도를 높인다.",
+    "firstClaim": "코딩 교육 키트에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 참여도를 높인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0131",
+    "publication": "",
+    "title": "외국어 말하기 평가 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2017-01-15",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 교사의 채점 부담을 줄인다.",
+    "firstClaim": "외국어 말하기 평가에서 학습 시간과 정답률을 함께 보는 분석. 이를 통해 교사의 채점 부담을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0121"
+    ]
+  },
+  {
+    "id": "GEN-0132",
+    "publication": "",
+    "title": "학습 진도 대시보드 구조",
+    "decision": "UNKNOWN",
+    "cpc": "G09B7/02",
+    "cpcLabels": [
+      "G09B7/02"
+    ],
+    "filed": "2010-09-17",
+    "applicant": "(더미)",
+    "abstract": "학습 진도 대시보드에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 학습 성취를 예측한다.",
+    "firstClaim": "학습 진도 대시보드에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 학습 성취를 예측한다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0129",
+      "GEN-0121",
+      "GEN-0124"
+    ]
+  },
+  {
+    "id": "GEN-0133",
+    "publication": "",
+    "title": "온라인 학습 플랫폼 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G09B19/00",
+    "cpcLabels": [
+      "G09B19/00"
+    ],
+    "filed": "2011-05-26",
+    "applicant": "(더미)",
+    "abstract": "온라인 학습 플랫폼에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "firstClaim": "온라인 학습 플랫폼에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 이탈을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0129"
+    ]
+  },
+  {
+    "id": "GEN-0134",
+    "publication": "",
+    "title": "외국어 말하기 평가 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G09B5/06",
+    "cpcLabels": [
+      "G09B5/06"
+    ],
+    "filed": "2008-03-05",
+    "applicant": "(더미)",
+    "abstract": "외국어 말하기 평가에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 개인별 난이도를 맞춘다.",
+    "firstClaim": "외국어 말하기 평가에서 블록 코딩을 실물 로봇과 연동하는 구조. 이를 통해 개인별 난이도를 맞춘다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0135",
+    "publication": "",
+    "title": "코딩 교육 키트 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G09B5/06",
+    "cpcLabels": [
+      "G09B5/06"
+    ],
+    "filed": "2021-09-05",
+    "applicant": "(더미)",
+    "abstract": "코딩 교육 키트에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "firstClaim": "코딩 교육 키트에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0133",
+      "GEN-0134"
+    ]
+  },
+  {
+    "id": "GEN-0136",
+    "publication": "",
+    "title": "학습 진도 대시보드 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/20",
+    "cpcLabels": [
+      "G06Q50/20"
+    ],
+    "filed": "2022-02-24",
+    "applicant": "(더미)",
+    "abstract": "학습 진도 대시보드에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "firstClaim": "학습 진도 대시보드에서 오답 패턴으로 다음 문제를 고르는 방법. 이를 통해 교사의 채점 부담을 줄인다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0133"
+    ]
+  },
+  {
+    "id": "GEN-0137",
+    "publication": "",
+    "title": "AI 문제 추천 엔진 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G09B5/06",
+    "cpcLabels": [
+      "G09B5/06"
+    ],
+    "filed": "2018-04-22",
+    "applicant": "(더미)",
+    "abstract": "AI 문제 추천 엔진에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 성취를 예측한다.",
+    "firstClaim": "AI 문제 추천 엔진에서 음성 인식으로 발음을 채점하는 구조. 이를 통해 학습 성취를 예측한다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": [
+      "GEN-0131",
+      "GEN-0133",
+      "GEN-0126"
+    ]
+  },
+  {
+    "id": "GEN-0138",
+    "publication": "",
+    "title": "AI 문제 추천 엔진 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "G09B7/02",
+    "cpcLabels": [
+      "G09B7/02"
+    ],
+    "filed": "2022-01-14",
+    "applicant": "(더미)",
+    "abstract": "AI 문제 추천 엔진에서 또래 학습 그룹을 자동으로 묶는 방법. 이를 통해 개인별 난이도를 맞춘다.",
+    "firstClaim": "AI 문제 추천 엔진에서 또래 학습 그룹을 자동으로 묶는 방법. 이를 통해 개인별 난이도를 맞춘다.",
+    "source": "dummy",
+    "field": "에듀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0139",
+    "publication": "",
+    "title": "공작기계 공구 마모 감지 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G05B23/02",
+    "cpcLabels": [
+      "G05B23/02"
+    ],
+    "filed": "2019-11-10",
+    "applicant": "(더미)",
+    "abstract": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "firstClaim": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0140",
+    "publication": "",
+    "title": "설비 예지 정비 시스템 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "G05B23/02",
+    "cpcLabels": [
+      "G05B23/02"
+    ],
+    "filed": "2013-10-13",
+    "applicant": "(더미)",
+    "abstract": "설비 예지 정비 시스템에서 진동 신호로 이상을 찾는 방법. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "firstClaim": "설비 예지 정비 시스템에서 진동 신호로 이상을 찾는 방법. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0141",
+    "publication": "",
+    "title": "설비 예지 정비 시스템 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G05B23/02",
+    "cpcLabels": [
+      "G05B23/02"
+    ],
+    "filed": "2021-03-05",
+    "applicant": "(더미)",
+    "abstract": "설비 예지 정비 시스템에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 사고를 예방한다.",
+    "firstClaim": "설비 예지 정비 시스템에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 사고를 예방한다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0142",
+    "publication": "",
+    "title": "사출 성형 조건 최적화 구조",
+    "decision": "REJECTED",
+    "cpc": "G05B23/02",
+    "cpcLabels": [
+      "G05B23/02"
+    ],
+    "filed": "2012-01-13",
+    "applicant": "(더미)",
+    "abstract": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 불량률을 낮춘다.",
+    "firstClaim": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 불량률을 낮춘다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0143",
+    "publication": "",
+    "title": "사출 성형 조건 최적화 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2012-07-18",
+    "applicant": "(더미)",
+    "abstract": "사출 성형 조건 최적화에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "firstClaim": "사출 성형 조건 최적화에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 공구 교체 시점을 앞당겨 알린다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0142"
+    ]
+  },
+  {
+    "id": "GEN-0144",
+    "publication": "",
+    "title": "공작기계 공구 마모 감지 장치",
+    "decision": "REJECTED",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2018-05-28",
+    "applicant": "(더미)",
+    "abstract": "공작기계 공구 마모 감지에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "firstClaim": "공작기계 공구 마모 감지에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0145",
+    "publication": "",
+    "title": "생산 라인 디지털 트윈 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/04",
+    "cpcLabels": [
+      "G06Q50/04"
+    ],
+    "filed": "2008-04-03",
+    "applicant": "(더미)",
+    "abstract": "생산 라인 디지털 트윈에서 진동 신호로 이상을 찾는 방법. 이를 통해 불량률을 낮춘다.",
+    "firstClaim": "생산 라인 디지털 트윈에서 진동 신호로 이상을 찾는 방법. 이를 통해 불량률을 낮춘다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0146",
+    "publication": "",
+    "title": "용접 품질 검사 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2015-10-25",
+    "applicant": "(더미)",
+    "abstract": "용접 품질 검사에서 진동 신호로 이상을 찾는 방법. 이를 통해 에너지 사용을 줄인다.",
+    "firstClaim": "용접 품질 검사에서 진동 신호로 이상을 찾는 방법. 이를 통해 에너지 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0140",
+      "GEN-0145"
+    ]
+  },
+  {
+    "id": "GEN-0147",
+    "publication": "",
+    "title": "용접 품질 검사 조성물",
+    "decision": "REJECTED",
+    "cpc": "B23Q17/09",
+    "cpcLabels": [
+      "B23Q17/09"
+    ],
+    "filed": "2025-03-02",
+    "applicant": "(더미)",
+    "abstract": "용접 품질 검사에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 불량률을 낮춘다.",
+    "firstClaim": "용접 품질 검사에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 불량률을 낮춘다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0142",
+      "GEN-0145"
+    ]
+  },
+  {
+    "id": "GEN-0148",
+    "publication": "",
+    "title": "사출 성형 조건 최적화 방법",
+    "decision": "REJECTED",
+    "cpc": "B23Q17/09",
+    "cpcLabels": [
+      "B23Q17/09"
+    ],
+    "filed": "2023-04-21",
+    "applicant": "(더미)",
+    "abstract": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "firstClaim": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0149",
+    "publication": "",
+    "title": "사출 성형 조건 최적화 방법",
+    "decision": "ACCEPTED",
+    "cpc": "B23Q17/09",
+    "cpcLabels": [
+      "B23Q17/09"
+    ],
+    "filed": "2011-05-02",
+    "applicant": "(더미)",
+    "abstract": "사출 성형 조건 최적화에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 사고를 예방한다.",
+    "firstClaim": "사출 성형 조건 최적화에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 사고를 예방한다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0145"
+    ]
+  },
+  {
+    "id": "GEN-0150",
+    "publication": "",
+    "title": "사출 성형 조건 최적화 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/04",
+    "cpcLabels": [
+      "G06Q50/04"
+    ],
+    "filed": "2021-10-21",
+    "applicant": "(더미)",
+    "abstract": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "firstClaim": "사출 성형 조건 최적화에서 진동 신호로 이상을 찾는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0145",
+      "GEN-0144",
+      "GEN-0140"
+    ]
+  },
+  {
+    "id": "GEN-0151",
+    "publication": "",
+    "title": "공작기계 공구 마모 감지 구조",
+    "decision": "REJECTED",
+    "cpc": "B23Q17/09",
+    "cpcLabels": [
+      "B23Q17/09"
+    ],
+    "filed": "2024-07-17",
+    "applicant": "(더미)",
+    "abstract": "공작기계 공구 마모 감지에서 비전 카메라로 결함을 분류하는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "firstClaim": "공작기계 공구 마모 감지에서 비전 카메라로 결함을 분류하는 방법. 이를 통해 설비 정지 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0140",
+      "GEN-0149",
+      "GEN-0150"
+    ]
+  },
+  {
+    "id": "GEN-0152",
+    "publication": "",
+    "title": "공작기계 공구 마모 감지 방법",
+    "decision": "PENDING",
+    "cpc": "B23Q17/09",
+    "cpcLabels": [
+      "B23Q17/09"
+    ],
+    "filed": "2015-04-25",
+    "applicant": "(더미)",
+    "abstract": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 설비 정지 시간을 줄인다.",
+    "firstClaim": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 설비 정지 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0142"
+    ]
+  },
+  {
+    "id": "GEN-0153",
+    "publication": "",
+    "title": "용접 품질 검사 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2014-04-06",
+    "applicant": "(더미)",
+    "abstract": "용접 품질 검사에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 에너지 사용을 줄인다.",
+    "firstClaim": "용접 품질 검사에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 에너지 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0145",
+      "GEN-0140"
+    ]
+  },
+  {
+    "id": "GEN-0154",
+    "publication": "",
+    "title": "공작기계 공구 마모 감지 구조",
+    "decision": "UNKNOWN",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2025-09-28",
+    "applicant": "(더미)",
+    "abstract": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 사고를 예방한다.",
+    "firstClaim": "공작기계 공구 마모 감지에서 작업 구역 침입을 감지하는 센서 배치. 이를 통해 사고를 예방한다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0151",
+      "GEN-0143"
+    ]
+  },
+  {
+    "id": "GEN-0155",
+    "publication": "",
+    "title": "용접 품질 검사 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2022-11-01",
+    "applicant": "(더미)",
+    "abstract": "용접 품질 검사에서 공정 데이터를 실시간 시뮬레이션하는 구조. 이를 통해 에너지 사용을 줄인다.",
+    "firstClaim": "용접 품질 검사에서 공정 데이터를 실시간 시뮬레이션하는 구조. 이를 통해 에너지 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": []
+  },
+  {
+    "id": "GEN-0156",
+    "publication": "",
+    "title": "생산 라인 디지털 트윈 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G05B19/418",
+    "cpcLabels": [
+      "G05B19/418"
+    ],
+    "filed": "2019-07-01",
+    "applicant": "(더미)",
+    "abstract": "생산 라인 디지털 트윈에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 사고를 예방한다.",
+    "firstClaim": "생산 라인 디지털 트윈에서 온도·압력 로그로 조건을 추천하는 방법. 이를 통해 사고를 예방한다.",
+    "source": "dummy",
+    "field": "스마트 제조",
+    "cites": [
+      "GEN-0152",
+      "GEN-0149"
+    ]
+  },
+  {
+    "id": "GEN-0157",
+    "publication": "",
+    "title": "포토레지스트 도포 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2019-12-05",
+    "applicant": "(더미)",
+    "abstract": "포토레지스트 도포에서 패드 표면 홈 패턴 설계. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "포토레지스트 도포에서 패드 표면 홈 패턴 설계. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0158",
+    "publication": "",
+    "title": "증착 가스 공급 장치",
+    "decision": "PENDING",
+    "cpc": "H01L21/3065",
+    "cpcLabels": [
+      "H01L21/3065"
+    ],
+    "filed": "2013-10-05",
+    "applicant": "(더미)",
+    "abstract": "증착 가스 공급에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "증착 가스 공급에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0159",
+    "publication": "",
+    "title": "CMP 연마 패드 시스템",
+    "decision": "REJECTED",
+    "cpc": "H01L21/67",
+    "cpcLabels": [
+      "H01L21/67"
+    ],
+    "filed": "2019-01-18",
+    "applicant": "(더미)",
+    "abstract": "CMP 연마 패드에서 회전 속도를 단계별로 바꾸는 도포. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "CMP 연마 패드에서 회전 속도를 단계별로 바꾸는 도포. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0160",
+    "publication": "",
+    "title": "증착 가스 공급 장치",
+    "decision": "REJECTED",
+    "cpc": "H01L21/3065",
+    "cpcLabels": [
+      "H01L21/3065"
+    ],
+    "filed": "2009-03-18",
+    "applicant": "(더미)",
+    "abstract": "증착 가스 공급에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "firstClaim": "증착 가스 공급에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0161",
+    "publication": "",
+    "title": "CMP 연마 패드 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/3065",
+    "cpcLabels": [
+      "H01L21/3065"
+    ],
+    "filed": "2013-12-16",
+    "applicant": "(더미)",
+    "abstract": "CMP 연마 패드에서 패드 표면 홈 패턴 설계. 이를 통해 수율을 높인다.",
+    "firstClaim": "CMP 연마 패드에서 패드 표면 홈 패턴 설계. 이를 통해 수율을 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0160"
+    ]
+  },
+  {
+    "id": "GEN-0162",
+    "publication": "",
+    "title": "포토레지스트 도포 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H01L21/67",
+    "cpcLabels": [
+      "H01L21/67"
+    ],
+    "filed": "2021-09-02",
+    "applicant": "(더미)",
+    "abstract": "포토레지스트 도포에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 검사 속도를 높인다.",
+    "firstClaim": "포토레지스트 도포에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 검사 속도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0158",
+      "GEN-0160",
+      "GEN-0157"
+    ]
+  },
+  {
+    "id": "GEN-0163",
+    "publication": "",
+    "title": "플라즈마 식각 챔버 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/67",
+    "cpcLabels": [
+      "H01L21/67"
+    ],
+    "filed": "2015-12-08",
+    "applicant": "(더미)",
+    "abstract": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0158"
+    ]
+  },
+  {
+    "id": "GEN-0164",
+    "publication": "",
+    "title": "플라즈마 식각 챔버 방법",
+    "decision": "PENDING",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2022-12-13",
+    "applicant": "(더미)",
+    "abstract": "플라즈마 식각 챔버에서 회전 속도를 단계별로 바꾸는 도포. 이를 통해 공정 시간을 줄인다.",
+    "firstClaim": "플라즈마 식각 챔버에서 회전 속도를 단계별로 바꾸는 도포. 이를 통해 공정 시간을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0159",
+      "GEN-0157"
+    ]
+  },
+  {
+    "id": "GEN-0165",
+    "publication": "",
+    "title": "플라즈마 식각 챔버 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/3065",
+    "cpcLabels": [
+      "H01L21/3065"
+    ],
+    "filed": "2016-04-21",
+    "applicant": "(더미)",
+    "abstract": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 검사 속도를 높인다.",
+    "firstClaim": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 검사 속도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0161",
+      "GEN-0158"
+    ]
+  },
+  {
+    "id": "GEN-0166",
+    "publication": "",
+    "title": "웨이퍼 세정 장치 방법",
+    "decision": "PENDING",
+    "cpc": "H01L21/02",
+    "cpcLabels": [
+      "H01L21/02"
+    ],
+    "filed": "2022-08-06",
+    "applicant": "(더미)",
+    "abstract": "웨이퍼 세정 장치에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "firstClaim": "웨이퍼 세정 장치에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0158"
+    ]
+  },
+  {
+    "id": "GEN-0167",
+    "publication": "",
+    "title": "플라즈마 식각 챔버 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2023-10-13",
+    "applicant": "(더미)",
+    "abstract": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0164"
+    ]
+  },
+  {
+    "id": "GEN-0168",
+    "publication": "",
+    "title": "웨이퍼 세정 장치 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/67",
+    "cpcLabels": [
+      "H01L21/67"
+    ],
+    "filed": "2015-07-16",
+    "applicant": "(더미)",
+    "abstract": "웨이퍼 세정 장치에서 광학 신호로 미세 결함을 찾는 방법. 이를 통해 검사 속도를 높인다.",
+    "firstClaim": "웨이퍼 세정 장치에서 광학 신호로 미세 결함을 찾는 방법. 이를 통해 검사 속도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0158"
+    ]
+  },
+  {
+    "id": "GEN-0169",
+    "publication": "",
+    "title": "증착 가스 공급 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2023-06-06",
+    "applicant": "(더미)",
+    "abstract": "증착 가스 공급에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "증착 가스 공급에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0165"
+    ]
+  },
+  {
+    "id": "GEN-0170",
+    "publication": "",
+    "title": "포토레지스트 도포 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2011-10-12",
+    "applicant": "(더미)",
+    "abstract": "포토레지스트 도포에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "firstClaim": "포토레지스트 도포에서 약액 농도를 실시간 측정하는 방법. 이를 통해 파티클 발생을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0171",
+    "publication": "",
+    "title": "플라즈마 식각 챔버 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/02",
+    "cpcLabels": [
+      "H01L21/02"
+    ],
+    "filed": "2014-09-26",
+    "applicant": "(더미)",
+    "abstract": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 공정 시간을 줄인다.",
+    "firstClaim": "플라즈마 식각 챔버에서 약액 농도를 실시간 측정하는 방법. 이를 통해 공정 시간을 줄인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0158"
+    ]
+  },
+  {
+    "id": "GEN-0172",
+    "publication": "",
+    "title": "CMP 연마 패드 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2018-01-20",
+    "applicant": "(더미)",
+    "abstract": "CMP 연마 패드에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 수율을 높인다.",
+    "firstClaim": "CMP 연마 패드에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 수율을 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0161"
+    ]
+  },
+  {
+    "id": "GEN-0173",
+    "publication": "",
+    "title": "포토레지스트 도포 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/66",
+    "cpcLabels": [
+      "H01L21/66"
+    ],
+    "filed": "2008-08-02",
+    "applicant": "(더미)",
+    "abstract": "포토레지스트 도포에서 패드 표면 홈 패턴 설계. 이를 통해 수율을 높인다.",
+    "firstClaim": "포토레지스트 도포에서 패드 표면 홈 패턴 설계. 이를 통해 수율을 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": []
+  },
+  {
+    "id": "GEN-0174",
+    "publication": "",
+    "title": "웨이퍼 세정 장치 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H01L21/67",
+    "cpcLabels": [
+      "H01L21/67"
+    ],
+    "filed": "2023-01-08",
+    "applicant": "(더미)",
+    "abstract": "웨이퍼 세정 장치에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "firstClaim": "웨이퍼 세정 장치에서 챔버 내벽 오염을 줄이는 구조. 이를 통해 막 두께 균일도를 높인다.",
+    "source": "dummy",
+    "field": "반도체 공정",
+    "cites": [
+      "GEN-0170",
+      "GEN-0168"
+    ]
+  },
+  {
+    "id": "GEN-0175",
+    "publication": "",
+    "title": "운전자 상태 감지 구조",
+    "decision": "UNKNOWN",
+    "cpc": "B60W60/00",
+    "cpcLabels": [
+      "B60W60/00"
+    ],
+    "filed": "2020-08-02",
+    "applicant": "(더미)",
+    "abstract": "운전자 상태 감지에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 충돌 위험을 낮춘다.",
+    "firstClaim": "운전자 상태 감지에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 충돌 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": []
+  },
+  {
+    "id": "GEN-0176",
+    "publication": "",
+    "title": "라이다 센서 융합 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G08G1/16",
+    "cpcLabels": [
+      "G08G1/16"
+    ],
+    "filed": "2010-09-27",
+    "applicant": "(더미)",
+    "abstract": "라이다 센서 융합에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "firstClaim": "라이다 센서 융합에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": []
+  },
+  {
+    "id": "GEN-0177",
+    "publication": "",
+    "title": "보행자 경로 예측 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2010-08-01",
+    "applicant": "(더미)",
+    "abstract": "보행자 경로 예측에서 카메라와 라이다 점군을 합치는 방법. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "보행자 경로 예측에서 카메라와 라이다 점군을 합치는 방법. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0176"
+    ]
+  },
+  {
+    "id": "GEN-0178",
+    "publication": "",
+    "title": "주차 경로 계획 구조",
+    "decision": "PENDING",
+    "cpc": "B60W30/09",
+    "cpcLabels": [
+      "B60W30/09"
+    ],
+    "filed": "2008-08-17",
+    "applicant": "(더미)",
+    "abstract": "주차 경로 계획에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "firstClaim": "주차 경로 계획에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": []
+  },
+  {
+    "id": "GEN-0179",
+    "publication": "",
+    "title": "보행자 경로 예측 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G08G1/16",
+    "cpcLabels": [
+      "G08G1/16"
+    ],
+    "filed": "2023-10-05",
+    "applicant": "(더미)",
+    "abstract": "보행자 경로 예측에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "보행자 경로 예측에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0177",
+      "GEN-0176",
+      "GEN-0178"
+    ]
+  },
+  {
+    "id": "GEN-0180",
+    "publication": "",
+    "title": "주차 경로 계획 방법",
+    "decision": "PENDING",
+    "cpc": "B60W30/09",
+    "cpcLabels": [
+      "B60W30/09"
+    ],
+    "filed": "2018-03-01",
+    "applicant": "(더미)",
+    "abstract": "주차 경로 계획에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 승차감을 높인다.",
+    "firstClaim": "주차 경로 계획에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 승차감을 높인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0177"
+    ]
+  },
+  {
+    "id": "GEN-0181",
+    "publication": "",
+    "title": "차량 간 통신 조성물",
+    "decision": "PENDING",
+    "cpc": "B60W30/09",
+    "cpcLabels": [
+      "B60W30/09"
+    ],
+    "filed": "2010-02-04",
+    "applicant": "(더미)",
+    "abstract": "차량 간 통신에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "차량 간 통신에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0176",
+      "GEN-0178"
+    ]
+  },
+  {
+    "id": "GEN-0182",
+    "publication": "",
+    "title": "운전자 상태 감지 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2013-03-06",
+    "applicant": "(더미)",
+    "abstract": "운전자 상태 감지에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 승차감을 높인다.",
+    "firstClaim": "운전자 상태 감지에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 승차감을 높인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": []
+  },
+  {
+    "id": "GEN-0183",
+    "publication": "",
+    "title": "주차 경로 계획 조성물",
+    "decision": "PENDING",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2022-07-08",
+    "applicant": "(더미)",
+    "abstract": "주차 경로 계획에서 카메라와 라이다 점군을 합치는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "firstClaim": "주차 경로 계획에서 카메라와 라이다 점군을 합치는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0177",
+      "GEN-0176"
+    ]
+  },
+  {
+    "id": "GEN-0184",
+    "publication": "",
+    "title": "차량 간 통신 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2011-12-23",
+    "applicant": "(더미)",
+    "abstract": "차량 간 통신에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 오검출을 줄인다.",
+    "firstClaim": "차량 간 통신에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 오검출을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0181"
+    ]
+  },
+  {
+    "id": "GEN-0185",
+    "publication": "",
+    "title": "차선 변경 판단 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2016-07-02",
+    "applicant": "(더미)",
+    "abstract": "차선 변경 판단에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 승차감을 높인다.",
+    "firstClaim": "차선 변경 판단에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 승차감을 높인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0182",
+      "GEN-0181",
+      "GEN-0176"
+    ]
+  },
+  {
+    "id": "GEN-0186",
+    "publication": "",
+    "title": "차량 간 통신 장치",
+    "decision": "PENDING",
+    "cpc": "G01S17/931",
+    "cpcLabels": [
+      "G01S17/931"
+    ],
+    "filed": "2017-10-24",
+    "applicant": "(더미)",
+    "abstract": "차량 간 통신에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "firstClaim": "차량 간 통신에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 충돌 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": []
+  },
+  {
+    "id": "GEN-0187",
+    "publication": "",
+    "title": "주차 경로 계획 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G08G1/16",
+    "cpcLabels": [
+      "G08G1/16"
+    ],
+    "filed": "2024-12-03",
+    "applicant": "(더미)",
+    "abstract": "주차 경로 계획에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "주차 경로 계획에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0184"
+    ]
+  },
+  {
+    "id": "GEN-0188",
+    "publication": "",
+    "title": "차선 변경 판단 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "B60W30/09",
+    "cpcLabels": [
+      "B60W30/09"
+    ],
+    "filed": "2022-02-13",
+    "applicant": "(더미)",
+    "abstract": "차선 변경 판단에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "차선 변경 판단에서 궤적 후보를 위험도로 고르는 구조. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0185"
+    ]
+  },
+  {
+    "id": "GEN-0189",
+    "publication": "",
+    "title": "차선 변경 판단 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G08G1/16",
+    "cpcLabels": [
+      "G08G1/16"
+    ],
+    "filed": "2017-12-02",
+    "applicant": "(더미)",
+    "abstract": "차선 변경 판단에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 승차감을 높인다.",
+    "firstClaim": "차선 변경 판단에서 협소 공간 경로를 반복 탐색하는 방법. 이를 통해 승차감을 높인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0184"
+    ]
+  },
+  {
+    "id": "GEN-0190",
+    "publication": "",
+    "title": "라이다 센서 융합 장치",
+    "decision": "PENDING",
+    "cpc": "B60W60/00",
+    "cpcLabels": [
+      "B60W60/00"
+    ],
+    "filed": "2010-02-19",
+    "applicant": "(더미)",
+    "abstract": "라이다 센서 융합에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "firstClaim": "라이다 센서 융합에서 졸음 신호를 시선으로 판단하는 방법. 이를 통해 주차 시간을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0177",
+      "GEN-0176"
+    ]
+  },
+  {
+    "id": "GEN-0191",
+    "publication": "",
+    "title": "보행자 경로 예측 구조",
+    "decision": "REJECTED",
+    "cpc": "B60W60/00",
+    "cpcLabels": [
+      "B60W60/00"
+    ],
+    "filed": "2020-12-03",
+    "applicant": "(더미)",
+    "abstract": "보행자 경로 예측에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 오검출을 줄인다.",
+    "firstClaim": "보행자 경로 예측에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 오검출을 줄인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0177",
+      "GEN-0182",
+      "GEN-0176"
+    ]
+  },
+  {
+    "id": "GEN-0192",
+    "publication": "",
+    "title": "차선 변경 판단 시스템",
+    "decision": "REJECTED",
+    "cpc": "B60W60/00",
+    "cpcLabels": [
+      "B60W60/00"
+    ],
+    "filed": "2023-05-06",
+    "applicant": "(더미)",
+    "abstract": "차선 변경 판단에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 승차감을 높인다.",
+    "firstClaim": "차선 변경 판단에서 주변 차량 의도를 확률로 추정하는 방법. 이를 통해 승차감을 높인다.",
+    "source": "dummy",
+    "field": "자율주행",
+    "cites": [
+      "GEN-0178"
+    ]
+  },
+  {
+    "id": "GEN-0193",
+    "publication": "",
+    "title": "소액 송금 정산 장치",
+    "decision": "PENDING",
+    "cpc": "G06Q20/32",
+    "cpcLabels": [
+      "G06Q20/32"
+    ],
+    "filed": "2018-01-17",
+    "applicant": "(더미)",
+    "abstract": "소액 송금 정산에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "소액 송금 정산에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0194",
+    "publication": "",
+    "title": "개인 신용 평가 장치",
+    "decision": "REJECTED",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2013-12-14",
+    "applicant": "(더미)",
+    "abstract": "개인 신용 평가에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 인증 단계를 줄인다.",
+    "firstClaim": "개인 신용 평가에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 인증 단계를 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0195",
+    "publication": "",
+    "title": "개인 신용 평가 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2023-07-12",
+    "applicant": "(더미)",
+    "abstract": "개인 신용 평가에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 인증 단계를 줄인다.",
+    "firstClaim": "개인 신용 평가에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 인증 단계를 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0196",
+    "publication": "",
+    "title": "간편 결제 인증 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q20/32",
+    "cpcLabels": [
+      "G06Q20/32"
+    ],
+    "filed": "2025-08-12",
+    "applicant": "(더미)",
+    "abstract": "간편 결제 인증에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "간편 결제 인증에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0194",
+      "GEN-0195"
+    ]
+  },
+  {
+    "id": "GEN-0197",
+    "publication": "",
+    "title": "가상계좌 발급 구조",
+    "decision": "REJECTED",
+    "cpc": "G06Q20/32",
+    "cpcLabels": [
+      "G06Q20/32"
+    ],
+    "filed": "2014-08-13",
+    "applicant": "(더미)",
+    "abstract": "가상계좌 발급에서 비금융 데이터로 신용을 보완하는 모델. 이를 통해 수수료를 낮춘다.",
+    "firstClaim": "가상계좌 발급에서 비금융 데이터로 신용을 보완하는 모델. 이를 통해 수수료를 낮춘다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0194"
+    ]
+  },
+  {
+    "id": "GEN-0198",
+    "publication": "",
+    "title": "가상계좌 발급 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "G06Q40/02",
+    "cpcLabels": [
+      "G06Q40/02"
+    ],
+    "filed": "2017-09-03",
+    "applicant": "(더미)",
+    "abstract": "가상계좌 발급에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 심사 시간을 줄인다.",
+    "firstClaim": "가상계좌 발급에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 심사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0197"
+    ]
+  },
+  {
+    "id": "GEN-0199",
+    "publication": "",
+    "title": "개인 신용 평가 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q20/32",
+    "cpcLabels": [
+      "G06Q20/32"
+    ],
+    "filed": "2020-05-01",
+    "applicant": "(더미)",
+    "abstract": "개인 신용 평가에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 수수료를 낮춘다.",
+    "firstClaim": "개인 신용 평가에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 수수료를 낮춘다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0193"
+    ]
+  },
+  {
+    "id": "GEN-0200",
+    "publication": "",
+    "title": "개인 신용 평가 시스템",
+    "decision": "PENDING",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2020-08-04",
+    "applicant": "(더미)",
+    "abstract": "개인 신용 평가에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 심사 시간을 줄인다.",
+    "firstClaim": "개인 신용 평가에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 심사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0198",
+      "GEN-0194"
+    ]
+  },
+  {
+    "id": "GEN-0201",
+    "publication": "",
+    "title": "개인 신용 평가 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q20/32",
+    "cpcLabels": [
+      "G06Q20/32"
+    ],
+    "filed": "2020-11-01",
+    "applicant": "(더미)",
+    "abstract": "개인 신용 평가에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "개인 신용 평가에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0202",
+    "publication": "",
+    "title": "소액 송금 정산 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2016-12-28",
+    "applicant": "(더미)",
+    "abstract": "소액 송금 정산에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 수수료를 낮춘다.",
+    "firstClaim": "소액 송금 정산에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 수수료를 낮춘다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0203",
+    "publication": "",
+    "title": "간편 결제 인증 방법",
+    "decision": "UNKNOWN",
+    "cpc": "G06Q40/02",
+    "cpcLabels": [
+      "G06Q40/02"
+    ],
+    "filed": "2017-11-22",
+    "applicant": "(더미)",
+    "abstract": "간편 결제 인증에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "간편 결제 인증에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0198",
+      "GEN-0194"
+    ]
+  },
+  {
+    "id": "GEN-0204",
+    "publication": "",
+    "title": "자산 관리 추천 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q20/40",
+    "cpcLabels": [
+      "G06Q20/40"
+    ],
+    "filed": "2020-03-25",
+    "applicant": "(더미)",
+    "abstract": "자산 관리 추천에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "자산 관리 추천에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0198",
+      "GEN-0201"
+    ]
+  },
+  {
+    "id": "GEN-0205",
+    "publication": "",
+    "title": "소액 송금 정산 구조",
+    "decision": "PENDING",
+    "cpc": "G06Q20/40",
+    "cpcLabels": [
+      "G06Q20/40"
+    ],
+    "filed": "2020-02-20",
+    "applicant": "(더미)",
+    "abstract": "소액 송금 정산에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "소액 송금 정산에서 생체 정보와 기기 정보를 함께 쓰는 인증. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0197"
+    ]
+  },
+  {
+    "id": "GEN-0206",
+    "publication": "",
+    "title": "가상계좌 발급 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2023-08-23",
+    "applicant": "(더미)",
+    "abstract": "가상계좌 발급에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 부정 결제를 줄인다.",
+    "firstClaim": "가상계좌 발급에서 정산 주기를 자동으로 조정하는 구조. 이를 통해 부정 결제를 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0195",
+      "GEN-0205"
+    ]
+  },
+  {
+    "id": "GEN-0207",
+    "publication": "",
+    "title": "자산 관리 추천 장치",
+    "decision": "PENDING",
+    "cpc": "G06Q40/02",
+    "cpcLabels": [
+      "G06Q40/02"
+    ],
+    "filed": "2012-01-02",
+    "applicant": "(더미)",
+    "abstract": "자산 관리 추천에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 연체 위험을 미리 알린다.",
+    "firstClaim": "자산 관리 추천에서 거래 패턴을 그래프로 분석하는 방법. 이를 통해 연체 위험을 미리 알린다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": []
+  },
+  {
+    "id": "GEN-0208",
+    "publication": "",
+    "title": "가상계좌 발급 조성물",
+    "decision": "PENDING",
+    "cpc": "H04L9/32",
+    "cpcLabels": [
+      "H04L9/32"
+    ],
+    "filed": "2020-06-01",
+    "applicant": "(더미)",
+    "abstract": "가상계좌 발급에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 인증 단계를 줄인다.",
+    "firstClaim": "가상계좌 발급에서 포트폴리오를 위험 성향에 맞추는 방법. 이를 통해 인증 단계를 줄인다.",
+    "source": "dummy",
+    "field": "핀테크",
+    "cites": [
+      "GEN-0193",
+      "GEN-0207"
+    ]
+  },
+  {
+    "id": "GEN-0209",
+    "publication": "",
+    "title": "토양 수분 센서 방법",
+    "decision": "UNKNOWN",
+    "cpc": "A01B79/00",
+    "cpcLabels": [
+      "A01B79/00"
+    ],
+    "filed": "2019-08-21",
+    "applicant": "(더미)",
+    "abstract": "토양 수분 센서에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 수확량을 늘린다.",
+    "firstClaim": "토양 수분 센서에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 수확량을 늘린다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": []
+  },
+  {
+    "id": "GEN-0210",
+    "publication": "",
+    "title": "온실 환경 제어 방법",
+    "decision": "REJECTED",
+    "cpc": "A01G9/24",
+    "cpcLabels": [
+      "A01G9/24"
+    ],
+    "filed": "2021-07-26",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 수확량을 늘린다.",
+    "firstClaim": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 수확량을 늘린다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0209"
+    ]
+  },
+  {
+    "id": "GEN-0211",
+    "publication": "",
+    "title": "수경재배 양액 관리 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A01G31/02",
+    "cpcLabels": [
+      "A01G31/02"
+    ],
+    "filed": "2015-02-15",
+    "applicant": "(더미)",
+    "abstract": "수경재배 양액 관리에서 잎 색으로 병해를 판별하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "firstClaim": "수경재배 양액 관리에서 잎 색으로 병해를 판별하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": []
+  },
+  {
+    "id": "GEN-0212",
+    "publication": "",
+    "title": "온실 환경 제어 방법",
+    "decision": "PENDING",
+    "cpc": "A01B79/00",
+    "cpcLabels": [
+      "A01B79/00"
+    ],
+    "filed": "2023-02-22",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 일사량에 따라 차광막을 여닫는 제어. 이를 통해 수확량을 늘린다.",
+    "firstClaim": "온실 환경 제어에서 일사량에 따라 차광막을 여닫는 제어. 이를 통해 수확량을 늘린다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0211",
+      "GEN-0209"
+    ]
+  },
+  {
+    "id": "GEN-0213",
+    "publication": "",
+    "title": "온실 환경 제어 방법",
+    "decision": "REJECTED",
+    "cpc": "A01G9/24",
+    "cpcLabels": [
+      "A01G9/24"
+    ],
+    "filed": "2019-12-14",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 농약 사용을 줄인다.",
+    "firstClaim": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 농약 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0209",
+      "GEN-0211"
+    ]
+  },
+  {
+    "id": "GEN-0214",
+    "publication": "",
+    "title": "온실 환경 제어 장치",
+    "decision": "REJECTED",
+    "cpc": "A01G9/24",
+    "cpcLabels": [
+      "A01G9/24"
+    ],
+    "filed": "2018-05-27",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 양액 농도를 센서로 자동 보정하는 방법. 이를 통해 물 사용을 줄인다.",
+    "firstClaim": "온실 환경 제어에서 양액 농도를 센서로 자동 보정하는 방법. 이를 통해 물 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0211"
+    ]
+  },
+  {
+    "id": "GEN-0215",
+    "publication": "",
+    "title": "드론 방제 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A01G9/24",
+    "cpcLabels": [
+      "A01G9/24"
+    ],
+    "filed": "2008-01-21",
+    "applicant": "(더미)",
+    "abstract": "드론 방제에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 수확량을 늘린다.",
+    "firstClaim": "드론 방제에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 수확량을 늘린다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": []
+  },
+  {
+    "id": "GEN-0216",
+    "publication": "",
+    "title": "수경재배 양액 관리 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/02",
+    "cpcLabels": [
+      "G06Q50/02"
+    ],
+    "filed": "2010-03-10",
+    "applicant": "(더미)",
+    "abstract": "수경재배 양액 관리에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 노동 시간을 줄인다.",
+    "firstClaim": "수경재배 양액 관리에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 노동 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": []
+  },
+  {
+    "id": "GEN-0217",
+    "publication": "",
+    "title": "온실 환경 제어 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A01G9/24",
+    "cpcLabels": [
+      "A01G9/24"
+    ],
+    "filed": "2021-10-02",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 노동 시간을 줄인다.",
+    "firstClaim": "온실 환경 제어에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 노동 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0215"
+    ]
+  },
+  {
+    "id": "GEN-0218",
+    "publication": "",
+    "title": "토양 수분 센서 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/02",
+    "cpcLabels": [
+      "G06Q50/02"
+    ],
+    "filed": "2024-05-21",
+    "applicant": "(더미)",
+    "abstract": "토양 수분 센서에서 일사량에 따라 차광막을 여닫는 제어. 이를 통해 노동 시간을 줄인다.",
+    "firstClaim": "토양 수분 센서에서 일사량에 따라 차광막을 여닫는 제어. 이를 통해 노동 시간을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0217"
+    ]
+  },
+  {
+    "id": "GEN-0219",
+    "publication": "",
+    "title": "축사 환경 모니터링 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/02",
+    "cpcLabels": [
+      "G06Q50/02"
+    ],
+    "filed": "2016-05-22",
+    "applicant": "(더미)",
+    "abstract": "축사 환경 모니터링에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 농약 사용을 줄인다.",
+    "firstClaim": "축사 환경 모니터링에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 농약 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": []
+  },
+  {
+    "id": "GEN-0220",
+    "publication": "",
+    "title": "드론 방제 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/02",
+    "cpcLabels": [
+      "G06Q50/02"
+    ],
+    "filed": "2018-04-14",
+    "applicant": "(더미)",
+    "abstract": "드론 방제에서 잎 색으로 병해를 판별하는 방법. 이를 통해 수확량을 늘린다.",
+    "firstClaim": "드론 방제에서 잎 색으로 병해를 판별하는 방법. 이를 통해 수확량을 늘린다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0216"
+    ]
+  },
+  {
+    "id": "GEN-0221",
+    "publication": "",
+    "title": "작물 생육 영상 분석 구조",
+    "decision": "REJECTED",
+    "cpc": "A01B79/00",
+    "cpcLabels": [
+      "A01B79/00"
+    ],
+    "filed": "2021-06-07",
+    "applicant": "(더미)",
+    "abstract": "작물 생육 영상 분석에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "firstClaim": "작물 생육 영상 분석에서 비행 경로를 작물 밀도에 맞추는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0220",
+      "GEN-0216"
+    ]
+  },
+  {
+    "id": "GEN-0222",
+    "publication": "",
+    "title": "온실 환경 제어 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A01B79/00",
+    "cpcLabels": [
+      "A01B79/00"
+    ],
+    "filed": "2010-10-03",
+    "applicant": "(더미)",
+    "abstract": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "firstClaim": "온실 환경 제어에서 잎 색으로 병해를 판별하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0215"
+    ]
+  },
+  {
+    "id": "GEN-0223",
+    "publication": "",
+    "title": "드론 방제 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A01B79/00",
+    "cpcLabels": [
+      "A01B79/00"
+    ],
+    "filed": "2018-06-02",
+    "applicant": "(더미)",
+    "abstract": "드론 방제에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 농약 사용을 줄인다.",
+    "firstClaim": "드론 방제에서 암모니아 농도로 환기를 조절하는 구조. 이를 통해 농약 사용을 줄인다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0215",
+      "GEN-0222"
+    ]
+  },
+  {
+    "id": "GEN-0224",
+    "publication": "",
+    "title": "축사 환경 모니터링 시스템",
+    "decision": "REJECTED",
+    "cpc": "G06Q50/02",
+    "cpcLabels": [
+      "G06Q50/02"
+    ],
+    "filed": "2012-03-02",
+    "applicant": "(더미)",
+    "abstract": "축사 환경 모니터링에서 양액 농도를 센서로 자동 보정하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "firstClaim": "축사 환경 모니터링에서 양액 농도를 센서로 자동 보정하는 방법. 이를 통해 병해를 조기에 찾는다.",
+    "source": "dummy",
+    "field": "스마트팜",
+    "cites": [
+      "GEN-0216",
+      "GEN-0215",
+      "GEN-0222"
+    ]
+  },
+  {
+    "id": "GEN-0225",
+    "publication": "",
+    "title": "자율 이동 운반차 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G05D1/02",
+    "cpcLabels": [
+      "G05D1/02"
+    ],
+    "filed": "2013-10-22",
+    "applicant": "(더미)",
+    "abstract": "자율 이동 운반차에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "자율 이동 운반차에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0226",
+    "publication": "",
+    "title": "분류 컨베이어 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G05D1/02",
+    "cpcLabels": [
+      "G05D1/02"
+    ],
+    "filed": "2010-05-15",
+    "applicant": "(더미)",
+    "abstract": "분류 컨베이어에서 상자 크기에 맞춰 적재 순서를 정하는 방법. 이를 통해 처리량을 늘린다.",
+    "firstClaim": "분류 컨베이어에서 상자 크기에 맞춰 적재 순서를 정하는 방법. 이를 통해 처리량을 늘린다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0227",
+    "publication": "",
+    "title": "재고 드론 스캔 장치",
+    "decision": "UNKNOWN",
+    "cpc": "B65G47/91",
+    "cpcLabels": [
+      "B65G47/91"
+    ],
+    "filed": "2017-03-05",
+    "applicant": "(더미)",
+    "abstract": "재고 드론 스캔에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "firstClaim": "재고 드론 스캔에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0225"
+    ]
+  },
+  {
+    "id": "GEN-0228",
+    "publication": "",
+    "title": "자율 이동 운반차 장치",
+    "decision": "ACCEPTED",
+    "cpc": "B25J9/16",
+    "cpcLabels": [
+      "B25J9/16"
+    ],
+    "filed": "2022-03-27",
+    "applicant": "(더미)",
+    "abstract": "자율 이동 운반차에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 오배송을 줄인다.",
+    "firstClaim": "자율 이동 운반차에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 오배송을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0225",
+      "GEN-0226"
+    ]
+  },
+  {
+    "id": "GEN-0229",
+    "publication": "",
+    "title": "분류 컨베이어 조성물",
+    "decision": "PENDING",
+    "cpc": "B25J9/16",
+    "cpcLabels": [
+      "B25J9/16"
+    ],
+    "filed": "2015-03-28",
+    "applicant": "(더미)",
+    "abstract": "분류 컨베이어에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "분류 컨베이어에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0225"
+    ]
+  },
+  {
+    "id": "GEN-0230",
+    "publication": "",
+    "title": "자율 이동 운반차 조성물",
+    "decision": "REJECTED",
+    "cpc": "B65G47/91",
+    "cpcLabels": [
+      "B65G47/91"
+    ],
+    "filed": "2025-11-04",
+    "applicant": "(더미)",
+    "abstract": "자율 이동 운반차에서 상자 크기에 맞춰 적재 순서를 정하는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "firstClaim": "자율 이동 운반차에서 상자 크기에 맞춰 적재 순서를 정하는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0231",
+    "publication": "",
+    "title": "배송 로봇 도킹 방법",
+    "decision": "ACCEPTED",
+    "cpc": "B65G1/137",
+    "cpcLabels": [
+      "B65G1/137"
+    ],
+    "filed": "2012-12-19",
+    "applicant": "(더미)",
+    "abstract": "배송 로봇 도킹에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "firstClaim": "배송 로봇 도킹에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0226"
+    ]
+  },
+  {
+    "id": "GEN-0232",
+    "publication": "",
+    "title": "창고 피킹 로봇 장치",
+    "decision": "ACCEPTED",
+    "cpc": "B65G47/91",
+    "cpcLabels": [
+      "B65G47/91"
+    ],
+    "filed": "2024-10-25",
+    "applicant": "(더미)",
+    "abstract": "창고 피킹 로봇에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 처리량을 늘린다.",
+    "firstClaim": "창고 피킹 로봇에서 다수 로봇 경로를 충돌 없이 배정하는 방법. 이를 통해 처리량을 늘린다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0233",
+    "publication": "",
+    "title": "상자 적재 로봇팔 장치",
+    "decision": "REJECTED",
+    "cpc": "B65G47/91",
+    "cpcLabels": [
+      "B65G47/91"
+    ],
+    "filed": "2009-04-14",
+    "applicant": "(더미)",
+    "abstract": "상자 적재 로봇팔에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "상자 적재 로봇팔에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0234",
+    "publication": "",
+    "title": "창고 피킹 로봇 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "B65G1/137",
+    "cpcLabels": [
+      "B65G1/137"
+    ],
+    "filed": "2025-12-18",
+    "applicant": "(더미)",
+    "abstract": "창고 피킹 로봇에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "firstClaim": "창고 피킹 로봇에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0225",
+      "GEN-0227"
+    ]
+  },
+  {
+    "id": "GEN-0235",
+    "publication": "",
+    "title": "자율 이동 운반차 장치",
+    "decision": "UNKNOWN",
+    "cpc": "B65G47/91",
+    "cpcLabels": [
+      "B65G47/91"
+    ],
+    "filed": "2008-04-10",
+    "applicant": "(더미)",
+    "abstract": "자율 이동 운반차에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 공간 효율을 높인다.",
+    "firstClaim": "자율 이동 운반차에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 공간 효율을 높인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0236",
+    "publication": "",
+    "title": "창고 피킹 로봇 장치",
+    "decision": "REJECTED",
+    "cpc": "B65G1/137",
+    "cpcLabels": [
+      "B65G1/137"
+    ],
+    "filed": "2013-03-11",
+    "applicant": "(더미)",
+    "abstract": "창고 피킹 로봇에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "firstClaim": "창고 피킹 로봇에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 작업자 부담을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0235"
+    ]
+  },
+  {
+    "id": "GEN-0237",
+    "publication": "",
+    "title": "상자 적재 로봇팔 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "G05D1/02",
+    "cpcLabels": [
+      "G05D1/02"
+    ],
+    "filed": "2014-07-04",
+    "applicant": "(더미)",
+    "abstract": "상자 적재 로봇팔에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 공간 효율을 높인다.",
+    "firstClaim": "상자 적재 로봇팔에서 물품 위치를 비전으로 인식해 집는 방법. 이를 통해 공간 효율을 높인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0236",
+      "GEN-0231"
+    ]
+  },
+  {
+    "id": "GEN-0238",
+    "publication": "",
+    "title": "재고 드론 스캔 방법",
+    "decision": "UNKNOWN",
+    "cpc": "B65G1/137",
+    "cpcLabels": [
+      "B65G1/137"
+    ],
+    "filed": "2015-12-07",
+    "applicant": "(더미)",
+    "abstract": "재고 드론 스캔에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 처리량을 늘린다.",
+    "firstClaim": "재고 드론 스캔에서 충전 순서를 작업량에 맞추는 방법. 이를 통해 처리량을 늘린다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0239",
+    "publication": "",
+    "title": "재고 드론 스캔 장치",
+    "decision": "ACCEPTED",
+    "cpc": "B25J9/16",
+    "cpcLabels": [
+      "B25J9/16"
+    ],
+    "filed": "2015-04-14",
+    "applicant": "(더미)",
+    "abstract": "재고 드론 스캔에서 바코드 없이 형상으로 분류하는 구조. 이를 통해 처리량을 늘린다.",
+    "firstClaim": "재고 드론 스캔에서 바코드 없이 형상으로 분류하는 구조. 이를 통해 처리량을 늘린다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": []
+  },
+  {
+    "id": "GEN-0240",
+    "publication": "",
+    "title": "상자 적재 로봇팔 방법",
+    "decision": "REJECTED",
+    "cpc": "B65G1/137",
+    "cpcLabels": [
+      "B65G1/137"
+    ],
+    "filed": "2014-05-23",
+    "applicant": "(더미)",
+    "abstract": "상자 적재 로봇팔에서 바코드 없이 형상으로 분류하는 구조. 이를 통해 오배송을 줄인다.",
+    "firstClaim": "상자 적재 로봇팔에서 바코드 없이 형상으로 분류하는 구조. 이를 통해 오배송을 줄인다.",
+    "source": "dummy",
+    "field": "물류 로봇",
+    "cites": [
+      "GEN-0231",
+      "GEN-0233",
+      "GEN-0225"
+    ]
+  },
+  {
+    "id": "GEN-0241",
+    "publication": "",
+    "title": "저당 소스 장치",
+    "decision": "REJECTED",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2024-12-27",
+    "applicant": "(더미)",
+    "abstract": "저당 소스에서 효소로 당을 줄이는 처리. 이를 통해 유통 기한을 늘린다.",
+    "firstClaim": "저당 소스에서 효소로 당을 줄이는 처리. 이를 통해 유통 기한을 늘린다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0242",
+    "publication": "",
+    "title": "냉동 즉석식품 구조",
+    "decision": "PENDING",
+    "cpc": "A23L5/10",
+    "cpcLabels": [
+      "A23L5/10"
+    ],
+    "filed": "2018-02-26",
+    "applicant": "(더미)",
+    "abstract": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 영양 손실을 줄인다.",
+    "firstClaim": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 영양 손실을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0243",
+    "publication": "",
+    "title": "발효 음료 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A23L3/36",
+    "cpcLabels": [
+      "A23L3/36"
+    ],
+    "filed": "2018-09-11",
+    "applicant": "(더미)",
+    "abstract": "발효 음료에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 식감을 개선한다.",
+    "firstClaim": "발효 음료에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 식감을 개선한다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0242"
+    ]
+  },
+  {
+    "id": "GEN-0244",
+    "publication": "",
+    "title": "발효 음료 조성물",
+    "decision": "PENDING",
+    "cpc": "A23L5/10",
+    "cpcLabels": [
+      "A23L5/10"
+    ],
+    "filed": "2020-07-17",
+    "applicant": "(더미)",
+    "abstract": "발효 음료에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 식감을 개선한다.",
+    "firstClaim": "발효 음료에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 식감을 개선한다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0242",
+      "GEN-0243"
+    ]
+  },
+  {
+    "id": "GEN-0245",
+    "publication": "",
+    "title": "냉동 즉석식품 조성물",
+    "decision": "REJECTED",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2014-05-18",
+    "applicant": "(더미)",
+    "abstract": "냉동 즉석식품에서 유산균 배양 온도를 단계별로 바꾸는 공정. 이를 통해 흡수율을 높인다.",
+    "firstClaim": "냉동 즉석식품에서 유산균 배양 온도를 단계별로 바꾸는 공정. 이를 통해 흡수율을 높인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0246",
+    "publication": "",
+    "title": "냉동 즉석식품 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2024-03-10",
+    "applicant": "(더미)",
+    "abstract": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 흡수율을 높인다.",
+    "firstClaim": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 흡수율을 높인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0241",
+      "GEN-0242",
+      "GEN-0245"
+    ]
+  },
+  {
+    "id": "GEN-0247",
+    "publication": "",
+    "title": "대체육 압출 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A23L5/10",
+    "cpcLabels": [
+      "A23L5/10"
+    ],
+    "filed": "2011-12-01",
+    "applicant": "(더미)",
+    "abstract": "대체육 압출에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "firstClaim": "대체육 압출에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0248",
+    "publication": "",
+    "title": "건강기능식품 캡슐 방법",
+    "decision": "REJECTED",
+    "cpc": "A23L3/36",
+    "cpcLabels": [
+      "A23L3/36"
+    ],
+    "filed": "2015-05-14",
+    "applicant": "(더미)",
+    "abstract": "건강기능식품 캡슐에서 효소로 당을 줄이는 처리. 이를 통해 흡수율을 높인다.",
+    "firstClaim": "건강기능식품 캡슐에서 효소로 당을 줄이는 처리. 이를 통해 흡수율을 높인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0249",
+    "publication": "",
+    "title": "건강기능식품 캡슐 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A23L3/36",
+    "cpcLabels": [
+      "A23L3/36"
+    ],
+    "filed": "2022-03-01",
+    "applicant": "(더미)",
+    "abstract": "건강기능식품 캡슐에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 식감을 개선한다.",
+    "firstClaim": "건강기능식품 캡슐에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 식감을 개선한다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0250",
+    "publication": "",
+    "title": "냉동 즉석식품 조성물",
+    "decision": "PENDING",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2014-05-04",
+    "applicant": "(더미)",
+    "abstract": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 유통 기한을 늘린다.",
+    "firstClaim": "냉동 즉석식품에서 급속 냉동으로 식감을 유지하는 공정. 이를 통해 유통 기한을 늘린다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0245"
+    ]
+  },
+  {
+    "id": "GEN-0251",
+    "publication": "",
+    "title": "발효 음료 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2025-04-02",
+    "applicant": "(더미)",
+    "abstract": "발효 음료에서 유산균 배양 온도를 단계별로 바꾸는 공정. 이를 통해 흡수율을 높인다.",
+    "firstClaim": "발효 음료에서 유산균 배양 온도를 단계별로 바꾸는 공정. 이를 통해 흡수율을 높인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0248"
+    ]
+  },
+  {
+    "id": "GEN-0252",
+    "publication": "",
+    "title": "대체육 압출 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A23P10/30",
+    "cpcLabels": [
+      "A23P10/30"
+    ],
+    "filed": "2017-12-21",
+    "applicant": "(더미)",
+    "abstract": "대체육 압출에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "firstClaim": "대체육 압출에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0245",
+      "GEN-0247"
+    ]
+  },
+  {
+    "id": "GEN-0253",
+    "publication": "",
+    "title": "냉동 즉석식품 조성물",
+    "decision": "REJECTED",
+    "cpc": "A23L3/36",
+    "cpcLabels": [
+      "A23L3/36"
+    ],
+    "filed": "2020-04-27",
+    "applicant": "(더미)",
+    "abstract": "냉동 즉석식품에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 유통 기한을 늘린다.",
+    "firstClaim": "냉동 즉석식품에서 고수분 압출로 섬유 조직을 만드는 방법. 이를 통해 유통 기한을 늘린다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0254",
+    "publication": "",
+    "title": "저당 소스 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "A23L5/10",
+    "cpcLabels": [
+      "A23L5/10"
+    ],
+    "filed": "2023-03-09",
+    "applicant": "(더미)",
+    "abstract": "저당 소스에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "firstClaim": "저당 소스에서 유효 성분을 미세 캡슐에 담는 방법. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0255",
+    "publication": "",
+    "title": "식물성 단백질 분말 조성물",
+    "decision": "REJECTED",
+    "cpc": "A23L3/36",
+    "cpcLabels": [
+      "A23L3/36"
+    ],
+    "filed": "2010-11-07",
+    "applicant": "(더미)",
+    "abstract": "식물성 단백질 분말에서 효소로 당을 줄이는 처리. 이를 통해 영양 손실을 줄인다.",
+    "firstClaim": "식물성 단백질 분말에서 효소로 당을 줄이는 처리. 이를 통해 영양 손실을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": []
+  },
+  {
+    "id": "GEN-0256",
+    "publication": "",
+    "title": "대체육 압출 방법",
+    "decision": "UNKNOWN",
+    "cpc": "A23L33/105",
+    "cpcLabels": [
+      "A23L33/105"
+    ],
+    "filed": "2017-10-09",
+    "applicant": "(더미)",
+    "abstract": "대체육 압출에서 효소로 당을 줄이는 처리. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "firstClaim": "대체육 압출에서 효소로 당을 줄이는 처리. 이를 통해 맛 저하 없이 당을 줄인다.",
+    "source": "dummy",
+    "field": "식품 가공",
+    "cites": [
+      "GEN-0245",
+      "GEN-0252"
+    ]
+  },
+  {
+    "id": "GEN-0257",
+    "publication": "",
+    "title": "전기차 충전 스케줄링 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H02J7/00",
+    "cpcLabels": [
+      "H02J7/00"
+    ],
+    "filed": "2015-08-27",
+    "applicant": "(더미)",
+    "abstract": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": []
+  },
+  {
+    "id": "GEN-0258",
+    "publication": "",
+    "title": "ESS 충방전 제어 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2014-07-22",
+    "applicant": "(더미)",
+    "abstract": "ESS 충방전 제어에서 부하를 우선순위로 차단하는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "ESS 충방전 제어에서 부하를 우선순위로 차단하는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": []
+  },
+  {
+    "id": "GEN-0259",
+    "publication": "",
+    "title": "태양광 발전 예측 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2014-11-18",
+    "applicant": "(더미)",
+    "abstract": "태양광 발전 예측에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 계통 안정성을 높인다.",
+    "firstClaim": "태양광 발전 예측에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 계통 안정성을 높인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0258"
+    ]
+  },
+  {
+    "id": "GEN-0260",
+    "publication": "",
+    "title": "건물 전력 수요 관리 장치",
+    "decision": "UNKNOWN",
+    "cpc": "H02J3/38",
+    "cpcLabels": [
+      "H02J3/38"
+    ],
+    "filed": "2024-04-28",
+    "applicant": "(더미)",
+    "abstract": "건물 전력 수요 관리에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "건물 전력 수요 관리에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0259"
+    ]
+  },
+  {
+    "id": "GEN-0261",
+    "publication": "",
+    "title": "수소 연료전지 제어 방법",
+    "decision": "UNKNOWN",
+    "cpc": "H02J7/00",
+    "cpcLabels": [
+      "H02J7/00"
+    ],
+    "filed": "2010-11-11",
+    "applicant": "(더미)",
+    "abstract": "수소 연료전지 제어에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "수소 연료전지 제어에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": []
+  },
+  {
+    "id": "GEN-0262",
+    "publication": "",
+    "title": "태양광 발전 예측 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2012-02-15",
+    "applicant": "(더미)",
+    "abstract": "태양광 발전 예측에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "태양광 발전 예측에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0261"
+    ]
+  },
+  {
+    "id": "GEN-0263",
+    "publication": "",
+    "title": "건물 전력 수요 관리 구조",
+    "decision": "PENDING",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2019-01-07",
+    "applicant": "(더미)",
+    "abstract": "건물 전력 수요 관리에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "건물 전력 수요 관리에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0262"
+    ]
+  },
+  {
+    "id": "GEN-0264",
+    "publication": "",
+    "title": "마이크로그리드 운영 시스템",
+    "decision": "PENDING",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2024-08-08",
+    "applicant": "(더미)",
+    "abstract": "마이크로그리드 운영에서 부하를 우선순위로 차단하는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "마이크로그리드 운영에서 부하를 우선순위로 차단하는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0260",
+      "GEN-0258"
+    ]
+  },
+  {
+    "id": "GEN-0265",
+    "publication": "",
+    "title": "수소 연료전지 제어 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2018-01-08",
+    "applicant": "(더미)",
+    "abstract": "수소 연료전지 제어에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 계통 안정성을 높인다.",
+    "firstClaim": "수소 연료전지 제어에서 기상 데이터로 발전량을 예측하는 방법. 이를 통해 계통 안정성을 높인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0259",
+      "GEN-0257",
+      "GEN-0262"
+    ]
+  },
+  {
+    "id": "GEN-0266",
+    "publication": "",
+    "title": "전기차 충전 스케줄링 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2009-10-17",
+    "applicant": "(더미)",
+    "abstract": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 피크 부하를 낮춘다.",
+    "firstClaim": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 피크 부하를 낮춘다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": []
+  },
+  {
+    "id": "GEN-0267",
+    "publication": "",
+    "title": "전기차 충전 스케줄링 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "H02S40/38",
+    "cpcLabels": [
+      "H02S40/38"
+    ],
+    "filed": "2009-06-26",
+    "applicant": "(더미)",
+    "abstract": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 전력 비용을 줄인다.",
+    "firstClaim": "전기차 충전 스케줄링에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 전력 비용을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0266"
+    ]
+  },
+  {
+    "id": "GEN-0268",
+    "publication": "",
+    "title": "태양광 발전 예측 시스템",
+    "decision": "PENDING",
+    "cpc": "H02S40/38",
+    "cpcLabels": [
+      "H02S40/38"
+    ],
+    "filed": "2022-02-01",
+    "applicant": "(더미)",
+    "abstract": "태양광 발전 예측에서 충전 대기열을 분산하는 방법. 이를 통해 전력 비용을 줄인다.",
+    "firstClaim": "태양광 발전 예측에서 충전 대기열을 분산하는 방법. 이를 통해 전력 비용을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0262",
+      "GEN-0258",
+      "GEN-0266"
+    ]
+  },
+  {
+    "id": "GEN-0269",
+    "publication": "",
+    "title": "마이크로그리드 운영 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H02J7/00",
+    "cpcLabels": [
+      "H02J7/00"
+    ],
+    "filed": "2009-10-15",
+    "applicant": "(더미)",
+    "abstract": "마이크로그리드 운영에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "마이크로그리드 운영에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0266"
+    ]
+  },
+  {
+    "id": "GEN-0270",
+    "publication": "",
+    "title": "전기차 충전 스케줄링 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2017-05-28",
+    "applicant": "(더미)",
+    "abstract": "전기차 충전 스케줄링에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "전기차 충전 스케줄링에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0259",
+      "GEN-0262",
+      "GEN-0261"
+    ]
+  },
+  {
+    "id": "GEN-0271",
+    "publication": "",
+    "title": "수소 연료전지 제어 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G06Q50/06",
+    "cpcLabels": [
+      "G06Q50/06"
+    ],
+    "filed": "2008-08-24",
+    "applicant": "(더미)",
+    "abstract": "수소 연료전지 제어에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 피크 부하를 낮춘다.",
+    "firstClaim": "수소 연료전지 제어에서 전력 요금에 맞춰 충방전을 정하는 방법. 이를 통해 피크 부하를 낮춘다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": []
+  },
+  {
+    "id": "GEN-0272",
+    "publication": "",
+    "title": "마이크로그리드 운영 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H02J7/00",
+    "cpcLabels": [
+      "H02J7/00"
+    ],
+    "filed": "2024-08-13",
+    "applicant": "(더미)",
+    "abstract": "마이크로그리드 운영에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "마이크로그리드 운영에서 연료 공급량을 부하에 맞추는 제어. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "에너지 관리",
+    "cites": [
+      "GEN-0271",
+      "GEN-0262",
+      "GEN-0257"
+    ]
+  },
+  {
+    "id": "GEN-0273",
+    "publication": "",
+    "title": "침입 탐지 시스템 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04L63/14",
+    "cpcLabels": [
+      "H04L63/14"
+    ],
+    "filed": "2021-11-24",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0274",
+    "publication": "",
+    "title": "침입 탐지 시스템 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06F21/32",
+    "cpcLabels": [
+      "G06F21/32"
+    ],
+    "filed": "2018-12-15",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0275",
+    "publication": "",
+    "title": "악성코드 분석 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06F21/55",
+    "cpcLabels": [
+      "G06F21/55"
+    ],
+    "filed": "2012-04-19",
+    "applicant": "(더미)",
+    "abstract": "악성코드 분석에서 네트워크 흐름을 학습해 이상을 찾는 방법. 이를 통해 권한 남용을 줄인다.",
+    "firstClaim": "악성코드 분석에서 네트워크 흐름을 학습해 이상을 찾는 방법. 이를 통해 권한 남용을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0276",
+    "publication": "",
+    "title": "생체 인증 장치",
+    "decision": "UNKNOWN",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2011-03-13",
+    "applicant": "(더미)",
+    "abstract": "생체 인증에서 네트워크 흐름을 학습해 이상을 찾는 방법. 이를 통해 정보 유출 위험을 낮춘다.",
+    "firstClaim": "생체 인증에서 네트워크 흐름을 학습해 이상을 찾는 방법. 이를 통해 정보 유출 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0277",
+    "publication": "",
+    "title": "침입 탐지 시스템 방법",
+    "decision": "PENDING",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2013-05-11",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0275"
+    ]
+  },
+  {
+    "id": "GEN-0278",
+    "publication": "",
+    "title": "생체 인증 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06F21/55",
+    "cpcLabels": [
+      "G06F21/55"
+    ],
+    "filed": "2022-03-05",
+    "applicant": "(더미)",
+    "abstract": "생체 인증에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "생체 인증에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0274"
+    ]
+  },
+  {
+    "id": "GEN-0279",
+    "publication": "",
+    "title": "로그 이상 탐지 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2016-01-16",
+    "applicant": "(더미)",
+    "abstract": "로그 이상 탐지에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "firstClaim": "로그 이상 탐지에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0280",
+    "publication": "",
+    "title": "생체 인증 장치",
+    "decision": "UNKNOWN",
+    "cpc": "G06F21/32",
+    "cpcLabels": [
+      "G06F21/32"
+    ],
+    "filed": "2016-06-02",
+    "applicant": "(더미)",
+    "abstract": "생체 인증에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 권한 남용을 줄인다.",
+    "firstClaim": "생체 인증에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 권한 남용을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0275",
+      "GEN-0279",
+      "GEN-0277"
+    ]
+  },
+  {
+    "id": "GEN-0281",
+    "publication": "",
+    "title": "악성코드 분석 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2016-07-11",
+    "applicant": "(더미)",
+    "abstract": "악성코드 분석에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "악성코드 분석에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": []
+  },
+  {
+    "id": "GEN-0282",
+    "publication": "",
+    "title": "침입 탐지 시스템 방법",
+    "decision": "PENDING",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2016-09-08",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 대응 시간을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0280",
+      "GEN-0276"
+    ]
+  },
+  {
+    "id": "GEN-0283",
+    "publication": "",
+    "title": "접근 권한 관리 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04L63/14",
+    "cpcLabels": [
+      "H04L63/14"
+    ],
+    "filed": "2019-03-05",
+    "applicant": "(더미)",
+    "abstract": "접근 권한 관리에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "접근 권한 관리에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0277",
+      "GEN-0276",
+      "GEN-0279"
+    ]
+  },
+  {
+    "id": "GEN-0284",
+    "publication": "",
+    "title": "로그 이상 탐지 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2012-09-21",
+    "applicant": "(더미)",
+    "abstract": "로그 이상 탐지에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 권한 남용을 줄인다.",
+    "firstClaim": "로그 이상 탐지에서 실행 행위를 격리 환경에서 관찰하는 방법. 이를 통해 권한 남용을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0275",
+      "GEN-0276"
+    ]
+  },
+  {
+    "id": "GEN-0285",
+    "publication": "",
+    "title": "개인정보 비식별화 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H04L63/14",
+    "cpcLabels": [
+      "H04L63/14"
+    ],
+    "filed": "2011-12-06",
+    "applicant": "(더미)",
+    "abstract": "개인정보 비식별화에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 대응 시간을 줄인다.",
+    "firstClaim": "개인정보 비식별화에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 대응 시간을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0276"
+    ]
+  },
+  {
+    "id": "GEN-0286",
+    "publication": "",
+    "title": "침입 탐지 시스템 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H04L9/40",
+    "cpcLabels": [
+      "H04L9/40"
+    ],
+    "filed": "2011-11-23",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 재식별 위험을 수치로 계산하는 방법. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0276"
+    ]
+  },
+  {
+    "id": "GEN-0287",
+    "publication": "",
+    "title": "로그 이상 탐지 시스템",
+    "decision": "PENDING",
+    "cpc": "G06F21/55",
+    "cpcLabels": [
+      "G06F21/55"
+    ],
+    "filed": "2022-04-15",
+    "applicant": "(더미)",
+    "abstract": "로그 이상 탐지에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 정보 유출 위험을 낮춘다.",
+    "firstClaim": "로그 이상 탐지에서 얼굴과 음성을 함께 쓰는 인증. 이를 통해 정보 유출 위험을 낮춘다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0281",
+      "GEN-0280"
+    ]
+  },
+  {
+    "id": "GEN-0288",
+    "publication": "",
+    "title": "침입 탐지 시스템 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "G06F21/32",
+    "cpcLabels": [
+      "G06F21/32"
+    ],
+    "filed": "2019-04-16",
+    "applicant": "(더미)",
+    "abstract": "침입 탐지 시스템에서 업무 역할에 맞춰 권한을 자동 회수하는 구조. 이를 통해 오탐을 줄인다.",
+    "firstClaim": "침입 탐지 시스템에서 업무 역할에 맞춰 권한을 자동 회수하는 구조. 이를 통해 오탐을 줄인다.",
+    "source": "dummy",
+    "field": "보안",
+    "cites": [
+      "GEN-0277",
+      "GEN-0284"
+    ]
+  },
+  {
+    "id": "GEN-0289",
+    "publication": "",
+    "title": "클라우드 게임 스트리밍 구조",
+    "decision": "ACCEPTED",
+    "cpc": "A63F13/795",
+    "cpcLabels": [
+      "A63F13/795"
+    ],
+    "filed": "2023-10-06",
+    "applicant": "(더미)",
+    "abstract": "클라우드 게임 스트리밍에서 입력 패턴으로 자동 조작을 찾는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "클라우드 게임 스트리밍에서 입력 패턴으로 자동 조작을 찾는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": []
+  },
+  {
+    "id": "GEN-0290",
+    "publication": "",
+    "title": "부정행위 탐지 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A63F13/67",
+    "cpcLabels": [
+      "A63F13/67"
+    ],
+    "filed": "2023-11-17",
+    "applicant": "(더미)",
+    "abstract": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 공정성을 높인다.",
+    "firstClaim": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 공정성을 높인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": []
+  },
+  {
+    "id": "GEN-0291",
+    "publication": "",
+    "title": "클라우드 게임 스트리밍 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2018-08-22",
+    "applicant": "(더미)",
+    "abstract": "클라우드 게임 스트리밍에서 입력 패턴으로 자동 조작을 찾는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "클라우드 게임 스트리밍에서 입력 패턴으로 자동 조작을 찾는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": []
+  },
+  {
+    "id": "GEN-0292",
+    "publication": "",
+    "title": "절차적 맵 생성 장치",
+    "decision": "ACCEPTED",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2023-11-28",
+    "applicant": "(더미)",
+    "abstract": "절차적 맵 생성에서 모션 데이터를 실시간 보간하는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "절차적 맵 생성에서 모션 데이터를 실시간 보간하는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0289",
+      "GEN-0291"
+    ]
+  },
+  {
+    "id": "GEN-0293",
+    "publication": "",
+    "title": "절차적 맵 생성 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2019-12-23",
+    "applicant": "(더미)",
+    "abstract": "절차적 맵 생성에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "절차적 맵 생성에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0291"
+    ]
+  },
+  {
+    "id": "GEN-0294",
+    "publication": "",
+    "title": "클라우드 게임 스트리밍 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A63F13/795",
+    "cpcLabels": [
+      "A63F13/795"
+    ],
+    "filed": "2014-04-09",
+    "applicant": "(더미)",
+    "abstract": "클라우드 게임 스트리밍에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 공정성을 높인다.",
+    "firstClaim": "클라우드 게임 스트리밍에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 공정성을 높인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": []
+  },
+  {
+    "id": "GEN-0295",
+    "publication": "",
+    "title": "부정행위 탐지 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A63F13/67",
+    "cpcLabels": [
+      "A63F13/67"
+    ],
+    "filed": "2008-12-23",
+    "applicant": "(더미)",
+    "abstract": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": []
+  },
+  {
+    "id": "GEN-0296",
+    "publication": "",
+    "title": "부정행위 탐지 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2014-04-10",
+    "applicant": "(더미)",
+    "abstract": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "firstClaim": "부정행위 탐지에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0294"
+    ]
+  },
+  {
+    "id": "GEN-0297",
+    "publication": "",
+    "title": "매치메이킹 방법",
+    "decision": "PENDING",
+    "cpc": "A63F13/56",
+    "cpcLabels": [
+      "A63F13/56"
+    ],
+    "filed": "2017-06-14",
+    "applicant": "(더미)",
+    "abstract": "매치메이킹에서 모션 데이터를 실시간 보간하는 방법. 이를 통해 움직임을 자연스럽게 한다.",
+    "firstClaim": "매치메이킹에서 모션 데이터를 실시간 보간하는 방법. 이를 통해 움직임을 자연스럽게 한다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0296"
+    ]
+  },
+  {
+    "id": "GEN-0298",
+    "publication": "",
+    "title": "매치메이킹 방법",
+    "decision": "UNKNOWN",
+    "cpc": "A63F13/56",
+    "cpcLabels": [
+      "A63F13/56"
+    ],
+    "filed": "2013-10-18",
+    "applicant": "(더미)",
+    "abstract": "매치메이킹에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "firstClaim": "매치메이킹에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0295"
+    ]
+  },
+  {
+    "id": "GEN-0299",
+    "publication": "",
+    "title": "매치메이킹 조성물",
+    "decision": "REJECTED",
+    "cpc": "A63F13/56",
+    "cpcLabels": [
+      "A63F13/56"
+    ],
+    "filed": "2018-07-11",
+    "applicant": "(더미)",
+    "abstract": "매치메이킹에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 공정성을 높인다.",
+    "firstClaim": "매치메이킹에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 공정성을 높인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0298"
+    ]
+  },
+  {
+    "id": "GEN-0300",
+    "publication": "",
+    "title": "클라우드 게임 스트리밍 구조",
+    "decision": "ACCEPTED",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2020-08-10",
+    "applicant": "(더미)",
+    "abstract": "클라우드 게임 스트리밍에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "firstClaim": "클라우드 게임 스트리밍에서 아이템 가격을 수요로 조정하는 구조. 이를 통해 움직임을 자연스럽게 한다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0291"
+    ]
+  },
+  {
+    "id": "GEN-0301",
+    "publication": "",
+    "title": "클라우드 게임 스트리밍 방법",
+    "decision": "ACCEPTED",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2021-07-24",
+    "applicant": "(더미)",
+    "abstract": "클라우드 게임 스트리밍에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 콘텐츠 제작 비용을 줄인다.",
+    "firstClaim": "클라우드 게임 스트리밍에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 콘텐츠 제작 비용을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0294"
+    ]
+  },
+  {
+    "id": "GEN-0302",
+    "publication": "",
+    "title": "게임 내 경제 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A63F13/795",
+    "cpcLabels": [
+      "A63F13/795"
+    ],
+    "filed": "2016-03-08",
+    "applicant": "(더미)",
+    "abstract": "게임 내 경제에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 움직임을 자연스럽게 한다.",
+    "firstClaim": "게임 내 경제에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 움직임을 자연스럽게 한다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0294"
+    ]
+  },
+  {
+    "id": "GEN-0303",
+    "publication": "",
+    "title": "게임 내 경제 방법",
+    "decision": "UNKNOWN",
+    "cpc": "A63F13/795",
+    "cpcLabels": [
+      "A63F13/795"
+    ],
+    "filed": "2019-04-09",
+    "applicant": "(더미)",
+    "abstract": "게임 내 경제에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 공정성을 높인다.",
+    "firstClaim": "게임 내 경제에서 지형 규칙으로 맵을 만드는 방법. 이를 통해 공정성을 높인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0297",
+      "GEN-0293",
+      "GEN-0298"
+    ]
+  },
+  {
+    "id": "GEN-0304",
+    "publication": "",
+    "title": "매치메이킹 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "G06T13/40",
+    "cpcLabels": [
+      "G06T13/40"
+    ],
+    "filed": "2022-08-13",
+    "applicant": "(더미)",
+    "abstract": "매치메이킹에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 대기 시간을 줄인다.",
+    "firstClaim": "매치메이킹에서 실력과 접속 지연을 함께 보는 매칭. 이를 통해 대기 시간을 줄인다.",
+    "source": "dummy",
+    "field": "게임",
+    "cites": [
+      "GEN-0300"
+    ]
+  },
+  {
+    "id": "GEN-0305",
+    "publication": "",
+    "title": "휴대용 초음파 조성물",
+    "decision": "REJECTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2015-02-23",
+    "applicant": "(더미)",
+    "abstract": "휴대용 초음파에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 검사 시간을 줄인다.",
+    "firstClaim": "휴대용 초음파에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 검사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": []
+  },
+  {
+    "id": "GEN-0306",
+    "publication": "",
+    "title": "휴대용 초음파 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2013-09-09",
+    "applicant": "(더미)",
+    "abstract": "휴대용 초음파에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 검사 시간을 줄인다.",
+    "firstClaim": "휴대용 초음파에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 검사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": []
+  },
+  {
+    "id": "GEN-0307",
+    "publication": "",
+    "title": "비침습 혈당 측정 방법",
+    "decision": "PENDING",
+    "cpc": "A61B5/00",
+    "cpcLabels": [
+      "A61B5/00"
+    ],
+    "filed": "2024-10-22",
+    "applicant": "(더미)",
+    "abstract": "비침습 혈당 측정에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 재활 기간을 줄인다.",
+    "firstClaim": "비침습 혈당 측정에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 재활 기간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0306",
+      "GEN-0305"
+    ]
+  },
+  {
+    "id": "GEN-0308",
+    "publication": "",
+    "title": "산소포화도 센서 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61N7/02",
+    "cpcLabels": [
+      "A61N7/02"
+    ],
+    "filed": "2009-06-26",
+    "applicant": "(더미)",
+    "abstract": "산소포화도 센서에서 근전도로 보조 힘을 조절하는 제어. 이를 통해 시술 통증을 줄인다.",
+    "firstClaim": "산소포화도 센서에서 근전도로 보조 힘을 조절하는 제어. 이를 통해 시술 통증을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": []
+  },
+  {
+    "id": "GEN-0309",
+    "publication": "",
+    "title": "휴대용 초음파 구조",
+    "decision": "PENDING",
+    "cpc": "A61N7/02",
+    "cpcLabels": [
+      "A61N7/02"
+    ],
+    "filed": "2011-08-26",
+    "applicant": "(더미)",
+    "abstract": "휴대용 초음파에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 채혈 없이 측정한다.",
+    "firstClaim": "휴대용 초음파에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 채혈 없이 측정한다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0308"
+    ]
+  },
+  {
+    "id": "GEN-0310",
+    "publication": "",
+    "title": "비침습 혈당 측정 조성물",
+    "decision": "REJECTED",
+    "cpc": "A61B5/00",
+    "cpcLabels": [
+      "A61B5/00"
+    ],
+    "filed": "2009-09-07",
+    "applicant": "(더미)",
+    "abstract": "비침습 혈당 측정에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 측정 오차를 줄인다.",
+    "firstClaim": "비침습 혈당 측정에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 측정 오차를 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0308"
+    ]
+  },
+  {
+    "id": "GEN-0311",
+    "publication": "",
+    "title": "재활 보조 로봇 장치",
+    "decision": "UNKNOWN",
+    "cpc": "A61B5/1455",
+    "cpcLabels": [
+      "A61B5/1455"
+    ],
+    "filed": "2025-03-12",
+    "applicant": "(더미)",
+    "abstract": "재활 보조 로봇에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 시술 통증을 줄인다.",
+    "firstClaim": "재활 보조 로봇에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 시술 통증을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": []
+  },
+  {
+    "id": "GEN-0312",
+    "publication": "",
+    "title": "재활 보조 로봇 방법",
+    "decision": "REJECTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2010-03-28",
+    "applicant": "(더미)",
+    "abstract": "재활 보조 로봇에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 시술 통증을 줄인다.",
+    "firstClaim": "재활 보조 로봇에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 시술 통증을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0308",
+      "GEN-0310"
+    ]
+  },
+  {
+    "id": "GEN-0313",
+    "publication": "",
+    "title": "비침습 혈당 측정 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61B5/1455",
+    "cpcLabels": [
+      "A61B5/1455"
+    ],
+    "filed": "2015-11-22",
+    "applicant": "(더미)",
+    "abstract": "비침습 혈당 측정에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 시술 통증을 줄인다.",
+    "firstClaim": "비침습 혈당 측정에서 탐촉자 위치를 영상으로 안내하는 방법. 이를 통해 시술 통증을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0310",
+      "GEN-0312"
+    ]
+  },
+  {
+    "id": "GEN-0314",
+    "publication": "",
+    "title": "웨어러블 심전도 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2019-08-04",
+    "applicant": "(더미)",
+    "abstract": "웨어러블 심전도에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 검사 시간을 줄인다.",
+    "firstClaim": "웨어러블 심전도에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 검사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0309",
+      "GEN-0308"
+    ]
+  },
+  {
+    "id": "GEN-0315",
+    "publication": "",
+    "title": "비침습 혈당 측정 방법",
+    "decision": "ACCEPTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2011-01-07",
+    "applicant": "(더미)",
+    "abstract": "비침습 혈당 측정에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 측정 오차를 줄인다.",
+    "firstClaim": "비침습 혈당 측정에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 측정 오차를 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0310",
+      "GEN-0308"
+    ]
+  },
+  {
+    "id": "GEN-0316",
+    "publication": "",
+    "title": "재활 보조 로봇 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61B8/08",
+    "cpcLabels": [
+      "A61B8/08"
+    ],
+    "filed": "2021-06-22",
+    "applicant": "(더미)",
+    "abstract": "재활 보조 로봇에서 근전도로 보조 힘을 조절하는 제어. 이를 통해 검사 시간을 줄인다.",
+    "firstClaim": "재활 보조 로봇에서 근전도로 보조 힘을 조절하는 제어. 이를 통해 검사 시간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0314"
+    ]
+  },
+  {
+    "id": "GEN-0317",
+    "publication": "",
+    "title": "HIFU 피부 치료기 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A61B5/00",
+    "cpcLabels": [
+      "A61B5/00"
+    ],
+    "filed": "2025-07-02",
+    "applicant": "(더미)",
+    "abstract": "HIFU 피부 치료기에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 측정 오차를 줄인다.",
+    "firstClaim": "HIFU 피부 치료기에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 측정 오차를 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0309",
+      "GEN-0308",
+      "GEN-0315"
+    ]
+  },
+  {
+    "id": "GEN-0318",
+    "publication": "",
+    "title": "HIFU 피부 치료기 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "A61B5/00",
+    "cpcLabels": [
+      "A61B5/00"
+    ],
+    "filed": "2011-12-17",
+    "applicant": "(더미)",
+    "abstract": "HIFU 피부 치료기에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 측정 오차를 줄인다.",
+    "firstClaim": "HIFU 피부 치료기에서 초점 깊이를 단계별로 바꾸는 조사. 이를 통해 측정 오차를 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0309",
+      "GEN-0310"
+    ]
+  },
+  {
+    "id": "GEN-0319",
+    "publication": "",
+    "title": "산소포화도 센서 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "A61B5/1455",
+    "cpcLabels": [
+      "A61B5/1455"
+    ],
+    "filed": "2010-09-24",
+    "applicant": "(더미)",
+    "abstract": "산소포화도 센서에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 재활 기간을 줄인다.",
+    "firstClaim": "산소포화도 센서에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 재활 기간을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0312"
+    ]
+  },
+  {
+    "id": "GEN-0320",
+    "publication": "",
+    "title": "웨어러블 심전도 구조",
+    "decision": "PENDING",
+    "cpc": "A61B5/00",
+    "cpcLabels": [
+      "A61B5/00"
+    ],
+    "filed": "2014-12-02",
+    "applicant": "(더미)",
+    "abstract": "웨어러블 심전도에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 시술 통증을 줄인다.",
+    "firstClaim": "웨어러블 심전도에서 피부 접촉 상태를 보정하는 신호 처리. 이를 통해 시술 통증을 줄인다.",
+    "source": "dummy",
+    "field": "의료기기",
+    "cites": [
+      "GEN-0308",
+      "GEN-0319",
+      "GEN-0309"
+    ]
+  },
+  {
+    "id": "GEN-0321",
+    "publication": "",
+    "title": "내화 코팅 방법",
+    "decision": "ACCEPTED",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2013-04-18",
+    "applicant": "(더미)",
+    "abstract": "내화 코팅에서 진동을 흡수하는 이중 구조. 이를 통해 층간 소음을 줄인다.",
+    "firstClaim": "내화 코팅에서 진동을 흡수하는 이중 구조. 이를 통해 층간 소음을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0322",
+    "publication": "",
+    "title": "층간 소음 차단재 장치",
+    "decision": "PENDING",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2018-07-08",
+    "applicant": "(더미)",
+    "abstract": "층간 소음 차단재에서 진동을 흡수하는 이중 구조. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "층간 소음 차단재에서 진동을 흡수하는 이중 구조. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0321"
+    ]
+  },
+  {
+    "id": "GEN-0323",
+    "publication": "",
+    "title": "층간 소음 차단재 방법",
+    "decision": "PENDING",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2023-12-25",
+    "applicant": "(더미)",
+    "abstract": "층간 소음 차단재에서 현장 체결 없이 조립하는 접합부. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "층간 소음 차단재에서 현장 체결 없이 조립하는 접합부. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0321",
+      "GEN-0322"
+    ]
+  },
+  {
+    "id": "GEN-0324",
+    "publication": "",
+    "title": "단열 패널 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2023-11-16",
+    "applicant": "(더미)",
+    "abstract": "단열 패널에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "단열 패널에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0325",
+    "publication": "",
+    "title": "모듈러 벽체 방법",
+    "decision": "REJECTED",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2024-09-15",
+    "applicant": "(더미)",
+    "abstract": "모듈러 벽체에서 현장 체결 없이 조립하는 접합부. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "모듈러 벽체에서 현장 체결 없이 조립하는 접합부. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0324"
+    ]
+  },
+  {
+    "id": "GEN-0326",
+    "publication": "",
+    "title": "모듈러 벽체 방법",
+    "decision": "ACCEPTED",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2023-06-22",
+    "applicant": "(더미)",
+    "abstract": "모듈러 벽체에서 공기층을 다층으로 두는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "firstClaim": "모듈러 벽체에서 공기층을 다층으로 두는 구조. 이를 통해 탄소 배출을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0321",
+      "GEN-0322"
+    ]
+  },
+  {
+    "id": "GEN-0327",
+    "publication": "",
+    "title": "층간 소음 차단재 구조",
+    "decision": "UNKNOWN",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2022-07-25",
+    "applicant": "(더미)",
+    "abstract": "층간 소음 차단재에서 진동을 흡수하는 이중 구조. 이를 통해 공사 기간을 줄인다.",
+    "firstClaim": "층간 소음 차단재에서 진동을 흡수하는 이중 구조. 이를 통해 공사 기간을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0328",
+    "publication": "",
+    "title": "내화 코팅 시스템",
+    "decision": "UNKNOWN",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2008-10-21",
+    "applicant": "(더미)",
+    "abstract": "내화 코팅에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "내화 코팅에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0329",
+    "publication": "",
+    "title": "내화 코팅 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "E04B2/74",
+    "cpcLabels": [
+      "E04B2/74"
+    ],
+    "filed": "2019-05-13",
+    "applicant": "(더미)",
+    "abstract": "내화 코팅에서 진동을 흡수하는 이중 구조. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "내화 코팅에서 진동을 흡수하는 이중 구조. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0330",
+    "publication": "",
+    "title": "저탄소 콘크리트 시스템",
+    "decision": "REJECTED",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2024-12-10",
+    "applicant": "(더미)",
+    "abstract": "저탄소 콘크리트에서 현장 체결 없이 조립하는 접합부. 이를 통해 공사 기간을 줄인다.",
+    "firstClaim": "저탄소 콘크리트에서 현장 체결 없이 조립하는 접합부. 이를 통해 공사 기간을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0325"
+    ]
+  },
+  {
+    "id": "GEN-0331",
+    "publication": "",
+    "title": "모듈러 벽체 장치",
+    "decision": "ACCEPTED",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2017-06-08",
+    "applicant": "(더미)",
+    "abstract": "모듈러 벽체에서 진동을 흡수하는 이중 구조. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "모듈러 벽체에서 진동을 흡수하는 이중 구조. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0328",
+      "GEN-0321"
+    ]
+  },
+  {
+    "id": "GEN-0332",
+    "publication": "",
+    "title": "내화 코팅 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "C04B28/04",
+    "cpcLabels": [
+      "C04B28/04"
+    ],
+    "filed": "2008-12-24",
+    "applicant": "(더미)",
+    "abstract": "내화 코팅에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "firstClaim": "내화 코팅에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 단열 성능을 높인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0328"
+    ]
+  },
+  {
+    "id": "GEN-0333",
+    "publication": "",
+    "title": "모듈러 벽체 장치",
+    "decision": "ACCEPTED",
+    "cpc": "E04B1/76",
+    "cpcLabels": [
+      "E04B1/76"
+    ],
+    "filed": "2008-08-16",
+    "applicant": "(더미)",
+    "abstract": "모듈러 벽체에서 자외선에 강한 표면 처리. 이를 통해 공사 기간을 줄인다.",
+    "firstClaim": "모듈러 벽체에서 자외선에 강한 표면 처리. 이를 통해 공사 기간을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": [
+      "GEN-0328"
+    ]
+  },
+  {
+    "id": "GEN-0334",
+    "publication": "",
+    "title": "모듈러 벽체 방법",
+    "decision": "PENDING",
+    "cpc": "E04F13/08",
+    "cpcLabels": [
+      "E04F13/08"
+    ],
+    "filed": "2012-11-05",
+    "applicant": "(더미)",
+    "abstract": "모듈러 벽체에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 공사 기간을 줄인다.",
+    "firstClaim": "모듈러 벽체에서 산업 부산물로 시멘트를 대체하는 배합. 이를 통해 공사 기간을 줄인다.",
+    "source": "dummy",
+    "field": "건축 자재",
+    "cites": []
+  },
+  {
+    "id": "GEN-0335",
+    "publication": "",
+    "title": "자외선 차단제 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/02",
+    "cpcLabels": [
+      "A61K8/02"
+    ],
+    "filed": "2025-04-15",
+    "applicant": "(더미)",
+    "abstract": "자외선 차단제에서 캡슐 막 두께를 조절하는 방법. 이를 통해 흡수 시간을 늘린다.",
+    "firstClaim": "자외선 차단제에서 캡슐 막 두께를 조절하는 방법. 이를 통해 흡수 시간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0336",
+    "publication": "",
+    "title": "보습 크림 구조",
+    "decision": "PENDING",
+    "cpc": "A61Q17/04",
+    "cpcLabels": [
+      "A61Q17/04"
+    ],
+    "filed": "2021-09-14",
+    "applicant": "(더미)",
+    "abstract": "보습 크림에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 자극을 줄인다.",
+    "firstClaim": "보습 크림에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 자극을 줄인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0337",
+    "publication": "",
+    "title": "미세 캡슐 세럼 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/11",
+    "cpcLabels": [
+      "A61K8/11"
+    ],
+    "filed": "2024-10-23",
+    "applicant": "(더미)",
+    "abstract": "미세 캡슐 세럼에서 유효 성분을 리포좀에 담는 방법. 이를 통해 백탁을 줄인다.",
+    "firstClaim": "미세 캡슐 세럼에서 유효 성분을 리포좀에 담는 방법. 이를 통해 백탁을 줄인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0336"
+    ]
+  },
+  {
+    "id": "GEN-0338",
+    "publication": "",
+    "title": "천연 유래 방부제 구조",
+    "decision": "PENDING",
+    "cpc": "A61K8/02",
+    "cpcLabels": [
+      "A61K8/02"
+    ],
+    "filed": "2015-02-09",
+    "applicant": "(더미)",
+    "abstract": "천연 유래 방부제에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 흡수 시간을 늘린다.",
+    "firstClaim": "천연 유래 방부제에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 흡수 시간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0339",
+    "publication": "",
+    "title": "두피 앰플 장치",
+    "decision": "UNKNOWN",
+    "cpc": "A61Q17/04",
+    "cpcLabels": [
+      "A61Q17/04"
+    ],
+    "filed": "2013-02-18",
+    "applicant": "(더미)",
+    "abstract": "두피 앰플에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 밀착력을 높인다.",
+    "firstClaim": "두피 앰플에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 밀착력을 높인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0340",
+    "publication": "",
+    "title": "자외선 차단제 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/02",
+    "cpcLabels": [
+      "A61K8/02"
+    ],
+    "filed": "2009-08-09",
+    "applicant": "(더미)",
+    "abstract": "자외선 차단제에서 캡슐 막 두께를 조절하는 방법. 이를 통해 흡수 시간을 늘린다.",
+    "firstClaim": "자외선 차단제에서 캡슐 막 두께를 조절하는 방법. 이를 통해 흡수 시간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0341",
+    "publication": "",
+    "title": "보습 크림 방법",
+    "decision": "REJECTED",
+    "cpc": "A61Q17/04",
+    "cpcLabels": [
+      "A61Q17/04"
+    ],
+    "filed": "2018-11-26",
+    "applicant": "(더미)",
+    "abstract": "보습 크림에서 캡슐 막 두께를 조절하는 방법. 이를 통해 백탁을 줄인다.",
+    "firstClaim": "보습 크림에서 캡슐 막 두께를 조절하는 방법. 이를 통해 백탁을 줄인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0339"
+    ]
+  },
+  {
+    "id": "GEN-0342",
+    "publication": "",
+    "title": "보습 크림 구조",
+    "decision": "PENDING",
+    "cpc": "A61K8/02",
+    "cpcLabels": [
+      "A61K8/02"
+    ],
+    "filed": "2022-01-27",
+    "applicant": "(더미)",
+    "abstract": "보습 크림에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 흡수 시간을 늘린다.",
+    "firstClaim": "보습 크림에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 흡수 시간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0343",
+    "publication": "",
+    "title": "보습 크림 조성물",
+    "decision": "PENDING",
+    "cpc": "A61K8/11",
+    "cpcLabels": [
+      "A61K8/11"
+    ],
+    "filed": "2025-11-23",
+    "applicant": "(더미)",
+    "abstract": "보습 크림에서 퍼프 함침 구조를 바꾸는 방법. 이를 통해 백탁을 줄인다.",
+    "firstClaim": "보습 크림에서 퍼프 함침 구조를 바꾸는 방법. 이를 통해 백탁을 줄인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": []
+  },
+  {
+    "id": "GEN-0344",
+    "publication": "",
+    "title": "자외선 차단제 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "A61Q17/04",
+    "cpcLabels": [
+      "A61Q17/04"
+    ],
+    "filed": "2010-07-10",
+    "applicant": "(더미)",
+    "abstract": "자외선 차단제에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 밀착력을 높인다.",
+    "firstClaim": "자외선 차단제에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 밀착력을 높인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0340"
+    ]
+  },
+  {
+    "id": "GEN-0345",
+    "publication": "",
+    "title": "미세 캡슐 세럼 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61Q17/04",
+    "cpcLabels": [
+      "A61Q17/04"
+    ],
+    "filed": "2014-03-14",
+    "applicant": "(더미)",
+    "abstract": "미세 캡슐 세럼에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 흡수 시간을 늘린다.",
+    "firstClaim": "미세 캡슐 세럼에서 무기 자외선 차단 입자를 분산하는 공정. 이를 통해 흡수 시간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0340"
+    ]
+  },
+  {
+    "id": "GEN-0346",
+    "publication": "",
+    "title": "쿠션 파운데이션 시스템",
+    "decision": "ACCEPTED",
+    "cpc": "A61Q19/00",
+    "cpcLabels": [
+      "A61Q19/00"
+    ],
+    "filed": "2017-10-12",
+    "applicant": "(더미)",
+    "abstract": "쿠션 파운데이션에서 캡슐 막 두께를 조절하는 방법. 이를 통해 보존 기간을 늘린다.",
+    "firstClaim": "쿠션 파운데이션에서 캡슐 막 두께를 조절하는 방법. 이를 통해 보존 기간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0338",
+      "GEN-0344"
+    ]
+  },
+  {
+    "id": "GEN-0347",
+    "publication": "",
+    "title": "쿠션 파운데이션 장치",
+    "decision": "ACCEPTED",
+    "cpc": "A61K8/11",
+    "cpcLabels": [
+      "A61K8/11"
+    ],
+    "filed": "2018-01-13",
+    "applicant": "(더미)",
+    "abstract": "쿠션 파운데이션에서 퍼프 함침 구조를 바꾸는 방법. 이를 통해 보존 기간을 늘린다.",
+    "firstClaim": "쿠션 파운데이션에서 퍼프 함침 구조를 바꾸는 방법. 이를 통해 보존 기간을 늘린다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0341",
+      "GEN-0346",
+      "GEN-0344"
+    ]
+  },
+  {
+    "id": "GEN-0348",
+    "publication": "",
+    "title": "두피 앰플 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "A61K8/11",
+    "cpcLabels": [
+      "A61K8/11"
+    ],
+    "filed": "2025-12-11",
+    "applicant": "(더미)",
+    "abstract": "두피 앰플에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 백탁을 줄인다.",
+    "firstClaim": "두피 앰플에서 식물 추출물로 방부력을 확보하는 배합. 이를 통해 백탁을 줄인다.",
+    "source": "dummy",
+    "field": "화장품",
+    "cites": [
+      "GEN-0343",
+      "GEN-0344"
+    ]
+  },
+  {
+    "id": "GEN-0349",
+    "publication": "",
+    "title": "5G 빔포밍 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04B7/06",
+    "cpcLabels": [
+      "H04B7/06"
+    ],
+    "filed": "2018-07-03",
+    "applicant": "(더미)",
+    "abstract": "5G 빔포밍에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 전송 속도를 높인다.",
+    "firstClaim": "5G 빔포밍에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 전송 속도를 높인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0350",
+    "publication": "",
+    "title": "Wi-Fi 간섭 회피 방법",
+    "decision": "PENDING",
+    "cpc": "H04L5/00",
+    "cpcLabels": [
+      "H04L5/00"
+    ],
+    "filed": "2012-07-09",
+    "applicant": "(더미)",
+    "abstract": "Wi-Fi 간섭 회피에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 지연을 줄인다.",
+    "firstClaim": "Wi-Fi 간섭 회피에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 지연을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0351",
+    "publication": "",
+    "title": "IoT 저전력 통신 조성물",
+    "decision": "UNKNOWN",
+    "cpc": "H04W72/04",
+    "cpcLabels": [
+      "H04W72/04"
+    ],
+    "filed": "2017-04-16",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 트래픽 종류별로 자원을 나누는 스케줄링. 이를 통해 전송 속도를 높인다.",
+    "firstClaim": "IoT 저전력 통신에서 트래픽 종류별로 자원을 나누는 스케줄링. 이를 통해 전송 속도를 높인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0350"
+    ]
+  },
+  {
+    "id": "GEN-0352",
+    "publication": "",
+    "title": "네트워크 슬라이싱 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04B7/06",
+    "cpcLabels": [
+      "H04B7/06"
+    ],
+    "filed": "2010-01-09",
+    "applicant": "(더미)",
+    "abstract": "네트워크 슬라이싱에서 수신 주기를 늘려 전력을 아끼는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "네트워크 슬라이싱에서 수신 주기를 늘려 전력을 아끼는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0353",
+    "publication": "",
+    "title": "위성 통신 단말 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H04L5/00",
+    "cpcLabels": [
+      "H04L5/00"
+    ],
+    "filed": "2011-10-09",
+    "applicant": "(더미)",
+    "abstract": "위성 통신 단말에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 망 운영 비용을 줄인다.",
+    "firstClaim": "위성 통신 단말에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 망 운영 비용을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0354",
+    "publication": "",
+    "title": "5G 빔포밍 시스템",
+    "decision": "PENDING",
+    "cpc": "H04W24/02",
+    "cpcLabels": [
+      "H04W24/02"
+    ],
+    "filed": "2013-03-23",
+    "applicant": "(더미)",
+    "abstract": "5G 빔포밍에서 채널 혼잡도로 주파수를 바꾸는 방법. 이를 통해 전송 속도를 높인다.",
+    "firstClaim": "5G 빔포밍에서 채널 혼잡도로 주파수를 바꾸는 방법. 이를 통해 전송 속도를 높인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0352",
+      "GEN-0353"
+    ]
+  },
+  {
+    "id": "GEN-0355",
+    "publication": "",
+    "title": "네트워크 슬라이싱 조성물",
+    "decision": "REJECTED",
+    "cpc": "H04B7/06",
+    "cpcLabels": [
+      "H04B7/06"
+    ],
+    "filed": "2016-09-06",
+    "applicant": "(더미)",
+    "abstract": "네트워크 슬라이싱에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 끊김을 줄인다.",
+    "firstClaim": "네트워크 슬라이싱에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 끊김을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0354",
+      "GEN-0350"
+    ]
+  },
+  {
+    "id": "GEN-0356",
+    "publication": "",
+    "title": "IoT 저전력 통신 구조",
+    "decision": "REJECTED",
+    "cpc": "H04L5/00",
+    "cpcLabels": [
+      "H04L5/00"
+    ],
+    "filed": "2018-07-23",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 수신 주기를 늘려 전력을 아끼는 방법. 이를 통해 지연을 줄인다.",
+    "firstClaim": "IoT 저전력 통신에서 수신 주기를 늘려 전력을 아끼는 방법. 이를 통해 지연을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0353"
+    ]
+  },
+  {
+    "id": "GEN-0357",
+    "publication": "",
+    "title": "네트워크 슬라이싱 조성물",
+    "decision": "ACCEPTED",
+    "cpc": "H04B7/06",
+    "cpcLabels": [
+      "H04B7/06"
+    ],
+    "filed": "2012-01-13",
+    "applicant": "(더미)",
+    "abstract": "네트워크 슬라이싱에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 전송 속도를 높인다.",
+    "firstClaim": "네트워크 슬라이싱에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 전송 속도를 높인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0353",
+      "GEN-0350"
+    ]
+  },
+  {
+    "id": "GEN-0358",
+    "publication": "",
+    "title": "IoT 저전력 통신 방법",
+    "decision": "ACCEPTED",
+    "cpc": "H04B7/06",
+    "cpcLabels": [
+      "H04B7/06"
+    ],
+    "filed": "2010-11-03",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 망 운영 비용을 줄인다.",
+    "firstClaim": "IoT 저전력 통신에서 서비스별 가상 망을 자동 구성하는 구조. 이를 통해 망 운영 비용을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0352"
+    ]
+  },
+  {
+    "id": "GEN-0359",
+    "publication": "",
+    "title": "IoT 저전력 통신 구조",
+    "decision": "UNKNOWN",
+    "cpc": "H04W72/04",
+    "cpcLabels": [
+      "H04W72/04"
+    ],
+    "filed": "2008-06-03",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "IoT 저전력 통신에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0360",
+    "publication": "",
+    "title": "위성 통신 단말 장치",
+    "decision": "PENDING",
+    "cpc": "H04W72/04",
+    "cpcLabels": [
+      "H04W72/04"
+    ],
+    "filed": "2010-05-12",
+    "applicant": "(더미)",
+    "abstract": "위성 통신 단말에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 망 운영 비용을 줄인다.",
+    "firstClaim": "위성 통신 단말에서 단말 위치로 빔 방향을 예측하는 방법. 이를 통해 망 운영 비용을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": [
+      "GEN-0358",
+      "GEN-0359"
+    ]
+  },
+  {
+    "id": "GEN-0361",
+    "publication": "",
+    "title": "IoT 저전력 통신 장치",
+    "decision": "ACCEPTED",
+    "cpc": "H04W24/02",
+    "cpcLabels": [
+      "H04W24/02"
+    ],
+    "filed": "2013-12-08",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 채널 혼잡도로 주파수를 바꾸는 방법. 이를 통해 망 운영 비용을 줄인다.",
+    "firstClaim": "IoT 저전력 통신에서 채널 혼잡도로 주파수를 바꾸는 방법. 이를 통해 망 운영 비용을 줄인다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  },
+  {
+    "id": "GEN-0362",
+    "publication": "",
+    "title": "IoT 저전력 통신 구조",
+    "decision": "ACCEPTED",
+    "cpc": "H04W72/04",
+    "cpcLabels": [
+      "H04W72/04"
+    ],
+    "filed": "2015-01-21",
+    "applicant": "(더미)",
+    "abstract": "IoT 저전력 통신에서 트래픽 종류별로 자원을 나누는 스케줄링. 이를 통해 배터리 수명을 늘린다.",
+    "firstClaim": "IoT 저전력 통신에서 트래픽 종류별로 자원을 나누는 스케줄링. 이를 통해 배터리 수명을 늘린다.",
+    "source": "dummy",
+    "field": "통신",
+    "cites": []
+  }
+]

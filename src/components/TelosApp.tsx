@@ -65,7 +65,8 @@ export default function TelosApp() {
   const [queryBusyId, setQueryBusyId] = useState<string | null>(null);
   const [queryError, setQueryError] = useState<{ id: string; message: string } | null>(null);
   const [riskOn, setRiskOn] = useState(false);
-  const [edgesOn, setEdgesOn] = useState(false);
+  // 인용선: 실제 인용은 실선, 더미가 낀 가짜 인용은 점선
+  const [edgesOn, setEdgesOn] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; nonce: number } | null>(null);
   const [comparisonIdea, setComparisonIdea] = useState("");
@@ -128,7 +129,7 @@ export default function TelosApp() {
       const res = await fetch("/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, k: 30, dataset }),
+        body: JSON.stringify({ query, k: 200, dataset }),
       });
       const body = (await res.json().catch(() => null)) as { hits?: SearchHit[]; addedPoints?: PatentPoint[]; error?: string } | null;
       if (!res.ok || !body?.hits) throw new Error(body?.error ?? `HTTP ${res.status}`);
@@ -385,10 +386,11 @@ export default function TelosApp() {
             <button
               type="button"
               aria-pressed={edgesOn}
+              title="실선은 KIPRIS에서 확인한 실제 인용, 점선은 더미가 낀 가짜 인용입니다"
               onClick={() => setEdgesOn((v) => !v)}
               className={`min-h-9 rounded-full px-3 text-[13px] font-semibold shadow-sm ${edgesOn ? "bg-foreground text-panel" : "bg-panel/95 text-muted"}`}
             >
-              관계선
+              인용선
             </button>
             {highlights && (
               <button type="button" onClick={() => setHighlights(null)} className="min-h-9 rounded-full bg-panel/95 px-3 text-[13px] font-semibold text-muted shadow-sm">

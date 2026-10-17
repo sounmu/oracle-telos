@@ -1,5 +1,28 @@
-// 클라이언트·서버 공용. 점 사이의 관계선 후보. 위치가 가까워서가 아니라 같은 분류(CPC 하위 분류)를 공유하는 특허끼리 잇는다.
+// 클라이언트·서버 공용. 점 사이의 관계선. 위치가 가까워서가 아니라 인용 관계나 같은 분류로 잇는다.
 import type { PatentPoint } from "./types";
+
+export interface CitationEdge {
+  /** 인용한 특허의 인덱스 */
+  from: number;
+  /** 인용된 특허의 인덱스 */
+  to: number;
+  /** 양쪽 모두 실제 자료일 때만 true. 더미가 끼면 가짜 인용이다 */
+  real: boolean;
+}
+
+/** 점 목록 안에서 인용 관계를 선으로 바꾼다. 목록에 없는 대상은 건너뛴다 */
+export function citationEdges(points: readonly Pick<PatentPoint, "id" | "source" | "cites">[]): CitationEdge[] {
+  const index = new Map(points.map((p, i) => [p.id, i]));
+  const edges: CitationEdge[] = [];
+  points.forEach((p, from) => {
+    for (const id of p.cites ?? []) {
+      const to = index.get(id);
+      if (to === undefined || to === from) continue;
+      edges.push({ from, to, real: p.source !== "dummy" && points[to].source !== "dummy" });
+    }
+  });
+  return edges;
+}
 
 /**
  * 같은 CPC 하위 분류(예: A61B)를 공유하는 점끼리, 각 점마다 가까운 이웃 perNode개까지 잇는다.

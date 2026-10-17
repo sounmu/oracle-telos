@@ -10,7 +10,7 @@ import { lookupByCompany, lookupByNumber, parsePatentNumber } from "@/lib/patent
 
 const searchInput = z.object({
   query: z.string().trim().min(1).max(4000),
-  k: z.number().int().min(1).max(50).default(10),
+  k: z.number().int().min(1).max(200).default(10),
   dataset: z.enum(["korea", "sample"]).default("sample"),
   decision: z.enum(["ACCEPTED", "REJECTED", "PENDING", "UNKNOWN"]).optional(),
   /** lookup이면 특허번호 또는 회사명으로 찾는다. 생략하면 기술 설명 검색 */

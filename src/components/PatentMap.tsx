@@ -8,7 +8,7 @@ import "d3-transition";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import { caseHits, riskField } from "@/lib/riskField";
-import { sameCpcEdges } from "@/lib/relations";
+import { citationEdges } from "@/lib/relations";
 import type { Decision, PatentPoint } from "@/lib/types";
 
 interface Props {
@@ -194,7 +194,7 @@ export default function PatentMap({
     return riskField(nodes, caseHits(points, ACTIVE_CASES));
   }, [riskOn, nodes, points]);
 
-  const edges = useMemo(() => (edgesOn ? sameCpcEdges(points) : []), [edgesOn, points]);
+  const edges = useMemo(() => (edgesOn ? citationEdges(points) : []), [edgesOn, points]);
 
   const tree = useMemo<Quadtree<Node> | null>(() => {
     if (!nodes.length) return null;
@@ -251,19 +251,42 @@ export default function PatentMap({
       ctx.globalAlpha = 1;
     }
 
-    // 0-1) 관계선: 같은 CPC 하위 분류끼리
+    // 0-1) 인용선: 실제 인용은 실선, 더미가 낀 가짜 인용은 점선. 선택한 특허의 인용은 진하게
     if (edgesOn && nodes.length === points.length) {
-      ctx.lineWidth = 0.6;
-      ctx.strokeStyle = "#4e5968";
-      ctx.globalAlpha = 0.12;
-      ctx.beginPath();
-      for (const [i, j] of edges) {
-        const a = nodes[i], b = nodes[j];
-        if (!visible.has(a.p.decision) || !visible.has(b.p.decision)) continue;
-        ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
-        ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+      const passes = [
+        { real: false, dash: [3, 3], alpha: 0.16, width: 0.6 },
+        { real: true, dash: [], alpha: 0.42, width: 0.9 },
+      ];
+      for (const pass of passes) {
+        ctx.setLineDash(pass.dash);
+        ctx.lineWidth = pass.width;
+        ctx.strokeStyle = "#3d4a5c";
+        ctx.globalAlpha = pass.alpha;
+        ctx.beginPath();
+        for (const e of edges) {
+          if (e.real !== pass.real) continue;
+          const a = nodes[e.from], b = nodes[e.to];
+          if (!visible.has(a.p.decision) || !visible.has(b.p.decision)) continue;
+          ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
+          ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
+      if (selectedId) {
+        ctx.setLineDash([]);
+        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = "#3182f6";
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        for (const e of edges) {
+          const a = nodes[e.from], b = nodes[e.to];
+          if (a.p.id !== selectedId && b.p.id !== selectedId) continue;
+          ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
+          ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+        }
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
       ctx.globalAlpha = 1;
     }
 
