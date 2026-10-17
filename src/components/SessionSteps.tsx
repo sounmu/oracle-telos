@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ACTIVE_CASES } from "@/lib/cases";
-import { countWithin, estimatePosition, linkedCases, type Neighbor } from "@/lib/phaseFeatures";
+import { denseRegions, similarityText, toTemplate, yearTrend, type DenseRegion } from "@/lib/explore";
+import { estimatePosition, linkedCases, type Neighbor } from "@/lib/phaseFeatures";
+import { DECISION_LABELS } from "@/lib/colors";
 import { STEP_LABELS, type Session, type StepIndex, type Template } from "@/lib/sessions";
 import type { PatentDataset, PatentPoint } from "@/lib/types";
 
@@ -62,21 +64,30 @@ export function NewChatBar({ onSubmit }: { onSubmit: (text: string) => void }) {
   );
 }
 
-/** ① 입력: 문장을 템플릿 칸으로 나눈다. 확정한 템플릿이 탐색의 검색 조건이 된다 */
+/** ① 입력: 아이템 문장을 템플릿 칸으로 바꾼다. 확정한 템플릿이 탐색의 조회 조건이 된다 */
 export function InputStep({ session, onConfirm }: { session: Session; onConfirm: (tpl: Template) => void }) {
+  const [text, setText] = useState(session.tpl?.item ?? session.idea);
   const [draft, setDraft] = useState<Template>(session.tpl ?? { item: "", tech: "", target: "", risk: "" });
-  const set = (k: keyof Template) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setDraft((d) => ({ ...d, [k]: e.target.value }));
+  const set = (k: keyof Template) => (e: React.ChangeEvent<HTMLInputElement>) => setDraft((d) => ({ ...d, [k]: e.target.value }));
   const ready = draft.item.trim().length >= 2;
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="rounded-2xl bg-panel p-5">
-        <label className="block text-[13px] font-semibold text-muted" htmlFor="tpl-item">아이템</label>
-        <textarea id="tpl-item" value={draft.item} onChange={set("item")} rows={3} className="mt-1 w-full rounded-xl bg-background p-3 text-[15px]" />
-        <Field id="tpl-tech" label="핵심 기술" value={draft.tech} onChange={set("tech")} placeholder="예: 미세입자 제조공법, 망상구조" />
+        <label className="block text-[13px] font-semibold text-muted" htmlFor="idea-text">검색하고 싶은 특허 아이디어</label>
+        <textarea id="idea-text" value={text} onChange={(e) => setText(e.target.value)} rows={3} className="mt-1 w-full rounded-xl bg-background p-3 text-[15px]" />
+        <div className="mt-3 flex justify-end">
+          <button type="button" disabled={text.trim().length < 5} onClick={() => setDraft({ ...toTemplate(text), item: text.trim() })} className="min-h-9 rounded-xl bg-background px-4 text-[13px] font-semibold text-ink-2 disabled:opacity-40">
+            템플릿으로 바꾸기
+          </button>
+        </div>
+      </div>
+      <div className="rounded-2xl bg-panel p-5">
+        <div className="text-[13px] font-semibold text-muted">정형 템플릿 (확인하고 고치세요)</div>
+        <Field id="tpl-item" label="아이템" value={draft.item} onChange={set("item")} />
+        <Field id="tpl-tech" label="핵심 기술" value={draft.tech} onChange={set("tech")} placeholder="예: 미세입자 제조공법" />
         <Field id="tpl-target" label="대상 고객" value={draft.target} onChange={set("target")} placeholder="예: 성형외과, 피부과" />
         <Field id="tpl-risk" label="우려하는 분쟁 분야" value={draft.risk} onChange={set("risk")} placeholder="예: 제조공법 특허" />
-        <p className="mt-3 text-[12px] text-muted">템플릿 칸은 다음 단계 검색 조건이 됩니다. 빈 칸은 무시합니다.</p>
+        <p className="mt-3 text-[12px] text-muted">빈 칸은 조회에서 무시합니다. 이 값으로 탐색 단계에서 DB를 조회합니다.</p>
       </div>
       <div className="flex justify-end">
         <button type="button" disabled={!ready} onClick={() => onConfirm({ ...draft, item: draft.item.trim() })} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40">
@@ -108,55 +119,6 @@ export async function locateIdea(idea: string, dataset: PatentDataset): Promise<
   const pos = estimatePosition(body.neighbors);
   if (!pos) throw new Error("가까운 특허를 찾지 못해 위치를 계산할 수 없습니다.");
   return { ...pos, neighbors: body.neighbors };
-}
-
-/** ③ 검증 패널: 연결 사례와 밀집도를 따로 보여 준다. 합산 점수는 보이지 않는다 */
-export function VerifyPanel({
-  points,
-  hitIds,
-  selected,
-}: {
-  points: PatentPoint[];
-  hitIds: string[];
-  selected: PatentPoint | null;
-}) {
-  const byId = new Map(points.map((p) => [p.id, p]));
-  const hits = hitIds.map((id) => byId.get(id)).filter((p): p is PatentPoint => Boolean(p));
-  const cases = linkedCases(hits, ACTIVE_CASES);
-  const radius = radiusOf(points);
-  const density = selected ? countWithin(points, selected, radius) : null;
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-background p-3">
-          <div className="text-[12px] text-muted">연결된 분쟁 사례</div>
-          <div className="text-xl font-bold tabular-nums">{cases.length}건</div>
-          <div className="text-[11px] text-muted">검색 결과와 키워드 2개 이상 겹침</div>
-        </div>
-        <div className="rounded-xl bg-background p-3">
-          <div className="text-[12px] text-muted">선택한 특허 주변 밀집도</div>
-          <div className="text-xl font-bold tabular-nums">{density === null ? "–" : `${density}건`}</div>
-          <div className="text-[11px] text-muted">{selected ? "반경 안 특허 수" : "특허를 고르면 표시"}</div>
-        </div>
-      </div>
-      {hitIds.length === 0 && (
-        <p className="rounded-xl bg-background p-3 text-[13px] text-muted">탐색 단계에서 검색하면 검색 결과를 기준으로 연결 사례와 밀집도를 봅니다.</p>
-      )}
-      {cases.map((c) => (
-        <div key={c.id} className="rounded-xl bg-background p-3 text-[13px]">
-          <div className="font-semibold">{c.title}</div>
-          <div className="text-muted">겹친 검색 결과 특허 {c.count}건</div>
-        </div>
-      ))}
-      <p className="text-[12px] text-muted">밀집도와 사례 수는 따로 봅니다. 합산 위험 점수는 계산식을 검증한 뒤에 보입니다.</p>
-    </div>
-  );
-}
-
-function radiusOf(points: PatentPoint[]): number {
-  if (points.length === 0) return 0;
-  const xs = points.map((p) => p.x), ys = points.map((p) => p.y);
-  return Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * 0.06;
 }
 
 /** ④ 요약: ①~③ 내용을 리포트 형식으로 정리한다 */
@@ -208,5 +170,112 @@ export function ReportPanel({
         <p>이 리포트는 시연 데이터(실제 자료와 더미 포함)로 만든 결과입니다. 법적 판단과 특허 동일성 판단은 전문가 검토가 필요합니다.</p>
       </section>
     </article>
+  );
+}
+
+/** ② 탐색 리포트: 조회 결과의 추세, 밀집 영역, 내 아이템과의 유사도와 위치 */
+export function ExploreReport({
+  results,
+  scores,
+  location,
+  onPick,
+  onRegion,
+}: {
+  results: PatentPoint[];
+  scores: ReadonlyMap<string, number>;
+  location: { x: number; y: number } | null;
+  onPick: (id: string) => void;
+  onRegion: (r: DenseRegion) => void;
+}) {
+  const real = results.filter((p) => p.source !== "dummy").length;
+  const trend = yearTrend(results);
+  const maxCount = Math.max(1, ...trend.map((t) => t.count));
+  const regions = denseRegions(results);
+  const similar = [...results].sort((a, b) => (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0)).slice(0, 5);
+  const decisions = (["ACCEPTED", "REJECTED", "PENDING", "UNKNOWN"] as const).map((d) => ({ d, n: results.filter((p) => p.decision === d).length }));
+  return (
+    <div className="space-y-4 text-[13px]">
+      <div className="rounded-2xl bg-panel p-4">
+        <div className="text-[12px] text-muted">조회 결과</div>
+        <div className="text-xl font-bold tabular-nums">{results.length}건</div>
+        <div className="text-[12px] text-muted">실제 자료 {real}건 · 더미 {results.length - real}건</div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {decisions.map((x) => <span key={x.d} className="text-muted">{DECISION_LABELS[x.d]} {x.n}</span>)}
+        </div>
+      </div>
+      <div className="rounded-2xl bg-panel p-4">
+        <div className="font-semibold">출원 추세</div>
+        <ul className="mt-2 space-y-1">
+          {trend.map((t) => (
+            <li key={t.year} className="flex items-center gap-2">
+              <span className="w-10 tabular-nums text-muted">{t.year}</span>
+              <span className="h-2 rounded bg-foreground" style={{ width: `${(t.count / maxCount) * 100}%`, minWidth: 2 }} />
+              <span className="tabular-nums text-muted">{t.count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="rounded-2xl bg-panel p-4">
+        <div className="font-semibold">밀집 영역</div>
+        {regions.length === 0 ? <p className="mt-1 text-muted">뚜렷하게 몰린 영역은 없습니다.</p> : (
+          <ul className="mt-2 space-y-2">
+            {regions.map((r, i) => (
+              <li key={`${r.x}-${r.y}`}>
+                <button type="button" onClick={() => onRegion(r)} className="w-full rounded-xl bg-background p-2 text-left hover:underline">
+                  영역 {i + 1} · {r.count}건 · 분야 {r.topCpc} <span className="text-muted">· 예: {r.example.slice(0, 40)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="rounded-2xl bg-panel p-4">
+        <div className="font-semibold">내 아이템과 가까운 특허</div>
+        {location && <p className="mt-1 text-muted">지도에 내 아이템 위치(추정)를 표시했습니다.</p>}
+        <ol className="mt-2 space-y-1">
+          {similar.map((p) => (
+            <li key={p.id}>
+              <button type="button" onClick={() => onPick(p.id)} className="w-full rounded-lg px-2 py-1 text-left hover:bg-background">
+                {p.title.slice(0, 48)} <span className="tabular-nums text-muted">· 유사도 {similarityText(scores.get(p.id) ?? 0)}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+/** ③ 검증 리포트: 탐색 결과를 바탕으로 리스크 지표를 보인다. 두 값은 따로 보인다 */
+export function VerifyReport({ results, selectedDensity }: { results: PatentPoint[]; selectedDensity: number | null }) {
+  const cases = linkedCases(results, ACTIVE_CASES);
+  const regions = denseRegions(results);
+  const topRegion = regions[0];
+  return (
+    <div className="space-y-3 text-[13px]">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-xl bg-background p-3">
+          <div className="text-[12px] text-muted">연결된 분쟁 사례</div>
+          <div className="text-xl font-bold tabular-nums">{cases.length}건</div>
+          <div className="text-[11px] text-muted">결과 특허와 키워드 2개 이상 겹침</div>
+        </div>
+        <div className="rounded-xl bg-background p-3">
+          <div className="text-[12px] text-muted">가장 몰린 영역</div>
+          <div className="text-xl font-bold tabular-nums">{topRegion ? `${topRegion.count}건` : "–"}</div>
+          <div className="text-[11px] text-muted">{topRegion ? `분야 ${topRegion.topCpc}` : "뚜렷한 밀집 없음"}</div>
+        </div>
+      </div>
+      <div className="rounded-xl bg-background p-3">
+        <div className="text-[12px] text-muted">선택한 특허 주변 밀집도</div>
+        <div className="text-lg font-bold tabular-nums">{selectedDensity === null ? "–" : `${selectedDensity}건`}</div>
+      </div>
+      {cases.map((c) => (
+        <div key={c.id} className="rounded-xl bg-background p-3">
+          <div className="font-semibold">{c.title}</div>
+          <div className="text-muted">겹친 결과 특허 {c.count}건</div>
+        </div>
+      ))}
+      <p className="text-[12px] text-muted">지도의 붉은 배경은 위험도 배경입니다. 밀집도와 사례 수를 따로 봅니다. 합산 위험 점수는 계산식을 검증한 뒤에 보입니다.</p>
+    </div>
   );
 }

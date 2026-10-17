@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PatentMap from "./PatentMap";
 import Dashboard from "./Dashboard";
-import SearchPanel from "./SearchPanel";
 import PatentDetail from "./PatentDetail";
-import { NewChatBar, Stepper, InputStep, VerifyPanel, ReportPanel, locateIdea } from "./SessionSteps";
+import { NewChatBar, Stepper, InputStep, ExploreReport, VerifyReport, ReportPanel, locateIdea } from "./SessionSteps";
+import { queryOf } from "@/lib/explore";
+import { countWithin } from "@/lib/phaseFeatures";
 import { formatDate, readErrorMessage } from "./ResearchReferences";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { linkedCases } from "@/lib/phaseFeatures";
@@ -48,7 +49,7 @@ function pickRandom<T>(items: readonly T[]): T | undefined {
 }
 
 export default function TelosApp() {
-  const [dataset, setDataset] = useState<PatentDataset>(process.env.NEXT_PUBLIC_TELOS_DEMO === "1" ? "sample" : "korea");
+  const [dataset] = useState<PatentDataset>(process.env.NEXT_PUBLIC_TELOS_DEMO === "1" ? "sample" : "korea");
   const [reloadNonce, setReloadNonce] = useState(0);
   const [points, setPoints] = useState<PatentPoint[]>([]);
   const [builtAt, setBuiltAt] = useState<string | null>(null);
@@ -63,6 +64,10 @@ export default function TelosApp() {
   const [location, setLocation] = useState<Location | null>(null);
   const [locateError, setLocateError] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
+  // 탐색: 템플릿으로 조회한 결과만 지도에 남긴다. 점수는 내 아이템과의 유사도
+  const [results, setResults] = useState<{ ids: string[]; scores: Map<string, number> } | null>(null);
+  const [queryBusy, setQueryBusy] = useState(false);
+  const [queryError, setQueryError] = useState<string | null>(null);
   const [riskOn, setRiskOn] = useState(false);
   const [edgesOn, setEdgesOn] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -97,12 +102,16 @@ export default function TelosApp() {
     setIdea(session.idea);
     setSelectedId(null);
     setLocation(null);
+    setResults(null);
+    setQueryError(null);
   }
   function openSession(id: string) {
     const target = sessions.find((s) => s.id === id);
     setActiveId(id);
     setSelectedId(null);
     setLocation(null);
+    setResults(null);
+    setQueryError(null);
     if (target) setIdea(target.tpl?.item ?? target.idea);
   }
   function goStep(i: StepIndex) {
@@ -113,6 +122,33 @@ export default function TelosApp() {
     if (!activeSession) return;
     setIdea(tpl.item);
     updateSession(activeSession.id, { tpl, name: tpl.item.slice(0, 18), idea: tpl.item, step: 1 });
+    setResults(null);
+    void runQuery(tpl);
+  }
+
+  /** 템플릿 값으로 DB를 조회한다. 결과가 지도와 리포트의 대상이 된다 */
+  async function runQuery(tpl: Template) {
+    const query = queryOf(tpl);
+    if (query.length < 2) return;
+    setQueryBusy(true);
+    setQueryError(null);
+    try {
+      const res = await fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, k: 30, dataset }),
+      });
+      const body = (await res.json().catch(() => null)) as { hits?: SearchHit[]; addedPoints?: PatentPoint[]; error?: string } | null;
+      if (!res.ok || !body?.hits) throw new Error(body?.error ?? `HTTP ${res.status}`);
+      if (body.addedPoints?.length) handlePointsAdded(body.addedPoints);
+      const scores = new Map(body.hits.map((h) => [h.id, h.score] as const));
+      setResults({ ids: body.hits.map((h) => h.id), scores });
+      if (tpl.item.trim().length >= 5) void runLocate(tpl.item);
+    } catch (err) {
+      setQueryError(err instanceof Error ? err.message : "조회하지 못했습니다.");
+    } finally {
+      setQueryBusy(false);
+    }
   }
 
   // 세션의 아이템이 바뀌면 이전 위치는 버린다
@@ -134,7 +170,10 @@ export default function TelosApp() {
   const detailIdea = comparisonIdea || idea.trim();
   const liveSearch = dataset === "korea" && kipris?.configured === true;
   const aiReady = aiConfigured !== false;
-  const hitIds = highlights ? Array.from(highlights.keys()) : [];
+  const resultPoints = useMemo(() => {
+    if (!results) return [];
+    return results.ids.map((id) => byId.get(id)).filter((p): p is PatentPoint => Boolean(p));
+  }, [results, byId]);
 
   useEffect(() => {
     const ac = new AbortController();
@@ -231,14 +270,6 @@ export default function TelosApp() {
     });
   }
 
-  function handleMatches(hits: SearchHit[], replace: boolean) {
-    setHighlights((prev) => {
-      const next = replace || !prev ? new Map<string, number>() : new Map(prev);
-      for (const h of hits) next.set(h.id, Math.max(next.get(h.id) ?? 0, h.score));
-      return next.size > 0 ? next : null;
-    });
-  }
-
   function handlePointsAdded(incoming: PatentPoint[]) {
     setPoints((prev) => {
       const merged = new Map(prev.map((p) => [p.id, p]));
@@ -257,12 +288,11 @@ export default function TelosApp() {
     if (id) leftRef.current?.scrollTo({ top: 0 });
   }
 
-  async function runLocate() {
-    if (!activeSession?.tpl?.item) return;
+  async function runLocate(text: string) {
     setLocating(true);
     setLocateError(null);
     try {
-      const pos = await locateIdea(activeSession.tpl.item, dataset);
+      const pos = await locateIdea(text, dataset);
       setLocation(pos);
     } catch (err) {
       setLocateError(err instanceof Error ? err.message : "위치를 계산하지 못했습니다.");
@@ -279,22 +309,22 @@ export default function TelosApp() {
         : `${DATASET_LABEL.title} · 불러오기 실패`;
 
   const step = activeSession?.step ?? 0;
-  const hitPoints = hitIds.map((id) => byId.get(id)).filter((p): p is PatentPoint => Boolean(p));
-  const caseList = linkedCases(hitPoints, ACTIVE_CASES);
+  const caseList = linkedCases(resultPoints, ACTIVE_CASES);
+  const selectedDensity = selected && resultPoints.length > 0 ? countWithin(resultPoints, selected, spanOf(resultPoints) * 0.06) : null;
 
   // 지도 영역: 홈과 세션의 탐색·검증 단계에서 같은 지도를 쓴다
   const mapSection = (
     <section aria-label="기술 지도" className="relative min-h-[60vh] flex-1 overflow-hidden rounded-3xl bg-panel md:m-4 md:min-h-0">
       {load === "ready" && points.length > 0 && (
         <PatentMap
-          points={points}
+          points={activeSession ? resultPoints : points}
           insetTop={96}
           visible={visible}
-          highlights={highlights}
+          highlights={activeSession ? results?.scores ?? null : highlights}
           selectedId={selectedId}
           focus={focus}
           onSelect={select}
-          riskOn={riskOn || step === 2}
+          riskOn={riskOn || (activeSession !== null && step === 2)}
           edgesOn={edgesOn}
           marker={location ? { x: location.x, y: location.y } : null}
         />
@@ -412,38 +442,43 @@ export default function TelosApp() {
 
           {step === 1 && (
             <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
-              <div ref={leftRef} className="w-full space-y-4 overflow-y-auto p-4 md:w-[460px] md:shrink-0 md:p-6">
-                <div className="rounded-2xl bg-panel p-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button type="button" onClick={runLocate} disabled={locating || !activeSession.tpl} className="min-h-9 rounded-full bg-foreground px-3 text-[13px] font-semibold text-panel disabled:opacity-40">
-                      {locating ? "위치 계산 중…" : "내 아이템 위치 계산"}
+              <div ref={leftRef} className="w-full space-y-4 overflow-y-auto p-4 md:w-[440px] md:shrink-0 md:p-6">
+                <div className="rounded-2xl bg-panel p-4 text-[13px]">
+                  <div className="text-[12px] text-muted">조회 조건 (입력 단계의 템플릿)</div>
+                  <div className="mt-1 font-semibold">{activeSession.tpl?.item ?? "-"}</div>
+                  <div className="text-muted">핵심 기술: {activeSession.tpl?.tech || "-"} · 대상: {activeSession.tpl?.target || "-"}</div>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={queryBusy || !activeSession.tpl}
+                      onClick={() => activeSession.tpl && void runQuery(activeSession.tpl)}
+                      className="min-h-9 rounded-full bg-foreground px-3 font-semibold text-panel disabled:opacity-40"
+                    >
+                      {queryBusy ? "조회 중…" : results ? "다시 조회" : "조회 실행"}
                     </button>
-                    {location && <span className="text-[12px] text-muted">지도에 추정 위치를 표시했습니다</span>}
+                    {locating && <span className="text-muted">내 위치 계산 중…</span>}
                   </div>
-                  {locateError && <p role="alert" className="mt-2 text-[13px] text-[#d22030]">{locateError}</p>}
+                  {queryError && <p role="alert" className="mt-2 text-[#d22030]">{queryError}</p>}
+                  {locateError && <p className="mt-2 text-muted">내 위치: {locateError}</p>}
                 </div>
-                <SearchPanel
-                  key={dataset}
-                  dataset={dataset}
-                  status={status}
-                  disabled={load !== "ready" || (points.length === 0 && !liveSearch)}
-                  aiReady={aiReady}
-                  idea={idea}
-                  onIdeaChange={setIdea}
-                  onMatches={handleMatches}
-                  onPointsAdded={handlePointsAdded}
-                  comparisons={comparisons}
-                  onSearchStart={startComparisons}
-                  onCompare={compare}
-                  onPick={pick}
-                  selectedId={selectedId}
-                />
+                {results && (
+                  <ExploreReport
+                    results={resultPoints}
+                    scores={results.scores}
+                    location={location ? { x: location.x, y: location.y } : null}
+                    onPick={pick}
+                    onRegion={(r) => {
+                      const nearest = [...resultPoints].sort((p, q) => Math.hypot(p.x - r.x, p.y - r.y) - Math.hypot(q.x - r.x, q.y - r.y))[0];
+                      if (nearest) pick(nearest.id);
+                    }}
+                  />
+                )}
                 {selected && (
                   <PatentDetail
                     key={selected.id}
                     point={selected}
                     dataset={dataset}
-                    score={highlights?.get(selected.id)}
+                    score={results?.scores.get(selected.id)}
                     onClose={() => setSelectedId(null)}
                     comparison={comparisons.get(selected.id)}
                     canCompare={detailIdea.length >= 5 && aiReady}
@@ -456,7 +491,7 @@ export default function TelosApp() {
                   />
                 )}
                 <div className="flex justify-end">
-                  <button type="button" onClick={() => goStep(2)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel">검증으로 →</button>
+                  <button type="button" disabled={!results} onClick={() => goStep(2)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel disabled:opacity-40">검증으로 →</button>
                 </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col">{mapSection}</div>
@@ -466,7 +501,11 @@ export default function TelosApp() {
           {step === 2 && (
             <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
               <div className="w-full space-y-4 overflow-y-auto p-4 md:w-[420px] md:shrink-0 md:p-6">
-                <VerifyPanel points={points} hitIds={hitIds} selected={selected} />
+                {!results ? (
+                  <p className="rounded-2xl bg-panel p-4 text-[13px] text-muted">탐색 단계에서 조회를 먼저 실행하세요.</p>
+                ) : (
+                  <VerifyReport results={resultPoints} selectedDensity={selectedDensity} />
+                )}
                 <div className="flex justify-between">
                   <button type="button" onClick={() => goStep(1)} className="min-h-11 rounded-xl bg-background px-4 font-semibold">← 탐색</button>
                   <button type="button" onClick={() => goStep(3)} className="min-h-11 rounded-xl bg-foreground px-5 font-semibold text-panel">요약 만들기 →</button>
@@ -478,7 +517,7 @@ export default function TelosApp() {
 
           {step === 3 && (
             <div className="flex-1 overflow-y-auto p-4 md:p-6">
-              <ReportPanel session={activeSession} hits={hitPoints} cases={caseList} location={location ? { x: location.x, y: location.y } : null} />
+              <ReportPanel session={activeSession} hits={resultPoints} cases={caseList} location={location ? { x: location.x, y: location.y } : null} />
               <div className="mx-auto mt-4 flex max-w-2xl justify-start">
                 <button type="button" onClick={() => goStep(2)} className="min-h-10 rounded-xl bg-background px-4 font-semibold">← 검증</button>
               </div>
@@ -488,6 +527,11 @@ export default function TelosApp() {
       )}
     </main>
   );
+}
+
+function spanOf(points: readonly PatentPoint[]): number {
+  const xs = points.map((p) => p.x), ys = points.map((p) => p.y);
+  return Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
 }
 
 function isComparison(v: unknown): v is PatentComparison {
