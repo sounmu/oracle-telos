@@ -1,59 +1,53 @@
-// 클라이언트 전용. 대화 세션(대시보드에 쌓이는 기능 사용 기록)의 모델과 저장.
-import { FEATURE_BY_ID, type FeatureId } from "./features";
-import { PHASES, type Phase } from "./phaseFeatures";
-import { DEFAULT_VIEW, type SessionView } from "./view";
+// 클라이언트 전용. 세션 = 사업 아이템 하나. 입력 → 탐색 → 검증 → 요약 4단계로 진행한다.
+
+export const SESSION_KEY = "telos.sessions.v2";
+export const STEP_LABELS = ["입력", "탐색", "검증", "요약"] as const;
+export type StepIndex = 0 | 1 | 2 | 3;
+
+/** 입력을 나눈 템플릿. 탐색의 검색 조건이 된다 */
+export interface Template {
+  item: string;
+  tech: string;
+  target: string;
+  risk: string;
+}
 
 export interface Session {
   id: string;
-  feature: FeatureId;
-  phase: Phase;
-  /** 세션을 열 때 입력한 아이디어 (없을 수 있다) */
+  name: string;
+  /** 처음 입력한 아이디어 원문 */
   idea: string;
-  title: string;
+  /** 템플릿은 입력 단계에서 확정된다. 없으면 아직 입력 전 */
+  tpl: Template | null;
+  step: StepIndex;
   createdAt: number;
-  /** 이 세션이 마스터 DB를 보는 조건 (필터·정렬·개수) */
-  view: SessionView;
 }
 
-export const SESSION_KEY = "telos.sessions.v1";
-
-export function makeSession(
-  feature: FeatureId,
-  idea: string,
-  now: number,
-  id: string,
-  view: SessionView = DEFAULT_VIEW,
-): Session {
-  const def = FEATURE_BY_ID[feature];
-  const trimmed = idea.trim();
+/** 입력 문장으로 새 세션을 만든다. 템플릿은 문장을 아이템 칸에 넣은 상태로 시작한다 */
+export function makeSession(text: string, now: number, id: string): Session {
+  const idea = text.trim();
   return {
     id,
-    feature,
-    phase: def.phase,
-    idea: trimmed,
-    title: trimmed ? `${def.label} · ${trimmed.slice(0, 24)}` : def.label,
+    name: idea ? idea.slice(0, 18) : "새 아이템",
+    idea,
+    tpl: idea ? { item: idea, tech: "", target: "", risk: "" } : null,
+    step: 0,
     createdAt: now,
-    view,
   };
 }
 
-/** 단계별로 묶고, 각 묶음은 최신 세션이 위로 오게 정렬한다 */
-export function groupByPhase(sessions: readonly Session[]): { phase: Phase; label: string; items: Session[] }[] {
-  return PHASES.map((p) => ({
-    phase: p.id,
-    label: p.label,
-    items: sessions.filter((s) => s.phase === p.id).sort((a, b) => b.createdAt - a.createdAt),
-  }));
+/** 최신 세션이 위로 오게 정렬 */
+export function sortSessions(sessions: readonly Session[]): Session[] {
+  return [...sessions].sort((a, b) => b.createdAt - a.createdAt);
 }
 
-/** 저장된 값을 검증해서 읽는다. 깨진 값은 버린다 */
+/** 저장된 값을 검증해서 읽는다. 깨진 항목은 버린다 */
 export function parseSessions(raw: string | null): Session[] {
   if (!raw) return [];
   try {
     const data: unknown = JSON.parse(raw);
     if (!Array.isArray(data)) return [];
-    // 조회 조건이 없던 예전 세션은 기본 조회로 채운다
-    return data.filter(isSession).map((s) => ({ ...s, phase: FEATURE_BY_ID[s.feature].phase, view: s.view ?? DEFAULT_VIEW }));
+    return data.filter(isSession);
   } catch {
     return [];
   }
@@ -64,16 +58,23 @@ function isSession(v: unknown): v is Session {
   const s = v as Record<string, unknown>;
   return (
     typeof s.id === "string" &&
-    typeof s.feature === "string" &&
-    s.feature in FEATURE_BY_ID &&
-    typeof s.phase === "string" &&
+    typeof s.name === "string" &&
     typeof s.idea === "string" &&
-    typeof s.title === "string" &&
-    typeof s.createdAt === "number"
+    typeof s.step === "number" &&
+    s.step >= 0 &&
+    s.step <= 3 &&
+    typeof s.createdAt === "number" &&
+    (s.tpl === null || isTemplate(s.tpl))
   );
 }
 
-/** 저장소를 쓸 수 없는 환경(비공개 창 등)에서도 화면은 동작해야 하므로 실패는 조용히 넘긴다 */
+function isTemplate(v: unknown): v is Template {
+  if (typeof v !== "object" || v === null) return false;
+  const t = v as Record<string, unknown>;
+  return typeof t.item === "string" && typeof t.tech === "string" && typeof t.target === "string" && typeof t.risk === "string";
+}
+
+/** 저장소를 쓸 수 없는 환경에서도 화면은 동작해야 하므로 실패는 조용히 넘긴다 */
 export function loadSessions(): Session[] {
   try {
     return parseSessions(window.localStorage.getItem(SESSION_KEY));

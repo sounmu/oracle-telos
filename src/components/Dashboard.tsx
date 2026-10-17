@@ -1,7 +1,6 @@
 "use client";
 
-import { FEATURE_BY_ID } from "@/lib/features";
-import { groupByPhase, type Session } from "@/lib/sessions";
+import { STEP_LABELS, type Session } from "@/lib/sessions";
 
 interface Props {
   sessions: Session[];
@@ -10,11 +9,10 @@ interface Props {
   onOpen: (id: string) => void;
 }
 
-/** 왼쪽 대시보드: 새 대화와 단계별로 쌓인 세션 목록 */
+/** 왼쪽 목록: 새 대화와 사업 아이템별 세션 */
 export default function Dashboard({ sessions, activeId, onNew, onOpen }: Props) {
-  const groups = groupByPhase(sessions);
   return (
-    <aside aria-label="대시보드" className="hidden w-64 shrink-0 flex-col gap-4 overflow-y-auto border-r border-background px-3 py-4 md:flex">
+    <aside aria-label="세션 목록" className="hidden w-64 shrink-0 flex-col gap-4 overflow-y-auto border-r border-background px-3 py-4 md:flex">
       <div className="px-1 text-lg font-extrabold tracking-tight">Telos</div>
       <button
         type="button"
@@ -23,29 +21,22 @@ export default function Dashboard({ sessions, activeId, onNew, onOpen }: Props) 
       >
         + 새 대화
       </button>
-      {sessions.length === 0 && <p className="px-1 text-sm text-muted">아래 기능을 누르면 대화가 여기에 쌓입니다.</p>}
-      {groups.map((g) =>
-        g.items.length === 0 ? null : (
-          <section key={g.phase} aria-label={`${g.label} 대화`}>
-            <h2 className="px-1 text-xs font-semibold text-muted">{g.label} · {g.items.length}</h2>
-            <ul className="mt-1 space-y-1">
-              {g.items.map((s) => (
-                <li key={s.id}>
-                  <button
-                    type="button"
-                    onClick={() => onOpen(s.id)}
-                    aria-current={activeId === s.id ? "true" : undefined}
-                    className={`w-full rounded-lg px-2 py-1.5 text-left text-[13px] ${activeId === s.id ? "bg-panel font-semibold" : "text-ink-2 hover:bg-panel"}`}
-                  >
-                    <span className="block truncate">{s.title}</span>
-                    <span className="block truncate text-[11px] text-muted">{FEATURE_BY_ID[s.feature].target}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ),
-      )}
+      {sessions.length === 0 && <p className="px-1 text-sm text-muted">아래에 사업 아이템을 적으면 대화가 여기에 쌓입니다.</p>}
+      <ul className="space-y-1">
+        {sessions.map((s) => (
+          <li key={s.id}>
+            <button
+              type="button"
+              onClick={() => onOpen(s.id)}
+              aria-current={activeId === s.id ? "true" : undefined}
+              className={`w-full rounded-lg px-2 py-1.5 text-left text-[13px] ${activeId === s.id ? "bg-panel font-semibold" : "text-ink-2 hover:bg-panel"}`}
+            >
+              <span className="block truncate">{s.name}</span>
+              <span className="block text-[11px] text-muted">{STEP_LABELS[s.step]} 단계</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </aside>
   );
 }
