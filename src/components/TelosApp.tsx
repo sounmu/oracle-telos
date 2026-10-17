@@ -74,6 +74,7 @@ export default function TelosApp() {
   const compareAbortRef = useRef<AbortController | null>(null);
   const requestedRef = useRef(new Set<string>());
   const leftRef = useRef<HTMLDivElement>(null);
+  const homeDetailRef = useRef<HTMLDivElement>(null);
 
   // 세션: 사업 아이템 하나. 저장소는 브라우저에만 있으므로 마운트 뒤에 한 번 읽는다
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -97,6 +98,11 @@ export default function TelosApp() {
     setSessions((prev) => [session, ...prev]);
     setActiveId(session.id);
     setIdea(session.idea);
+    setSelectedId(null);
+  }
+  /** 홈(새 대화)으로 돌아간다. 세션에서 고른 특허가 홈 상세로 따라오지 않게 선택도 비운다 */
+  function goHome() {
+    setActiveId(null);
     setSelectedId(null);
   }
   function openSession(id: string) {
@@ -282,6 +288,15 @@ export default function TelosApp() {
     if (id) leftRef.current?.scrollTo({ top: 0 });
   }
 
+  // 홈 지도에서 특허를 고르면 상세 패널을 보여 준다. 폰은 지도 아래에 붙으므로 그 위치로 내린다
+  useEffect(() => {
+    if (activeId !== null || !selectedId) return;
+    const panel = homeDetailRef.current;
+    if (!panel) return;
+    panel.scrollTo({ top: 0 });
+    if (window.matchMedia("(max-width: 767px)").matches) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [activeId, selectedId]);
+
   async function runLocate(sessionId: string, text: string) {
     setLocatingId(sessionId);
     setLocateError(null);
@@ -414,16 +429,47 @@ export default function TelosApp() {
 
   return (
     <main className="flex min-h-full w-full flex-col md:h-full md:flex-row">
-      <Dashboard sessions={sortSessions(sessions)} activeId={activeId} onNew={() => setActiveId(null)} onOpen={openSession} />
+      <Dashboard sessions={sortSessions(sessions)} activeId={activeId} onNew={goHome} onOpen={openSession} />
 
-      {!activeSession && <div className="flex min-w-0 flex-1 flex-col p-3 md:h-full">{mapSection}</div>}
+      {!activeSession && (
+        <div className="flex min-w-0 flex-1 flex-col p-3 md:h-full md:flex-row">
+          {mapSection}
+          {selected && (
+            <div ref={homeDetailRef} className="w-full scroll-mt-3 p-1 pt-3 md:w-[420px] md:shrink-0 md:overflow-y-auto md:p-4">
+              <PatentDetail
+                key={selected.id}
+                point={selected}
+                dataset={dataset}
+                onClose={() => setSelectedId(null)}
+                canCompare={false}
+                aiReady={aiReady}
+                onCompare={() => {}}
+                backLabel="지도로 돌아가기"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {activeSession && (
         <div className="flex min-w-0 flex-1 flex-col md:h-full">
           <header className="flex flex-wrap items-center justify-between gap-3 border-b border-background bg-panel/80 px-4 py-3 backdrop-blur-md md:px-6">
-            <div className="min-w-0">
-              <div className="truncate text-[16px] font-bold">{activeSession.name}</div>
-              <div className="text-[12px] text-muted">{subtitle}</div>
+            {/* 폰에서는 세션 목록(사이드바)이 숨겨지므로 홈으로 가는 길을 헤더에 둔다. 폰은 이 줄이 한 줄을 다 쓰고 단계 표시는 다음 줄로 내려간다 */}
+            <div className="flex min-w-0 basis-full items-center gap-1 md:basis-auto">
+              <button
+                type="button"
+                onClick={goHome}
+                className="-ml-2 flex min-h-11 shrink-0 items-center gap-1 rounded-xl px-2 text-[15px] font-semibold text-ink-2 hover:bg-background md:hidden"
+              >
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12.5 4.5L7 10l5.5 5.5" />
+                </svg>
+                홈
+              </button>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-[16px] font-bold">{activeSession.name}</div>
+                <div className="truncate text-[12px] text-muted">{subtitle}</div>
+              </div>
             </div>
             <Stepper reached={activeSession.step} current={activeSession.step} onGo={goStep} />
           </header>
