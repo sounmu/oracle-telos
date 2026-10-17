@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>세션 화면 프로토타입 · Telos</title>
+<style>
+:root{--bg:#f7f8fa;--panel:#fff;--fg:#191f28;--muted:#6b7684;--line:#e5e8eb;--accent:#191f28;--real:#12b886;--dummy:#c9ced6;--risk:#f04452}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;font-size:14px;line-height:1.5;height:100vh;overflow:hidden}
+.app{display:grid;grid-template-columns:240px 1fr;height:100vh}
+aside{background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;overflow:auto}
+.brand{font-weight:800;font-size:18px;margin:0 6px 12px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer}
+.btn.dark{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.sess{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;font:inherit;cursor:pointer;color:var(--fg)}
+.sess.on{background:var(--bg);font-weight:700}
+.sess small{display:block;color:var(--muted);font-size:11px}
+main{display:flex;flex-direction:column;min-width:0}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 20px}
+.steps{display:flex;gap:6px;align-items:center}
+.step{display:flex;align-items:center;gap:6px;border:0;background:none;font:inherit;cursor:pointer;padding:4px 8px;border-radius:999px;color:var(--muted)}
+.step .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:inline-grid;place-items:center;font-size:12px;font-weight:700}
+.step.on{color:var(--fg);font-weight:700}
+.step.on .n{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step.done .n{background:var(--line)}
+.bar{flex:1;height:1.5px;background:var(--line);min-width:12px}
+.title{font-size:17px;font-weight:800;margin-top:8px}
+.content{flex:1;overflow:auto;padding:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+label{display:block;font-weight:700;font-size:13px;margin:10px 0 4px}
+textarea,input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;background:#fff}
+textarea{min-height:90px;resize:vertical}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 320px;gap:14px}
+canvas{width:100%;height:440px;background:#fff;border:1px solid var(--line);border-radius:14px;display:block;cursor:pointer}
+.legend{display:flex;gap:12px;color:var(--muted);font-size:12px;flex-wrap:wrap}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;background:#fff4d6;color:#8a5a00;margin-left:6px}
+.muted{color:var(--muted)}
+ol.list{margin:0;padding-left:18px}
+ol.list li{margin:6px 0}
+.report h3{margin:14px 0 6px;font-size:15px}
+.report p,.report li{font-size:14px}
+@media print{aside,header .steps,.noprint{display:none!important}.app{display:block}.content{overflow:visible}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">Telos</div>
+    <button class="btn dark" style="width:100%" id="newBtn">+ 새 세션</button>
+    <p class="muted" style="margin:14px 6px 6px;font-size:12px">세션 = 사업 아이템 하나</p>
+    <div id="sessions"></div>
+  </aside>
+  <main>
+    <header>
+      <div class="steps" id="steps"></div>
+      <div class="title" id="title"></div>
+    </header>
+    <section class="content" id="content"></section>
+  </main>
+</div>
+
+<script>
+const POINTS = [{"id": "REAL-1481441", "title": "폴리락트산(PLA) 미세입자의 스프레이 공법에 따른 제조방법", "decision": "ACCEPTED", "cpc": "C08J3/12", "filed": "2013-02-22", "x": -4.246, "y": -11.123, "source": "real", "abstract": "폴리에스테르계 고분자를 에틸렌 카보네이트(EC)에 용해시킨 고분자 용액을 저온의 탄화수소 또는 알코올 용액에 분사해 냉동된 EC/고분자 미세입자를 만든 뒤, 열 수용액에서 EC를 제거하고 세척해 고분자 미세입자를 제조하는 방법."}, {"id": "REAL-2013-0006379", "title": "고분자 미세입자의 제조방법", "decision": "REJECTED", "cpc": "C08J3/12", "filed": "2013-01-21", "x": -4.424, "y": -10.554, "source": "real", "abstract": "폴리에스터계 고분자의 DMSO 용액을 -20~0℃의 C6-10 탄화수소 용액에 진동하는 가는 주사 바늘로 떨어뜨려 냉동된 미세입자를 만들고, 열 수용액에서 DMSO를 제거해 고분자 미세입자를 고수율로 얻는 제조방법."}, {"id": "REAL-1725279", "title": "망상구조를 갖는 고분자 미세입자의 제조방법", "decision": "ACCEPTED", "cpc": "C08J3/12", "filed": "2015-10-27", "x": -4.039, "y": -10.67, "source": "real", "abstract": "폴리에스테르계 고분자를 에틸렌카보네이트(EC)와 DMSO의 혼합용매에 용해시키고, 어는점 이하의 탄화수소에 분사해 고형분을 얻은 뒤 물에서 혼합용매를 제거해 망상구조를 갖는 고분자 미세입자를 제조하는 방법."}, {"id": "REAL-2022-0072130", "title": "복합체, 이의 제조방법 및 이를 이용한 성형용 필러 조성물", "decision": "ACCEPTED", "cpc": "A61L27/48", "filed": "2022-06-14", "x": -3.755, "y": -11.073, "source": "real", "abstract": "내부에 망상 구조를 갖는 생분해성 입자(PLA)와 수용성 고분자(히알루론산)를 포함하는 복합체. 케이크 제형을 가져 장기보관성과 분산성이 우수하며, 이를 분산한 성형용 필러 조성물."}, {"id": "DUMMY-001", "title": "반도체 공정 관련 기술 01", "decision": "ACCEPTED", "cpc": "H01L21/02", "filed": "2017-06-08", "x": -4.392, "y": -8.983, "source": "dummy", "abstract": "웨이퍼 세정 공정에서 약액 농도를 실시간 측정해 공정 시간을 조절하는 장치."}, {"id": "DUMMY-002", "title": "반도체 공정 관련 기술 02", "decision": "PENDING", "cpc": "H01L21/67", "filed": "2018-11-15", "x": -4.331, "y": -9.4, "source": "dummy", "abstract": "식각 챔버 내 가스 분포를 보정해 웨이퍼 균일도를 높이는 샤워헤드 구조."}, {"id": "DUMMY-003", "title": "자동차 부품 관련 기술 03", "decision": "REJECTED", "cpc": "B60W30/00", "filed": "2019-04-22", "x": -2.353, "y": -7.403, "source": "dummy", "abstract": "주행 중 차선 변경 전에 후방 차량의 속도를 추정해 경고 시점을 정하는 제어 방법."}, {"id": "DUMMY-004", "title": "자동차 부품 관련 기술 04", "decision": "UNKNOWN", "cpc": "F16H61/00", "filed": "2020-09-02", "x": -2.563, "y": -7.675, "source": "dummy", "abstract": "전기차 감속기의 기어 맞물림 소음을 줄이기 위한 윤활유 공급 구조."}, {"id": "DUMMY-005", "title": "통신 프로토콜 관련 기술 05", "decision": "ACCEPTED", "cpc": "H04L9/32", "filed": "2021-02-09", "x": -0.051, "y": -9.523, "source": "dummy", "abstract": "IoT 기기 간 메시지 인증을 위해 경량 해시 체인을 사용하는 인증 방법."}, {"id": "DUMMY-006", "title": "통신 프로토콜 관련 기술 06", "decision": "ACCEPTED", "cpc": "H04W4/02", "filed": "2022-07-16", "x": -0.092, "y": -9.195, "source": "dummy", "abstract": "실내 위치 측정 시 와이파이 신호 세기를 보정해 오차를 줄이는 위치 추정 방법."}, {"id": "DUMMY-007", "title": "식품 가공 관련 기술 07", "decision": "PENDING", "cpc": "A23L3/00", "filed": "2023-12-23", "x": -3.298, "y": -9.894, "source": "dummy", "abstract": "과일 주스의 살균 공정에서 고압 처리 시간을 줄여 비타민 손실을 막는 방법."}, {"id": "DUMMY-008", "title": "식품 가공 관련 기술 08", "decision": "REJECTED", "cpc": "A23L7/10", "filed": "2024-05-03", "x": -3.645, "y": -10.197, "source": "dummy", "abstract": "현미를 발아시켜 식이섬유 함량을 높인 곡물 가공식품의 제조방법."}, {"id": "DUMMY-009", "title": "농업 기계 관련 기술 09", "decision": "UNKNOWN", "cpc": "A01B79/00", "filed": "2016-10-10", "x": -3.602, "y": -9.086, "source": "dummy", "abstract": "비닐하우스 내부 온습도 데이터를 바탕으로 관수량을 자동 조절하는 장치."}, {"id": "DUMMY-010", "title": "농업 기계 관련 기술 10", "decision": "ACCEPTED", "cpc": "A01G25/16", "filed": "2017-03-17", "x": -3.047, "y": -9.206, "source": "dummy", "abstract": "드론이 촬영한 작물 영상으로 병해 지점을 찾아 약제를 국소 살포하는 방법."}, {"id": "DUMMY-011", "title": "게임 소프트웨어 관련 기술 11", "decision": "ACCEPTED", "cpc": "G06F3/01", "filed": "2018-08-24", "x": -0.494, "y": -7.866, "source": "dummy", "abstract": "가상 현실 게임에서 손 추적 입력을 보정해 조작 지연을 줄이는 방법."}, {"id": "DUMMY-012", "title": "게임 소프트웨어 관련 기술 12", "decision": "PENDING", "cpc": "A63F13/52", "filed": "2019-01-04", "x": -0.472, "y": -8.214, "source": "dummy", "abstract": "멀티플레이 게임 서버에서 플레이어 위치 동기화 주기를 네트워크 상태에 맞춰 바꾸는 방법."}, {"id": "DUMMY-013", "title": "물류 로봇 관련 기술 13", "decision": "REJECTED", "cpc": "B65G1/04", "filed": "2020-06-11", "x": -1.045, "y": -7.675, "source": "dummy", "abstract": "창고 선반 사이를 이동하는 로봇이 적재 위치를 계산해 피킹 순서를 정하는 시스템."}, {"id": "DUMMY-014", "title": "물류 로봇 관련 기술 14", "decision": "UNKNOWN", "cpc": "G05D1/02", "filed": "2021-11-18", "x": -0.926, "y": -7.893, "source": "dummy", "abstract": "물류센터 내 자율 주행 로봇의 교차로 통행 우선순위를 실시간으로 정하는 방법."}, {"id": "DUMMY-015", "title": "에너지 저장 관련 기술 15", "decision": "ACCEPTED", "cpc": "H01M10/05", "filed": "2022-04-25", "x": -4.493, "y": -9.957, "source": "dummy", "abstract": "리튬 이차전지 전해액에 첨가제를 넣어 고온 수명을 개선하는 조성물."}, {"id": "DUMMY-016", "title": "에너지 저장 관련 기술 16", "decision": "ACCEPTED", "cpc": "H02J7/00", "filed": "2023-09-05", "x": -4.017, "y": -8.802, "source": "dummy", "abstract": "전기차 충전 시 배터리 온도에 따라 충전 전류를 단계적으로 조정하는 제어 회로."}, {"id": "DUMMY-017", "title": "디스플레이 관련 기술 17", "decision": "PENDING", "cpc": "G09G3/32", "filed": "2024-02-12", "x": -1.581, "y": -9.384, "source": "dummy", "abstract": "유기발광 디스플레이의 화소 회로에서 문턱 전압 편차를 보상하는 구동 방법."}, {"id": "DUMMY-018", "title": "디스플레이 관련 기술 18", "decision": "REJECTED", "cpc": "G02F1/1333", "filed": "2016-07-19", "x": -1.968, "y": -9.766, "source": "dummy", "abstract": "곡면 디스플레이의 편광판 부착 시 응력을 줄이는 접착층 구조."}, {"id": "DUMMY-019", "title": "의료기기 관련 기술 19", "decision": "UNKNOWN", "cpc": "A61B5/00", "filed": "2017-12-26", "x": -2.705, "y": -7.991, "source": "dummy", "abstract": "웨어러블 심전도 패치에서 움직임에 따른 잡음을 제거하는 신호 처리 방법."}, {"id": "DUMMY-020", "title": "의료기기 관련 기술 20", "decision": "ACCEPTED", "cpc": "A61B17/32", "filed": "2018-05-06", "x": -2.435, "y": -8.328, "source": "dummy", "abstract": "내시경 시술에서 조직 절제 깊이를 실시간으로 감지하는 전극 장치."}, {"id": "DUMMY-021", "title": "수처리 관련 기술 21", "decision": "ACCEPTED", "cpc": "C02F1/00", "filed": "2019-10-13", "x": -3.374, "y": -9.39, "source": "dummy", "abstract": "정수 장치에서 막 오염을 줄이기 위해 역세척 주기를 수질 데이터로 정하는 방법."}, {"id": "DUMMY-022", "title": "수처리 관련 기술 22", "decision": "PENDING", "cpc": "C02F3/34", "filed": "2020-03-20", "x": -4.048, "y": -9.828, "source": "dummy", "abstract": "하수 처리장의 미생물 활성도를 높이는 산소 공급 장치 구조."}, {"id": "DUMMY-023", "title": "건축 자재 관련 기술 23", "decision": "REJECTED", "cpc": "E04B1/00", "filed": "2021-08-27", "x": -2.954, "y": -10.625, "source": "dummy", "abstract": "단열 성능을 높인 경량 벽체 패널과 이를 이어 붙이는 결합 구조."}, {"id": "DUMMY-024", "title": "건축 자재 관련 기술 24", "decision": "UNKNOWN", "cpc": "C04B28/02", "filed": "2022-01-07", "x": -3.507, "y": -10.652, "source": "dummy", "abstract": "석회 기반 시멘트에 재활용 골재를 섞어 강도를 확보하는 모르타르 조성물."}, {"id": "DUMMY-025", "title": "인공지능 추천 관련 기술 25", "decision": "ACCEPTED", "cpc": "G06Q30/06", "filed": "2023-06-14", "x": -0.966, "y": -9.181, "source": "dummy", "abstract": "사용자 구매 이력과 리뷰 감성 분석을 함께 써서 상품을 추천하는 방법."}, {"id": "DUMMY-026", "title": "인공지능 추천 관련 기술 26", "decision": "ACCEPTED", "cpc": "G06N20/00", "filed": "2024-11-21", "x": -0.715, "y": -8.744, "source": "dummy", "abstract": "소규모 데이터에서 추천 모델을 빠르게 갱신하는 증분 학습 방법."}, {"id": "DUMMY-027", "title": "교육 기술 관련 기술 27", "decision": "PENDING", "cpc": "G09B5/00", "filed": "2016-04-01", "x": -1.134, "y": -9.082, "source": "dummy", "abstract": "학습자의 풀이 기록을 분석해 다음 문제 난이도를 정하는 전자 학습 장치."}, {"id": "DUMMY-028", "title": "교육 기술 관련 기술 28", "decision": "REJECTED", "cpc": "G09B7/00", "filed": "2017-09-08", "x": -1.44, "y": -8.73, "source": "dummy", "abstract": "음성 인식으로 외국어 발음을 채점하고 틀린 음소를 알려 주는 학습 방법."}, {"id": "DUMMY-029", "title": "생활 가전 관련 기술 29", "decision": "UNKNOWN", "cpc": "F24F11/00", "filed": "2018-02-15", "x": -3.515, "y": -8.186, "source": "dummy", "abstract": "실내 이산화탄소 농도에 따라 환기 팬 속도를 바꾸는 공기 조화 장치."}, {"id": "DUMMY-030", "title": "생활 가전 관련 기술 30", "decision": "ACCEPTED", "cpc": "A47J31/44", "filed": "2019-07-22", "x": -3.728, "y": -8.46, "source": "dummy", "abstract": "커피 추출 시 원두 분쇄도를 감지해 추출 압력을 조절하는 머신."}, {"id": "DUMMY-031", "title": "보안 기술 관련 기술 31", "decision": "ACCEPTED", "cpc": "G06F21/62", "filed": "2020-12-02", "x": -0.515, "y": -9.69, "source": "dummy", "abstract": "클라우드 저장 데이터를 사용자 키로 나눠 보관하는 분산 암호화 방법."}, {"id": "DUMMY-032", "title": "보안 기술 관련 기술 32", "decision": "PENDING", "cpc": "H04L63/08", "filed": "2021-05-09", "x": -0.388, "y": -9.424, "source": "dummy", "abstract": "다중 인증 과정에서 기기 지문을 함께 확인하는 접근 제어 방법."}, {"id": "DUMMY-033", "title": "로봇 제어 관련 기술 33", "decision": "REJECTED", "cpc": "B25J9/16", "filed": "2022-10-16", "x": -1.324, "y": -7.69, "source": "dummy", "abstract": "협동 로봇이 사람의 접촉을 감지하면 관절 토크를 즉시 줄이는 제어 방법."}, {"id": "DUMMY-034", "title": "로봇 제어 관련 기술 34", "decision": "UNKNOWN", "cpc": "B25J13/08", "filed": "2023-03-23", "x": -1.521, "y": -7.979, "source": "dummy", "abstract": "원격 조작 로봇의 촉각 피드백을 진동 패턴으로 바꿔 전달하는 장치."}, {"id": "DUMMY-035", "title": "화장품 관련 기술 35", "decision": "ACCEPTED", "cpc": "A61K8/73", "filed": "2024-08-03", "x": -2.069, "y": -10.291, "source": "dummy", "abstract": "보습 성분을 미세 캡슐에 담아 피부 흡수 시간을 늦추는 크림 조성물."}, {"id": "DUMMY-036", "title": "화장품 관련 기술 36", "decision": "ACCEPTED", "cpc": "A61Q19/08", "filed": "2016-01-10", "x": -2.371, "y": -10.026, "source": "dummy", "abstract": "자외선 차단제의 백탁을 줄이기 위해 산화아연 입자 크기를 조절하는 방법."}];
+const CASE = {
+  name: "리젠바이오텍 vs 바임 (미세입자 제조공법 무효·정정 분쟁)",
+  keywords: ["미세입자","PLA","폴리락트산","망상구조","EC","DMSO","에틸렌카보네이트","필러","냉동","분사"],
+  result: "2026.09 현재 대법원 상고 단계. 특허 1481441의 청구항 1·3 무효 확정, 특허 1725279 정정 유효성 상고 중."
+};
+const STEPS = ["입력","탐색","검증","요약"];
+const SESSIONS = [
+  {id:"s1", name:"미세입자 필러 아이템", sub:"", idea:"", step:2},
+  {id:"s2", name:"웨어러블 심전도 패치", sub:"", idea:"", step:0},
+];
+const SESS_STATE = {
+  s1: {idea: "PLA 미세입자를 냉동 분사로 만들어 피부 주입용 필러로 쓰는 아이템", tpl: {item:"PLA 미세입자를 냉동 분사로 만들어 피부 주입용 필러로 쓰는 아이템", tech:"미세입자 냉동 분사", target:"피부과", risk:"제조공법"}, step: 2}
+};
+let current = "s1";
+let stepIdx = 0;
+let selectedPoint = null;
+
+function st(id){ return SESS_STATE[id] ||= {idea:"", tpl:null, step:0}; }
+function keywordsOf(text){
+  return (text||"").toLowerCase().split(/[^a-z0-9가-힣]+/).filter(w=>w.length>=2);
+}
+function matchPoints(tpl){
+  const kws = keywordsOf([tpl.item,tpl.tech,tpl.target,tpl.risk].join(" "));
+  if(!kws.length) return {list:POINTS, scored:false};
+  const scored = POINTS.map(p=>{
+    const hay=(p.title+" "+p.abstract).toLowerCase();
+    return {p, s: kws.filter(k=>hay.includes(k)).length};
+  }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  return scored.length ? {list: scored.map(x=>x.p), scored:true, top: scored.slice(0,3)} : {list:POINTS, scored:false};
+}
+function locate(top){
+  if(!top||!top.length) return null;
+  let wx=0,wy=0,ws=0;
+  for(const t of top){ wx+=t.p.x*t.s; wy+=t.p.y*t.s; ws+=t.s; }
+  return {x:wx/ws, y:wy/ws};
+}
+function riskOf(list){
+  // 밀집도: 반경 안 특허 수. 사례 도달도: 사례 키워드와 2개 이상 겹치는 특허 여부. 두 값은 따로 보인다.
+  const linked = list.filter(p=>{
+    const hay=(p.title+" "+p.abstract).toLowerCase();
+    return CASE.keywords.filter(k=>hay.includes(k.toLowerCase())).length>=2;
+  });
+  return {linked, linkedIds:new Set(linked.map(p=>p.id))};
+}
+
+function renderSessions(){
+  const box=document.getElementById("sessions");
+  box.innerHTML="";
+  for(const s of SESSIONS){
+    const b=document.createElement("button");
+    b.className="sess"+(s.id===current?" on":"");
+    const label=s.name;
+    b.innerHTML=label+"<small>"+["입력","탐색","검증","요약"][st(s.id).step]+" 단계</small>";
+    b.onclick=()=>{current=s.id; stepIdx=st(current).step; render();};
+    box.appendChild(b);
+  }
+}
+function renderSteps(){
+  const s=st(current);
+  const el=document.getElementById("steps");
+  el.innerHTML="";
+  STEPS.forEach((name,i)=>{
+    if(i>0){const bar=document.createElement("span");bar.className="bar";el.appendChild(bar);}
+    const b=document.createElement("button");
+    b.className="step"+(i===stepIdx?" on":"")+(i<s.step?" done":"");
+    b.innerHTML='<span class="n">'+(i+1)+'</span>'+name;
+    b.onclick=()=>{ if(i<=s.step || (i===1 && s.tpl)) { stepIdx=i; render(); } };
+    el.appendChild(b);
+  });
+  const titles=["① 입력: 아이템을 적으면 템플릿으로 정리합니다","② 탐색: 템플릿으로 맞춤 지도를 조회합니다","③ 검증: 위험 표시와 연결 사례를 봅니다","④ 요약: ①~③을 리포트로 정리합니다"];
+  document.getElementById("title").textContent=titles[stepIdx];
+}
+function render(){
+  renderSessions(); renderSteps();
+  const c=document.getElementById("content");
+  c.innerHTML="";
+  const s=st(current);
+  if(stepIdx===0) renderInput(c,s);
+  if(stepIdx===1) renderExplore(c,s);
+  if(stepIdx===2) renderVerify(c,s);
+  if(stepIdx===3) renderReport(c,s);
+}
+
+function renderInput(c,s){
+  const card=document.createElement("div"); card.className="card";
+  card.innerHTML=`<label>아이템 설명</label><textarea id="idea" placeholder="예: PLA 미세입자를 피부 주입용 필러로 쓰는 아이템">${s.idea||""}</textarea>
+  <div class="row" style="margin-top:10px"><button class="btn dark" id="toTpl">템플릿으로 바꾸기</button><span class="muted">입력 내용을 아래 칸으로 나눠 정리합니다</span></div>`;
+  c.appendChild(card);
+  const t=s.tpl||{item:s.idea||"",tech:"",target:"",risk:""};
+  const form=document.createElement("div"); form.className="card";
+  form.innerHTML=`<div class="muted" style="font-size:12px">템플릿 (다음 단계의 검색 조건이 됩니다)</div>
+  <label>아이템</label><input id="f_item" value="${t.item}">
+  <label>핵심 기술</label><input id="f_tech" value="${t.tech}" placeholder="예: 미세입자 제조공법, 망상구조">
+  <label>대상 고객</label><input id="f_target" value="${t.target}" placeholder="예: 성형외과, 피부과">
+  <label>우려하는 분쟁 분야</label><input id="f_risk" value="${t.risk}" placeholder="예: 제조공법 특허">
+  <div class="row" style="margin-top:12px"><button class="btn dark" id="next1" ${s.tpl?"":"disabled"}>탐색으로 →</button></div>`;
+  c.appendChild(form);
+  document.getElementById("toTpl").onclick=()=>{
+    const text=document.getElementById("idea").value.trim();
+    if(!text) return;
+    s.idea=text;
+    s.tpl={item:text, tech:keywordsOf(text).slice(0,3).join(" "), target:"", risk:"제조공법"};
+    const cur=SESSIONS.find(x=>x.id===current); if(cur && cur.name==="새 아이템") cur.name=text.slice(0,18);
+    render();
+  };
+  if(s.tpl){
+    const sync=()=>{ s.tpl={item:f("f_item"),tech:f("f_tech"),target:f("f_target"),risk:f("f_risk")}; };
+    ["f_item","f_tech","f_target","f_risk"].forEach(id=>document.getElementById(id).oninput=sync);
+    document.getElementById("next1").onclick=()=>{ sync(); s.step=Math.max(s.step,1); stepIdx=1; render(); };
+  }
+}
+function f(id){ return document.getElementById(id).value.trim(); }
+
+function renderExplore(c,s){
+  if(!s.tpl){ c.innerHTML='<div class="card muted">먼저 ①입력에서 템플릿을 만들어 주세요.</div>'; return; }
+  const m=matchPoints(s.tpl);
+  const card=document.createElement("div"); card.className="grid2";
+  card.innerHTML=`<div><canvas id="map" width="900" height="560"></canvas>
+    <div class="legend" style="margin-top:8px"><span><span class="dot" style="background:var(--real)"></span>실제 자료</span><span><span class="dot" style="background:var(--dummy)"></span>더미(시연용)</span><span><span class="dot" style="background:#333"></span>내 아이템(추정)</span></div>
+    <p class="muted" style="font-size:12px">${m.scored?"템플릿 키워드와 맞는 특허 "+m.list.length+"건을 보여 줍니다. 점을 누르면 내용을 봅니다.":"맞는 특허가 없어 전체 "+m.list.length+"건을 보여 줍니다."}</p></div>
+    <div><div class="card" id="detail"><div class="muted">점을 누르면 여기에 내용이 나옵니다.</div></div>
+    <div class="card"><b>맞는 상위 특허</b><ol class="list" id="top"></ol></div></div>`;
+  c.appendChild(card);
+  const loc = locate(m.top);
+  const ol=document.getElementById("top");
+  (m.top||[]).forEach(t=>{const li=document.createElement("li"); li.innerHTML=`${t.p.title.slice(0,46)} <span class="muted">· 키워드 ${t.s}개</span>`; li.style.cursor="pointer"; li.onclick=()=>showDetail(t.p); ol.appendChild(li);});
+  drawMap(m.list, {loc, risk:false});
+  document.getElementById("map").onclick=(e)=>{
+    const hit=hitTest(e, m.list);
+    if(hit) showDetail(hit);
+  };
+  if(!selectedPoint) selectedPoint=null;
+  mapState={list:m.list, loc, risk:false};
+  nextBtn(c,2,"검증으로 →");
+}
+
+function renderVerify(c,s){
+  if(!s.tpl){ c.innerHTML='<div class="card muted">먼저 ①입력에서 템플릿을 만들어 주세요.</div>'; return; }
+  const m=matchPoints(s.tpl);
+  const r=riskOf(m.list);
+  const card=document.createElement("div"); card.className="grid2";
+  card.innerHTML=`<div><canvas id="map" width="900" height="560"></canvas>
+    <div class="legend" style="margin-top:8px"><span><span class="dot" style="background:var(--risk)"></span>연결 사례가 닿는 특허</span><span><span class="dot" style="background:var(--real)"></span>실제 자료</span><span><span class="dot" style="background:var(--dummy)"></span>더미</span></div></div>
+    <div>
+      <div class="card"><b>위험 표시 (두 값을 따로 봅니다)</b>
+        <ul class="list" style="margin-top:8px">
+          <li>연결된 분쟁 사례: <b>${r.linked.length? "1건" : "0건"}</b> (${CASE.name})</li>
+          <li>연결 특허 수: <b>${r.linked.length}건</b></li>
+          <li>주변 밀집도: 지도 위 점 기준 반경 안 특허 수 (아래 점 선택 시 표시)</li>
+        </ul>
+        <p class="muted" style="font-size:12px">합산 위험 점수는 계산식을 검증한 뒤에 보여 줍니다.</p>
+      </div>
+      <div class="card"><b>연결 사례 결과</b><p style="margin:6px 0 0">${CASE.result}</p></div>
+      <div class="card" id="detail"><div class="muted">점을 누르면 주변 밀집도를 봅니다.</div></div>
+    </div>`;
+  c.appendChild(card);
+  const loc=locate(m.top);
+  drawMap(m.list,{loc, risk:true, linked:r.linkedIds});
+  document.getElementById("map").onclick=(e)=>{
+    const hit=hitTest(e,m.list);
+    if(hit){
+      const within=m.list.filter(p=>Math.hypot(p.x-hit.x,p.y-hit.y)<=0.6).length;
+      document.getElementById("detail").innerHTML=`<b>${hit.title.slice(0,60)}</b><div class="muted" style="margin-top:4px">주변 밀집도 ${within}건 · ${r.linkedIds.has(hit.id)?"연결 사례 있음":"연결 사례 없음"}${hit.source==="dummy"?'<span class="tag">더미 데이터 · 시연용</span>':""}</div>`;
+    }
+  };
+  nextBtn(c,3,"요약 만들기 →");
+}
+
+function renderReport(c,s){
+  if(!s.tpl){ c.innerHTML='<div class="card muted">①~③을 먼저 진행해 주세요.</div>'; return; }
+  const m=matchPoints(s.tpl);
+  const r=riskOf(m.list);
+  const real=m.list.filter(p=>p.source!=="dummy").length, dummy=m.list.length-real;
+  const card=document.createElement("div"); card.className="card report";
+  card.innerHTML=`<div class="row noprint" style="justify-content:space-between"><b>리포트</b><button class="btn" onclick="window.print()">인쇄 / PDF 저장</button></div>
+  <h3>① 아이템</h3><p>${s.tpl.item}</p>
+  <p class="muted">핵심 기술: ${s.tpl.tech||"-"} · 대상: ${s.tpl.target||"-"} · 우려 분야: ${s.tpl.risk||"-"}</p>
+  <h3>② 탐색 결과</h3><p>맞는 특허 ${m.list.length}건 (실제 ${real}건, 더미 ${dummy}건)</p>
+  <ol>${(m.top||[]).map(t=>`<li>${t.p.title.slice(0,70)} (${t.p.filed})</li>`).join("")||"<li>맞는 특허 없음</li>"}</ol>
+  <h3>③ 검증 결과</h3><ul><li>연결된 분쟁 사례: ${r.linked.length?"1건":"없음"}</li><li>${CASE.name}</li><li>${CASE.result}</li></ul>
+  <h3>확인 필요</h3><ul><li>위 결과는 시연용 데이터(실제 자료와 더미 포함)에서 나온 것입니다.</li><li>특허 요소 비교와 법적 판단은 전문가 검토가 필요합니다.</li></ul>`;
+  c.appendChild(card);
+}
+
+function nextBtn(c,to,label){
+  const row=document.createElement("div"); row.className="row noprint";
+  row.innerHTML=`<button class="btn dark">${label}</button>`;
+  row.firstChild.onclick=()=>{ const s=st(current); s.step=Math.max(s.step,to); stepIdx=to; render(); };
+  c.appendChild(row);
+}
+
+let mapState=null;
+function bounds(list){
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(const p of POINTS){x0=Math.min(x0,p.x);x1=Math.max(x1,p.x);y0=Math.min(y0,p.y);y1=Math.max(y1,p.y);}
+  return {x0,x1,y0,y1};
+}
+function toPx(p,canvas){
+  const b=bounds();
+  const pad=40, sx=(canvas.width-pad*2)/((b.x1-b.x0)||1), sy=(canvas.height-pad*2)/((b.y1-b.y0)||1);
+  const k=Math.min(sx,sy);
+  return [pad+(p.x-b.x0)*k, canvas.height-pad-(p.y-b.y0)*k];
+}
+function drawMap(list,opt){
+  const cv=document.getElementById("map"); if(!cv) return;
+  const ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // 맞지 않는 점은 옅게 보여 맥락을 남긴다
+  const inList=new Set(list.map(p=>p.id));
+  for(const p of POINTS){
+    const [x,y]=toPx(p,cv);
+    ctx.globalAlpha = inList.has(p.id)? 1 : 0.15;
+    if(opt.risk && opt.linked && opt.linked.has(p.id)){
+      ctx.fillStyle="rgba(240,68,82,0.18)";
+      ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = p.source==="dummy" ? "#c9ced6" : "#12b886";
+    ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+    if(opt.risk && opt.linked && opt.linked.has(p.id)){ ctx.strokeStyle="#f04452"; ctx.lineWidth=2; ctx.stroke(); }
+  }
+  ctx.globalAlpha=1;
+  if(opt.loc){
+    const [x,y]=toPx(opt.loc,cv);
+    ctx.fillStyle="#333"; ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill();
+    ctx.font="13px sans-serif"; ctx.fillText("내 아이템(추정)", x+12, y+4);
+  }
+}
+function hitTest(e,list){
+  const cv=document.getElementById("map"); const rect=cv.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(cv.width/rect.width), y=(e.clientY-rect.top)*(cv.height/rect.height);
+  let best=null,bd=18;
+  for(const p of POINTS){ const [px,py]=toPx(p,cv); const d=Math.hypot(px-x,py-y); if(d<bd){bd=d;best=p;} }
+  return best;
+}
+function showDetail(p){
+  const d=document.getElementById("detail"); if(!d) return;
+  d.innerHTML=`<b>${p.title.slice(0,70)}</b>
+   <div class="muted" style="margin-top:4px">${p.decision} · ${p.cpc} · ${p.filed}${p.source==="dummy"?'<span class="tag">더미 데이터 · 시연용</span>':""}</div>
+   <p style="margin-top:8px">${p.abstract}</p>`;
+}
+
+document.getElementById("newBtn").onclick=()=>{
+  const id="s"+(SESSIONS.length+1);
+  SESSIONS.push({id,name:"새 아이템",sub:"",idea:"",step:0});
+  current=id; stepIdx=0; render();
+};
+render();
+</script>
+</body>
+</html>
