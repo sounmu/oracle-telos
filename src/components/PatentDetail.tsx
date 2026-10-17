@@ -19,6 +19,8 @@ interface Props {
   onCompare: () => void;
   /** 관련 분쟁 사례를 고르고 상담용 요약을 만들 때 쓰는 내 기술 설명 */
   idea?: string;
+  /** 닫기 버튼 문구. 홈 지도에서는 결과 목록이 없으므로 바꿔 쓴다 */
+  backLabel?: string;
 }
 
 interface RequestState {
@@ -36,6 +38,7 @@ export default function PatentDetail({
   aiReady = true,
   onCompare,
   idea = "",
+  backLabel = "결과로 돌아가기",
 }: Props) {
   const [full, setFull] = useState<PatentFull | null>(null);
   const [initial, setInitial] = useState<RequestState>({ loading: true, error: null });
@@ -156,13 +159,13 @@ export default function PatentDetail({
       <button
         type="button"
         onClick={onClose}
-        title="결과로 돌아가기 (Esc)"
+        title={`${backLabel} (Esc)`}
         className="-ml-2 flex min-h-11 w-fit items-center gap-1 rounded-xl px-2 text-[15px] font-semibold text-ink-2 hover:bg-panel"
       >
         <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12.5 4.5L7 10l5.5 5.5" />
         </svg>
-        결과로 돌아가기
+        {backLabel}
       </button>
 
       <header className="rounded-3xl bg-panel p-5 md:p-6">

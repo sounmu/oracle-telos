@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:demo": "TELOS_DEMO=1 NEXT_PUBLIC_TELOS_DEMO=1 next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

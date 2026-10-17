@@ -574,5 +574,197 @@
     "firstClaim": "자외선 차단제의 백탁을 줄이기 위해 산화아연 입자 크기를 조절하는 방법.",
     "source": "dummy",
     "field": "화장품"
+  },
+  {
+    "id": "DUMMY-037",
+    "publication": "",
+    "title": "이차전지 관련 기술 37",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/446",
+    "cpcLabels": [
+      "H01M50/446"
+    ],
+    "filed": "2016-03-14",
+    "applicant": "(더미)",
+    "abstract": "폴리에틸렌 분리막 위에 알루미나 입자 코팅층을 얇게 형성해 고온 열수축을 줄이는 이차전지 분리막.",
+    "firstClaim": "폴리에틸렌 분리막 위에 알루미나 입자 코팅층을 얇게 형성해 고온 열수축을 줄이는 이차전지 분리막.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-038",
+    "publication": "",
+    "title": "이차전지 관련 기술 38",
+    "decision": "PENDING",
+    "cpc": "H01M50/411",
+    "cpcLabels": [
+      "H01M50/411"
+    ],
+    "filed": "2023-05-22",
+    "applicant": "(더미)",
+    "abstract": "분리막 표면에 접착성 고분자 패턴을 인쇄해 전극과의 접착력을 높이는 리튬이온 배터리 제조 방법.",
+    "firstClaim": "분리막 표면에 접착성 고분자 패턴을 인쇄해 전극과의 접착력을 높이는 리튬이온 배터리 제조 방법.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-039",
+    "publication": "",
+    "title": "이차전지 관련 기술 39",
+    "decision": "ACCEPTED",
+    "cpc": "H01M10/0525",
+    "cpcLabels": [
+      "H01M10/0525"
+    ],
+    "filed": "2019-09-03",
+    "applicant": "(더미)",
+    "abstract": "전극 조립체의 양극·분리막·음극을 지그재그로 적층해 셀 두께 편차를 줄이는 배터리 셀 구조.",
+    "firstClaim": "전극 조립체의 양극·분리막·음극을 지그재그로 적층해 셀 두께 편차를 줄이는 배터리 셀 구조.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-040",
+    "publication": "",
+    "title": "이차전지 관련 기술 40",
+    "decision": "REJECTED",
+    "cpc": "H01M50/403",
+    "cpcLabels": [
+      "H01M50/403"
+    ],
+    "filed": "2018-11-27",
+    "applicant": "(더미)",
+    "abstract": "세라믹 입자와 바인더 비율을 조절한 슬러리로 분리막 양면을 코팅하는 공정.",
+    "firstClaim": "세라믹 입자와 바인더 비율을 조절한 슬러리로 분리막 양면을 코팅하는 공정.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-041",
+    "publication": "",
+    "title": "이차전지 관련 기술 41",
+    "decision": "UNKNOWN",
+    "cpc": "H01M50/489",
+    "cpcLabels": [
+      "H01M50/489"
+    ],
+    "filed": "2021-07-08",
+    "applicant": "(더미)",
+    "abstract": "분리막 코팅층에 난연성 무기물 입자를 섞어 배터리 열폭주 확산을 늦추는 구조.",
+    "firstClaim": "분리막 코팅층에 난연성 무기물 입자를 섞어 배터리 열폭주 확산을 늦추는 구조.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-042",
+    "publication": "",
+    "title": "이차전지 관련 기술 42",
+    "decision": "ACCEPTED",
+    "cpc": "H01M50/431",
+    "cpcLabels": [
+      "H01M50/431"
+    ],
+    "filed": "2024-01-19",
+    "applicant": "(더미)",
+    "abstract": "건식 공정으로 만든 다공성 분리막의 기공 크기를 균일하게 하는 연신 방법.",
+    "firstClaim": "건식 공정으로 만든 다공성 분리막의 기공 크기를 균일하게 하는 연신 방법.",
+    "source": "dummy",
+    "field": "이차전지"
+  },
+  {
+    "id": "DUMMY-043",
+    "publication": "",
+    "title": "디스플레이 관련 기술 43",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/353",
+    "cpcLabels": [
+      "H10K59/353"
+    ],
+    "filed": "2015-08-11",
+    "applicant": "(더미)",
+    "abstract": "녹색 서브 화소를 마름모 꼭지점에 두고 적색·청색 서브 화소를 공유하는 유기 발광 화소 배열.",
+    "firstClaim": "녹색 서브 화소를 마름모 꼭지점에 두고 적색·청색 서브 화소를 공유하는 유기 발광 화소 배열.",
+    "source": "dummy",
+    "field": "디스플레이"
+  },
+  {
+    "id": "DUMMY-044",
+    "publication": "",
+    "title": "디스플레이 관련 기술 44",
+    "decision": "PENDING",
+    "cpc": "H10K59/122",
+    "cpcLabels": [
+      "H10K59/122"
+    ],
+    "filed": "2023-09-26",
+    "applicant": "(더미)",
+    "abstract": "화소 정의막 위 스페이서 높이를 영역별로 달리해 증착 마스크 처짐을 줄이는 표시 패널.",
+    "firstClaim": "화소 정의막 위 스페이서 높이를 영역별로 달리해 증착 마스크 처짐을 줄이는 표시 패널.",
+    "source": "dummy",
+    "field": "디스플레이"
+  },
+  {
+    "id": "DUMMY-045",
+    "publication": "",
+    "title": "디스플레이 관련 기술 45",
+    "decision": "ACCEPTED",
+    "cpc": "H10K59/352",
+    "cpcLabels": [
+      "H10K59/352"
+    ],
+    "filed": "2020-04-02",
+    "applicant": "(더미)",
+    "abstract": "서브 화소 개구부를 육각형으로 만들어 해상도 대비 발광 면적을 넓히는 OLED 패널 구조.",
+    "firstClaim": "서브 화소 개구부를 육각형으로 만들어 해상도 대비 발광 면적을 넓히는 OLED 패널 구조.",
+    "source": "dummy",
+    "field": "디스플레이"
+  },
+  {
+    "id": "DUMMY-046",
+    "publication": "",
+    "title": "디스플레이 관련 기술 46",
+    "decision": "REJECTED",
+    "cpc": "H10K71/166",
+    "cpcLabels": [
+      "H10K71/166"
+    ],
+    "filed": "2017-12-05",
+    "applicant": "(더미)",
+    "abstract": "미세 금속 마스크의 개구 패턴을 보정해 유기 발광층 증착 위치 오차를 줄이는 방법.",
+    "firstClaim": "미세 금속 마스크의 개구 패턴을 보정해 유기 발광층 증착 위치 오차를 줄이는 방법.",
+    "source": "dummy",
+    "field": "디스플레이"
+  },
+  {
+    "id": "DUMMY-047",
+    "publication": "",
+    "title": "디스플레이 관련 기술 47",
+    "decision": "UNKNOWN",
+    "cpc": "H10K59/131",
+    "cpcLabels": [
+      "H10K59/131"
+    ],
+    "filed": "2022-06-15",
+    "applicant": "(더미)",
+    "abstract": "표시 패널 아래 카메라 영역의 화소 밀도를 낮추고 배선을 투명 전극으로 바꾸는 구조.",
+    "firstClaim": "표시 패널 아래 카메라 영역의 화소 밀도를 낮추고 배선을 투명 전극으로 바꾸는 구조.",
+    "source": "dummy",
+    "field": "디스플레이"
+  },
+  {
+    "id": "DUMMY-048",
+    "publication": "",
+    "title": "디스플레이 관련 기술 48",
+    "decision": "ACCEPTED",
+    "cpc": "G09G3/3233",
+    "cpcLabels": [
+      "G09G3/3233"
+    ],
+    "filed": "2025-02-20",
+    "applicant": "(더미)",
+    "abstract": "OLED 화소의 구동 트랜지스터 열화를 감지해 휘도를 보상하는 구동 회로.",
+    "firstClaim": "OLED 화소의 구동 트랜지스터 열화를 감지해 휘도를 보상하는 구동 회로.",
+    "source": "dummy",
+    "field": "디스플레이"
   }
 ]
