@@ -19,6 +19,7 @@ import type {
 } from "../types";
 import { SourceError } from "./http";
 import { researchIndexSchema } from "./schema";
+import { scoreBm25 } from "./bm25";
 
 export function researchPath(): string {
   return path.join(process.env.TELOS_RESEARCH_DIR ?? path.join(process.cwd(), "data", "raw", "kipris"), "index.json");
@@ -389,13 +390,13 @@ export function rankResearch(
     .filter((document) => sources.includes(document.source))
     .filter((document) => !decision || (document.source === "kipris" && document.patent.decision === decision))
     .map((document) => [document.id, document]));
-  const terms = [...new Set(query.normalize("NFKC").toLowerCase().split(/\s+/).filter(Boolean))].slice(0, 24);
-  const candidates = index.chunks.filter((chunk) => documents.has(chunk.documentId)).map((chunk) => {
-    const content = chunk.text.normalize("NFKC").toLowerCase();
+  const chunks = index.chunks.filter((chunk) => documents.has(chunk.documentId));
+  const lexical = scoreBm25(chunks, query);
+  const candidates = chunks.map((chunk) => {
     return {
       chunk,
       semantic: chunk.vector.reduce((sum, value, position) => sum + value * vector[position], 0),
-      lexical: terms.reduce((sum, term) => sum + (content.includes(term) ? 1 : 0), 0),
+      lexical: lexical.get(chunk.id) ?? 0,
     };
   });
   const scores = new Map<string, number>();

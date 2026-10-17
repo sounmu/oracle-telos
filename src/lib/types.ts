@@ -322,3 +322,45 @@ export interface DisputeCase {
   readonly ids: { readonly patents: readonly string[]; readonly cases: readonly string[] };
   readonly sources: readonly { readonly label: string; readonly url: string }[];
 }
+
+export type SearchExperimentMethod = "embedding" | "keyword" | "bm25" | "hybrid" | "elements";
+export interface SearchExperimentQuery {
+  readonly id: string;
+  readonly idea: string;
+  readonly judgments?: { readonly source: string; readonly relevance: Readonly<Record<string, number>> };
+}
+export interface SearchExperimentRank {
+  readonly id: string;
+  readonly title: string;
+  readonly score: number;
+  readonly elementScore?: number;
+}
+export interface SearchExperimentMetrics {
+  readonly ndcgAt3: number;
+  readonly precisionAt3: number;
+  readonly judgedAt3: number;
+}
+export interface SearchExperimentResult {
+  readonly query: SearchExperimentQuery;
+  readonly plan: SearchPlan;
+  readonly setupMs: number;
+  readonly methods: readonly {
+    readonly method: SearchExperimentMethod;
+    readonly elapsedMs: number;
+    readonly ranking: readonly SearchExperimentRank[];
+    readonly metrics: SearchExperimentMetrics | null;
+  }[];
+  readonly comparisons: readonly PatentComparison[];
+  readonly errors: readonly string[];
+}
+export interface SearchExperimentReport {
+  readonly lexical: { readonly tokenizer: string; readonly k1: number; readonly b: number };
+  readonly createdAt: string;
+  readonly indexSha256: string;
+  readonly embeddingModel: string;
+  readonly agentModel: string;
+  readonly corpusSize: number;
+  readonly top: number;
+  readonly queryCount: number;
+  readonly results: readonly SearchExperimentResult[];
+}
