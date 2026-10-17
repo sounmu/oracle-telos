@@ -2,6 +2,7 @@ import { mockEnabled, mockSearchHits, MOCK_NOTICE } from "@/lib/mockApi";
 import { embedTexts } from "@/lib/embeddings";
 import { getPatentIndex, MISSING_DATA_MESSAGE, toHit } from "@/lib/patents";
 import { topK } from "@/lib/similarity";
+import { hybridTopK } from "@/lib/hybridSearch";
 import { z } from "zod";
 import { searchKoreanPatents } from "@/lib/korea/search";
 import { planPatentSearch } from "@/lib/agent";
@@ -75,9 +76,11 @@ export async function POST(request: Request) {
     const index = await getPatentIndex();
     if (!index) return Response.json({ error: MISSING_DATA_MESSAGE }, { status: 503 });
     const [vec] = await embedTexts([query]);
-    const scored = topK(vec, index.vectors, index.meta.dim, k, (i) =>
-      decision ? index.patents[i].decision === decision : true,
-    );
+    const accept = (i: number) => (decision ? index.patents[i].decision === decision : true);
+    // 시연 마스터는 여러 분야가 섞여 있어 임베딩만 쓰면 다른 분야가 끼므로 어휘 점수와 합쳐 거른다
+    const scored = process.env.TELOS_DEMO === "1"
+      ? hybridTopK(index, query, vec, k, accept)
+      : topK(vec, index.vectors, index.meta.dim, k, accept);
     return Response.json({ hits: scored.map((s) => toHit(index.patents[s.index], s.score)) });
   } catch (error) {
     return Response.json({

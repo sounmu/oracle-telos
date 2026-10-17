@@ -135,6 +135,16 @@ function drawGrid(
   ctx.globalAlpha = 1;
 }
 
+/** 화면 맞춤용 범위: 점이 8개 이상이면 사분위수 ±1.5×IQR 안쪽으로 자른다 (실제 최소·최대를 넘지 않음) */
+function robustRange(values: number[]): [number, number] {
+  const sorted = [...values].sort((a, b) => a - b);
+  const min = sorted[0], max = sorted[sorted.length - 1];
+  if (sorted.length < 8) return [min, max];
+  const q = (f: number) => sorted[Math.floor(f * (sorted.length - 1))];
+  const q1 = q(0.25), q3 = q(0.75), iqr = q3 - q1;
+  return [Math.max(min, q1 - 1.5 * iqr), Math.min(max, q3 + 1.5 * iqr)];
+}
+
 export default function PatentMap({
   points,
   visible,
@@ -157,13 +167,9 @@ export default function PatentMap({
   // 데이터 좌표 → 기본 캔버스 좌표 변환 (크기에 맞춰 fit). 점과 마커가 같은 변환을 쓴다
   const frame = useMemo(() => {
     if (!points.length || !size.w || !size.h) return null;
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const p of points) {
-      if (p.x < minX) minX = p.x;
-      if (p.x > maxX) maxX = p.x;
-      if (p.y < minY) minY = p.y;
-      if (p.y > maxY) maxY = p.y;
-    }
+    // 동떨어진 점 하나가 화면을 끌어당겨 나머지가 구석에 몰리지 않도록, 사분위 범위 밖의 점은 맞춤 계산에서 뺀다
+    const [minX, maxX] = robustRange(points.map((p) => p.x));
+    const [minY, maxY] = robustRange(points.map((p) => p.y));
     const spanX = maxX - minX || 1;
     const spanY = maxY - minY || 1;
     const top = Math.max(PAD, insetTop);
@@ -360,6 +366,14 @@ export default function PatentMap({
       select(canvas).on(".zoom", null);
     };
   }, [draw]);
+
+  // 점 목록이 바뀌면(세션 결과 교체 등) 이전 확대·이동을 버리고 새 목록에 맞춘 전체 보기로 돌아간다
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const z = zoomRef.current;
+    if (!canvas || !z) return;
+    select(canvas).call(z.transform, zoomIdentity);
+  }, [points]);
 
   // focus 변경 시 카메라 이동
   useEffect(() => {

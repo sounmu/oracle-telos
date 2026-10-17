@@ -2,7 +2,7 @@ import type { ResearchChunk } from "../types";
 
 export const LEXICAL_CONFIG = { tokenizer: "ko-word-ngram-v1", k1: 1.2, b: 0.75 } as const;
 const segmenter = new Intl.Segmenter("ko", { granularity: "word" });
-const tokenCache = new WeakMap<ResearchChunk, { readonly length: number; readonly frequencies: ReadonlyMap<string, number> }>();
+const tokenCache = new WeakMap<object, { readonly length: number; readonly frequencies: ReadonlyMap<string, number> }>();
 
 export function tokenizeSearch(text: string): string[] {
   const tokens: string[] = [];
@@ -20,7 +20,8 @@ export function tokenizeSearch(text: string): string[] {
   return tokens;
 }
 
-export function scoreBm25(chunks: readonly ResearchChunk[], query: string): ReadonlyMap<string, number> {
+/** 청크는 id와 text만 쓴다. 같은 객체를 다시 넘기면 토큰화 결과를 재사용한다 */
+export function scoreBm25(chunks: readonly Pick<ResearchChunk, "id" | "text">[], query: string): ReadonlyMap<string, number> {
   const terms = [...new Set(tokenizeSearch(query))];
   if (chunks.length === 0 || terms.length === 0) return new Map();
   const documents = chunks.map((chunk) => {
