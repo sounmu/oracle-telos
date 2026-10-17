@@ -8,7 +8,7 @@ import "d3-transition";
 import { ACTIVE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import { caseHits, riskField } from "@/lib/riskField";
-import { citationEdges } from "@/lib/relations";
+import { citationEdges, citationPasses } from "@/lib/relations";
 import type { Decision, PatentPoint } from "@/lib/types";
 
 interface Props {
@@ -253,34 +253,16 @@ export default function PatentMap({
 
     // 0-1) 인용선: 실제 인용은 실선, 더미가 낀 가짜 인용은 점선. 선택한 특허의 인용은 진하게
     if (edgesOn && nodes.length === points.length) {
-      const passes = [
-        { real: false, dash: [3, 3], alpha: 0.16, width: 0.6 },
-        { real: true, dash: [], alpha: 0.42, width: 0.9 },
-      ];
-      for (const pass of passes) {
-        ctx.setLineDash(pass.dash);
-        ctx.lineWidth = pass.width;
-        ctx.strokeStyle = "#3d4a5c";
-        ctx.globalAlpha = pass.alpha;
+      // 선택 강조도 실제/가짜에 따라 실선/점선을 유지하고, 숨긴 상태의 점에 닿는 선은 그리지 않는다
+      for (const pass of citationPasses(edges, points, visible, selectedId)) {
+        if (!pass.edges.length) continue;
+        ctx.setLineDash(pass.real ? [] : pass.selected ? [4, 3] : [3, 3]);
+        ctx.lineWidth = pass.selected ? 1.6 : pass.real ? 0.9 : 0.6;
+        ctx.strokeStyle = pass.selected ? "#3182f6" : "#3d4a5c";
+        ctx.globalAlpha = pass.selected ? (pass.real ? 0.85 : 0.6) : pass.real ? 0.42 : 0.16;
         ctx.beginPath();
-        for (const e of edges) {
-          if (e.real !== pass.real) continue;
+        for (const e of pass.edges) {
           const a = nodes[e.from], b = nodes[e.to];
-          if (!visible.has(a.p.decision) || !visible.has(b.p.decision)) continue;
-          ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
-          ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
-        }
-        ctx.stroke();
-      }
-      if (selectedId) {
-        ctx.setLineDash([]);
-        ctx.lineWidth = 1.6;
-        ctx.strokeStyle = "#3182f6";
-        ctx.globalAlpha = 0.85;
-        ctx.beginPath();
-        for (const e of edges) {
-          const a = nodes[e.from], b = nodes[e.to];
-          if (a.p.id !== selectedId && b.p.id !== selectedId) continue;
           ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
           ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
         }

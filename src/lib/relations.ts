@@ -1,5 +1,5 @@
 // 클라이언트·서버 공용. 점 사이의 관계선. 위치가 가까워서가 아니라 인용 관계나 같은 분류로 잇는다.
-import type { PatentPoint } from "./types";
+import type { Decision, PatentPoint } from "./types";
 
 export interface CitationEdge {
   /** 인용한 특허의 인덱스 */
@@ -22,6 +22,43 @@ export function citationEdges(points: readonly Pick<PatentPoint, "id" | "source"
     }
   });
   return edges;
+}
+
+/** 인용 목록 날짜는 종류가 출원일일 때만 출원일로 쓴다. 공개·등록일 등은 빈 값(미상) */
+export function citationFiled(n: { date: string; dateKind: string }): string {
+  return n.dateKind === "출원일" ? n.date : "";
+}
+
+export interface CitationPass {
+  real: boolean;
+  /** 선택한 특허에 닿는 선 */
+  selected: boolean;
+  edges: CitationEdge[];
+}
+
+/**
+ * 인용선을 그리는 순서대로 묶는다: 일반 가짜 → 일반 실제 → 선택 가짜 → 선택 실제.
+ * 선택 강조에서도 실제/가짜(실선/점선) 구분을 유지하고, 양끝이 모두 보이는 선만 넣는다.
+ */
+export function citationPasses(
+  edges: readonly CitationEdge[],
+  points: readonly Pick<PatentPoint, "id" | "decision">[],
+  visible: ReadonlySet<Decision>,
+  selectedId: string | null,
+): CitationPass[] {
+  const passes: CitationPass[] = [
+    { real: false, selected: false, edges: [] },
+    { real: true, selected: false, edges: [] },
+    { real: false, selected: true, edges: [] },
+    { real: true, selected: true, edges: [] },
+  ];
+  for (const e of edges) {
+    const a = points[e.from], b = points[e.to];
+    if (!visible.has(a.decision) || !visible.has(b.decision)) continue;
+    const selected = selectedId !== null && (a.id === selectedId || b.id === selectedId);
+    passes[(selected ? 2 : 0) + (e.real ? 1 : 0)].edges.push(e);
+  }
+  return passes;
 }
 
 /**

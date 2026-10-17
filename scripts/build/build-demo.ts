@@ -14,6 +14,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { UMAP } from "umap-js";
 import { EMBEDDING_DIM, EMBEDDING_MODEL, embedTexts } from "../../src/lib/embeddings";
+import { citationFiled } from "../../src/lib/relations";
 import type { PatentFull } from "../../src/lib/types";
 
 const ROOT = process.cwd();
@@ -49,8 +50,9 @@ function citationPatent(n: Citations["nodes"][number]): RawPatent {
     decision: "UNKNOWN",
     cpc,
     cpcLabels: [cpc],
-    filed: n.date,
-    abstract: `${n.title}. KIPRIS 인용 목록에서 확인한 실제 특허로, 제목·${n.dateKind}·IPC만 수집했습니다.`,
+    // 공개·등록일은 출원일이 아니므로 filed에 넣지 않고(미상) 요약에 날짜 종류와 함께 남긴다
+    filed: citationFiled(n),
+    abstract: `${n.title}. KIPRIS 인용 목록에서 확인한 실제 특허로, 제목·${n.dateKind}(${n.date})·IPC만 수집했습니다.`,
     firstClaim: "",
     source: "real",
   };
