@@ -13,7 +13,7 @@ interface Props {
 export default function Dashboard({ sessions, activeId, onNew, onOpen }: Props) {
   return (
     <aside aria-label="세션 목록" className="hidden w-64 shrink-0 flex-col gap-4 overflow-y-auto border-r border-background px-3 py-4 md:flex">
-      <div className="px-1 text-lg font-extrabold tracking-tight">Telos</div>
+      <div className="px-1 text-lg font-extrabold tracking-tight">PatenTrace</div>
       <button
         type="button"
         onClick={onNew}

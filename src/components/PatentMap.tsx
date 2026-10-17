@@ -28,6 +28,8 @@ interface Props {
   edgesOn?: boolean;
   /** 내 아이디어의 위치 (데이터 좌표). null이면 표시하지 않음 */
   marker?: { x: number; y: number } | null;
+  /** 밀집 영역 강조: 영역에 속한 점 전체와 그 중심 점. null이면 표시하지 않음 */
+  group?: { ids: ReadonlySet<string>; centerId: string } | null;
 }
 
 interface Node {
@@ -146,6 +148,7 @@ export default function PatentMap({
   riskOn = false,
   edgesOn = false,
   marker = null,
+  group = null,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -232,7 +235,7 @@ export default function PatentMap({
     const t = transformRef.current;
     const k = t.k;
     const baseR = 2.2 * Math.min(2.2, Math.sqrt(k));
-    const dim = highlights !== null;
+    const dim = highlights !== null || group !== null;
 
     // 0) 분쟁 위험도 배경: 셀마다 밀집도 × 사례 수에 따라 옅은 색을 물들인다
     if (riskOn) {
@@ -275,8 +278,9 @@ export default function PatentMap({
     // 1) 일반 점
     for (const n of nodes) {
       if (!visible.has(n.p.decision)) continue;
-      const isHi = dim && highlights.has(n.p.id);
-      if (isHi) continue; // 하이라이트는 위에 따로
+      // 영역 강조 중에는 영역 점만, 아니면 하이라이트 점만 위에 따로 그린다
+      const isHi = group ? group.ids.has(n.p.id) : highlights?.has(n.p.id) ?? false;
+      if (isHi) continue;
       const x = t.applyX(n.bx);
       const y = t.applyY(n.by);
       if (x < -10 || y < -10 || x > size.w + 10 || y > size.h + 10) continue;
@@ -289,7 +293,7 @@ export default function PatentMap({
     }
 
     // 2) 하이라이트 점 (유사도 높을수록 큼)
-    if (dim) {
+    if (highlights && !group) {
       for (const [id, score] of highlights) {
         const n = byId.get(id);
         if (!n || !visible.has(n.p.decision)) continue;
@@ -301,6 +305,58 @@ export default function PatentMap({
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
+      }
+    }
+
+    // 2-1) 밀집 영역: 주변 점(작은 링) → 중심 점(큰 점 + 이중 링 + 이름표)
+    if (group) {
+      const members: { n: Node; x: number; y: number }[] = [];
+      for (const id of group.ids) {
+        const n = byId.get(id);
+        if (!n || !visible.has(n.p.decision)) continue;
+        members.push({ n, x: t.applyX(n.bx), y: t.applyY(n.by) });
+      }
+      const center = members.find((m) => m.n.p.id === group.centerId);
+      for (const m of members) {
+        if (m === center) continue;
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = DECISION_COLORS[m.n.p.decision];
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, baseR * 1.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 0.7;
+        ctx.strokeStyle = "#3182f6";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, baseR * 1.6 + 2.5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      if (center) {
+        const r = baseR * 2.6;
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = DECISION_COLORS[center.n.p.decision];
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.strokeStyle = "#3182f6";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, r + 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.font = "700 11px system-ui, sans-serif";
+        const label = "영역 중심";
+        const lw = ctx.measureText(label).width + 12;
+        const lx = center.x - lw / 2;
+        const ly = center.y - r - 26;
+        ctx.fillStyle = "#3182f6";
+        ctx.beginPath();
+        ctx.roundRect(lx, ly, lw, 18, 9);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(label, lx + 6, ly + 13);
       }
     }
 
@@ -322,7 +378,7 @@ export default function PatentMap({
     }
 
     // 3) 선택 링
-    if (selectedId) {
+    if (selectedId && selectedId !== group?.centerId) {
       const n = byId.get(selectedId);
       if (n) {
         const x = t.applyX(n.bx);
@@ -336,7 +392,7 @@ export default function PatentMap({
       }
     }
     ctx.globalAlpha = 1;
-  }, [nodes, byId, size, visible, highlights, selectedId, riskOn, risk, edgesOn, edges, points, markerBase]);
+  }, [nodes, byId, size, visible, highlights, selectedId, riskOn, risk, edgesOn, edges, points, markerBase, group]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(draw);
@@ -368,13 +424,25 @@ export default function PatentMap({
     if (!focus || !canvas || !z) return;
     const n = byId.get(focus.id);
     if (!n) return;
-    const k = Math.max(transformRef.current.k, 4);
+    const top = Math.min(insetTop, size.h / 2);
+    let k = Math.max(transformRef.current.k, 4);
+    let [cx, cy] = [n.bx, n.by];
+    // 영역 중심으로 이동할 때는 영역 점 전체가 화면에 들어오게 맞춘다
+    const members = group?.ids.has(focus.id) ? [...group.ids].map((id) => byId.get(id)).filter((m): m is Node => Boolean(m)) : [];
+    if (members.length > 1) {
+      cx = members.reduce((s, m) => s + m.bx, 0) / members.length;
+      cy = members.reduce((s, m) => s + m.by, 0) / members.length;
+      const reach = Math.max(...members.map((m) => Math.hypot(m.bx - cx, m.by - cy))) || 1;
+      k = Math.min(60, Math.max(0.6, (Math.min(size.w, size.h - top) * 0.42) / reach));
+    }
     const target = zoomIdentity
-      .translate(size.w / 2, (Math.min(insetTop, size.h / 2) + size.h) / 2)
+      .translate(size.w / 2, (top + size.h) / 2)
       .scale(k)
-      .translate(-n.bx, -n.by);
+      .translate(-cx, -cy);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     select(canvas).transition().duration(reduce ? 0 : 650).call(z.transform, target);
+    // group은 focus와 함께 바뀌므로 focus가 바뀔 때만 이동한다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focus, byId, size, insetTop]);
 
   const findAt = useCallback(

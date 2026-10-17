@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Telos — AI 특허 탐색기",
+  title: "PatenTrace — AI 특허 탐색기",
   description: "기존 특허를 지도로 보고, 내 아이디어와 비교해 방향을 잡는다.",
 };
 

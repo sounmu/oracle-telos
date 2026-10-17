@@ -53,6 +53,10 @@ export interface DenseRegion {
   topCpc: string;
   /** 영역의 대표 특허 제목 */
   example: string;
+  /** 영역에 속한 특허 id 전체 */
+  ids: string[];
+  /** 영역 무게중심에 가장 가까운 특허 id (지도에서 '중심'으로 표시) */
+  centerId: string;
   x: number;
   y: number;
 }
@@ -81,7 +85,8 @@ export function denseRegions(points: readonly Pick<PatentPoint, "id" | "title" |
       const topCpc = [...cpcCount].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
       const cx = g.reduce((s, p) => s + p.x, 0) / g.length;
       const cy = g.reduce((s, p) => s + p.y, 0) / g.length;
-      return { count: g.length, topCpc, example: g[0].title, x: cx, y: cy };
+      const center = g.reduce((best, p) => (Math.hypot(p.x - cx, p.y - cy) < Math.hypot(best.x - cx, best.y - cy) ? p : best));
+      return { count: g.length, topCpc, example: center.title, ids: g.map((p) => p.id), centerId: center.id, x: cx, y: cy };
     });
 }
 

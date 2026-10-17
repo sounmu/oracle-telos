@@ -185,7 +185,7 @@ export function ExploreReport({
   scores: ReadonlyMap<string, number>;
   location: { x: number; y: number } | null;
   onPick: (id: string) => void;
-  onRegion: (r: DenseRegion) => void;
+  onRegion: (r: DenseRegion, index: number) => void;
 }) {
   const real = results.filter((p) => p.source !== "dummy").length;
   const trend = yearTrend(results);
@@ -221,7 +221,7 @@ export function ExploreReport({
           <ul className="mt-2 space-y-2">
             {regions.map((r, i) => (
               <li key={`${r.x}-${r.y}`}>
-                <button type="button" onClick={() => onRegion(r)} className="w-full rounded-xl bg-background p-2 text-left hover:underline">
+                <button type="button" onClick={() => onRegion(r, i)} className="w-full rounded-xl bg-background p-2 text-left hover:underline">
                   영역 {i + 1} · {r.count}건 · 분야 {r.topCpc} <span className="text-muted">· 예: {r.example.slice(0, 40)}</span>
                 </button>
               </li>
