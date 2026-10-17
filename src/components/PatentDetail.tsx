@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { DECISION_LABELS, DECISION_TAG_STYLES } from "@/lib/colors";
 import type { ComparisonState, PatentDataset, PatentFull, PatentPoint } from "@/lib/types";
-import ComparisonView, { AI_KEY_HINT, formatTemperature, temperatureOf } from "./Comparison";
+import { CLAIM_STATUS_LABELS, PROXIMITY_LABELS } from "@/lib/proximity";
+import ComparisonView, { AI_KEY_HINT, formatCoverage } from "./Comparison";
 import DisputeCases, { matchCases } from "./DisputeCases";
 import { formatDate, readErrorMessage, scoreLabel } from "./ResearchReferences";
 
@@ -137,7 +138,10 @@ export default function PatentDetail({
     ];
     if (comparison?.status === "ready") {
       const c = comparison.data;
-      lines.push(`기술 근접도: ${formatTemperature(temperatureOf(c))} · ${c.proximity.reason}`);
+      lines.push(`기술 근접도: ${PROXIMITY_LABELS[c.proximity.level].title} (청구항 1 구성 대응 ${formatCoverage(c.proximity)}) · ${c.proximity.reason}`);
+      for (const r of c.claimChart) {
+        lines.push(`- 청구항 1 "${r.element}" [${CLAIM_STATUS_LABELS[r.status]}]${r.mine ? ` 내 설명: "${r.mine}"` : ""}`);
+      }
       for (const r of c.rows) {
         lines.push(
           `- ${r.element} [${r.relation === "common" ? "공통" : r.relation === "different" ? "차이" : "확인 필요"}] 내 기술: ${r.mine ?? "미기재"} / 특허: ${r.theirs ?? "확인되지 않음"}${r.evidence ? ` / 원문: "${r.evidence}"` : ""}`,

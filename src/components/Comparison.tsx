@@ -1,8 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { PROXIMITY_LABELS } from "@/lib/proximity";
-import type { ComparisonRow, ComparisonState, PatentComparison, ProximityLevel } from "@/lib/types";
+import {
+  CLAIM_STATUS_LABELS,
+  coverageOf,
+  PROXIMITY_LABELS,
+  PROXIMITY_RULES,
+  PROXIMITY_SOURCES,
+} from "@/lib/proximity";
+import type {
+  ClaimElementRow,
+  ClaimElementStatus,
+  ComparisonRow,
+  ComparisonState,
+  PatentComparison,
+  Proximity,
+  ProximityLevel,
+} from "@/lib/types";
 
 const INK = "#191f28";
 
@@ -14,35 +28,23 @@ export const PROXIMITY_STYLE: Record<ProximityLevel, { fill: string; ink: string
   insufficient: { fill: "#b9aef5", ink: "#5b4bb7", bg: "#f1eeff" },
 };
 
-/**
- * 화면 표시용 온도. 근거가 확인된 행 중 공통 비율을 32~40도로 옮긴다(단계 경계 1/3·2/3 = 34.7°·37.3°).
- * 단계(proximity.level)는 서버 규칙(src/lib/proximity.ts)을 그대로 쓰고, 자료 부족이면 null이다.
- */
-export function temperatureOf(comparison: PatentComparison): number | null {
-  if (comparison.proximity.level === "insufficient") return null;
-  const confirmed = comparison.rows.filter((row) => row.relation !== "unconfirmed");
-  if (confirmed.length === 0) return null;
-  const common = confirmed.filter((row) => row.relation === "common").length;
-  return 32 + (common / confirmed.length) * 8;
+/** 화면 숫자 "대응 구성 / 전체 구성". 판단하지 않았으면 "--" */
+export function formatCoverage(proximity: Proximity): string {
+  const c = coverageOf(proximity);
+  return c ? `${c.matched}/${c.total}` : "--";
 }
 
-export function formatTemperature(t: number | null): string {
-  return t === null ? "--°" : `${t.toFixed(1)}°`;
-}
-
-/** 근접도 온도계 캐릭터. 서늘=웃음, 따뜻=무덤덤, 뜨거움=걱정, 자료 부족=갸웃 */
+/** 근접도 온도계 캐릭터. 서늘=웃음, 따뜻=무덤덤, 뜨거움=걱정, 자료 부족=갸웃. 눈금 높이는 단계만 나타낸다 */
 export function ProximityFace({
   level,
   size = 28,
-  temperature = null,
 }: {
   level: ProximityLevel | "loading" | "idle";
   size?: number;
-  temperature?: number | null;
 }) {
   const style = level === "loading" || level === "idle" ? null : PROXIMITY_STYLE[level];
   const fill = style ? style.fill : "#d1d6db";
-  const ratio = temperature === null ? (level === "hot" ? 0.8 : level === "warm" ? 0.55 : level === "cool" ? 0.25 : 0.1) : Math.max(0, Math.min(1, (temperature - 30) / 12));
+  const ratio = level === "hot" ? 0.8 : level === "warm" ? 0.55 : level === "cool" ? 0.25 : 0.1;
   const h = Math.round(14 + ratio * 80);
   const mouth =
     level === "cool"
@@ -73,7 +75,7 @@ export function ProximityFace({
   );
 }
 
-/** 결과 목록용 작은 근접도 표시. 상태 색 점과 구분되도록 캐릭터·이름·온도를 함께 쓴다 */
+/** 결과 목록용 작은 근접도 표시. 상태 색 점과 구분되도록 이름과 청구항 구성 대응 수를 함께 쓴다 */
 export function ProximityBadge({ state }: { state: ComparisonState | undefined }) {
   if (!state) return null;
   if (state.status === "loading") {
@@ -89,7 +91,7 @@ export function ProximityBadge({ state }: { state: ComparisonState | undefined }
   }
   const { level } = state.data.proximity;
   const s = PROXIMITY_STYLE[level];
-  const t = temperatureOf(state.data);
+  const coverage = coverageOf(state.data.proximity);
   return (
     <span className="inline-flex shrink-0 items-center gap-2" title={state.data.proximity.reason}>
       <span
@@ -99,7 +101,11 @@ export function ProximityBadge({ state }: { state: ComparisonState | undefined }
         <span className="inline-block h-2 w-2 rounded-full" style={{ background: s.fill }} />
         {PROXIMITY_LABELS[level].title}
       </span>
-      {t !== null && <span className="text-[13px] font-bold tabular-nums text-foreground">{formatTemperature(t)}</span>}
+      {coverage && (
+        <span className="text-[13px] font-bold tabular-nums text-foreground" title="청구항 1 구성 중 내 설명에 대응되는 수">
+          구성 {coverage.matched}/{coverage.total}
+        </span>
+      )}
     </span>
   );
 }
@@ -138,7 +144,7 @@ export default function ComparisonView({ state, canCompare, onCompare, disabledR
         <div aria-live="polite">
           <p className="mb-3 flex items-center gap-3 text-sm text-ink-2">
             <ProximityFace level="loading" size={44} />
-            기술 요소별로 원문을 비교하는 중이에요
+            청구항 구성과 기술 요소별로 원문을 비교하는 중이에요
           </p>
           <div className="space-y-2">
             {[0, 1, 2].map((i) => (
@@ -173,9 +179,9 @@ const RELATION_STYLE: Record<ComparisonRow["relation"], string> = {
 
 function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
   const [filter, setFilter] = useState<RelationFilter>("all");
-  const { level, reason } = comparison.proximity;
+  const { proximity } = comparison;
+  const { level, reason } = proximity;
   const s = PROXIMITY_STYLE[level];
-  const t = temperatureOf(comparison);
   const confirmed = comparison.rows.filter((r) => r.relation !== "unconfirmed");
   const common = confirmed.filter((r) => r.relation === "common").length;
   const different = confirmed.length - common;
@@ -191,24 +197,16 @@ function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <p className="text-[22px] font-extrabold leading-snug tracking-tight">
-            {confirmed.length > 0 ? (
-              <>
-                근거를 확인한 {confirmed.length}개 요소 중
-                <br />
-                <span style={{ color: s.ink }}>{common}개가 같고</span> {different}개가 달라요
-              </>
-            ) : (
-              "원문에서 근거를 확인한 요소가 없어요"
-            )}
+          <p className="text-[22px] font-extrabold leading-snug tracking-tight" style={{ color: s.ink }}>
+            {PROXIMITY_LABELS[level].message}
           </p>
           <p className="mt-1.5 text-sm text-muted">{reason}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <ProximityFace level={level} temperature={t} size={60} />
+          <ProximityFace level={level} size={60} />
           <div>
             <div className="text-[28px] font-extrabold leading-none tracking-tight tabular-nums" style={{ color: s.ink }}>
-              {formatTemperature(t)}
+              {formatCoverage(proximity)}
             </div>
             <div className="mt-1 text-sm font-semibold">{PROXIMITY_LABELS[level].title}</div>
           </div>
@@ -217,7 +215,26 @@ function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
 
       {comparison.summary && <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{comparison.summary}</p>}
 
-      <div role="group" aria-label="비교 필터" className="mt-4 grid grid-cols-2 gap-1 rounded-2xl bg-background p-1 sm:grid-cols-4">
+      <h3 className="mt-5 text-[17px] font-bold">청구항 1 구성 대비</h3>
+      <p className="mt-0.5 text-sm text-muted">근접도 단계는 이 표로만 정해요.</p>
+      <ClaimChart proximity={proximity} chart={comparison.claimChart} />
+
+      <details className="group mt-3 rounded-2xl bg-background px-4">
+        <summary className="flex min-h-12 cursor-pointer items-center justify-between py-3 text-[15px] font-semibold">
+          왜 이 단계인가요?
+          <Chevron />
+        </summary>
+        <ProximityBasis level={level} />
+      </details>
+
+      <h3 className="mt-6 text-[17px] font-bold">내 기술 요소별 비교</h3>
+      <p className="mt-0.5 text-sm text-muted">
+        {confirmed.length > 0
+          ? `근거를 확인한 ${confirmed.length}개 요소 중 ${common}개가 같고 ${different}개가 달라요. 참고용이며 근접도 단계에는 쓰지 않아요.`
+          : "원문에서 근거를 확인한 요소가 없어요."}
+      </p>
+
+      <div role="group" aria-label="비교 필터" className="mt-3 grid grid-cols-2 gap-1 rounded-2xl bg-background p-1 sm:grid-cols-4">
         {(["all", "common", "different", "unconfirmed"] as const).map((key) => (
           <button
             key={key}
@@ -241,11 +258,112 @@ function ComparisonTable({ comparison }: { comparison: PatentComparison }) {
       </ul>
 
       <p className="mt-3 text-[13px] leading-relaxed text-muted">
-        청구항 {comparison.claimsTotal}개 중 처음 {comparison.claimsReviewed}개와 초록만 비교했어요. 원문 인용이 확인된 내용만
-        공통·차이로 표시해요. 근접도와 온도는 기술적으로 가까운 정도이며 법적 위험도·침해 확률·등록 가능성이 아니에요.{" "}
+        청구항 {comparison.claimsTotal}개 중 처음 {comparison.claimsReviewed}개와 초록만 비교했고, 근접도는 청구항 1만 봤어요. 다른
+        독립항은 따로 확인해야 해요. 원문 인용이 확인된 내용만 표시해요. 근접도는 기술적으로 가까운 정도이며 법적 위험도·침해
+        확률·등록 가능성이 아니에요.{" "}
         <a href={comparison.sourceUrl} target="_blank" rel="noreferrer noopener" className="font-semibold text-accent-strong hover:underline">
           원문 보기
         </a>
+      </p>
+    </div>
+  );
+}
+
+const CLAIM_STATUS_STYLE: Record<ClaimElementStatus, string> = {
+  present: "bg-[#ffede5] text-[#c2410c]",
+  modified: "bg-[#fff4db] text-[#8a5300]",
+  absent: "bg-accent-soft text-accent-strong",
+  unconfirmed: "bg-background text-ink-2",
+};
+
+function ClaimChart({ chart, proximity }: { chart: readonly ClaimElementRow[]; proximity: Proximity }) {
+  const unverified = proximity.counts.total - chart.length;
+  if (chart.length === 0) {
+    return <p className="mt-2 rounded-2xl bg-background px-4 py-3 text-sm text-muted">청구항 1을 원문 그대로 나누지 못했어요.</p>;
+  }
+  return (
+    <>
+      <ul className="mt-2 divide-y divide-background" aria-label="청구항 1 구성 대비">
+        {chart.map((row) => (
+          <li key={row.element} className="py-3">
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-[15px] font-semibold leading-snug">“{row.element}”</span>
+              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[13px] font-bold ${CLAIM_STATUS_STYLE[row.status]}`}>
+                {CLAIM_STATUS_LABELS[row.status]}
+              </span>
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-ink-2">
+              {row.mine && <span className="font-semibold text-foreground">내 설명 “{row.mine}” · </span>}
+              {row.note}
+            </p>
+          </li>
+        ))}
+      </ul>
+      {unverified > 0 && (
+        <p className="text-[13px] text-muted">모델이 낸 구성 {unverified}개는 청구항 1 원문에서 찾지 못해 &lsquo;확인 필요&rsquo;로 셌어요.</p>
+      )}
+      {proximity.completeness.truncated && (
+        <p className="text-[13px] text-muted">청구항 1이 길어 앞부분만 확인했어요. 뒤쪽 구성은 이 표에 없을 수 있어요.</p>
+      )}
+      {proximity.completeness.uncovered.length > 0 && (
+        <p className="text-[13px] text-muted">
+          청구항 1 원문 중 이 표에 담기지 않은 문구: {proximity.completeness.uncovered.map((text) => `“${text}”`).join(", ")}
+        </p>
+      )}
+    </>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-5 w-5 text-muted transition group-open:rotate-180" aria-hidden="true">
+      <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** 단계 판정 규칙과 그 근거(판례). 현재 단계를 강조한다 */
+export function ProximityBasis({ level }: { level: ProximityLevel }) {
+  return (
+    <div className="space-y-3 pb-4 text-[14px] leading-relaxed">
+      <p>
+        특허 청구항 1을 구성요소로 나누고, 각 구성이 내 설명에 있는지 위에서부터 차례로 따져 단계를 정해요. 비율 구간이나 점수
+        가중치는 쓰지 않아요.
+      </p>
+      <ol className="space-y-1.5">
+        {PROXIMITY_RULES.map((r, i) => {
+          const st = PROXIMITY_STYLE[r.level];
+          const current = r.level === level;
+          return (
+            <li
+              key={r.level}
+              className={`flex gap-2 rounded-xl px-3 py-2 ${current ? "font-semibold" : "text-muted"}`}
+              style={current ? { background: st.bg, color: st.ink } : undefined}
+            >
+              <span className="shrink-0 tabular-nums">{i + 1}.</span>
+              <span>
+                <span className="font-bold">{PROXIMITY_LABELS[r.level].title}</span> · {r.rule}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      <div>
+        <div className="text-[13px] font-semibold text-muted">규칙의 근거</div>
+        <ul className="mt-1 space-y-1.5">
+          {PROXIMITY_SOURCES.map((src) => (
+            <li key={src.title}>
+              <a href={src.url} target="_blank" rel="noreferrer noopener" className="font-semibold text-accent-strong hover:underline">
+                {src.title}
+              </a>
+              <span className="text-ink-2"> — {src.point}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="text-[13px] text-muted">
+        판례의 판단 틀을 기술 비교에 빌려 쓴 것이에요. 실제 권리범위·침해 판단은 청구항 해석과 균등·공지기술 항변까지 따져야
+        하므로 변리사 검토가 필요해요. &lsquo;설명에 없음&rsquo;은 내가 적은 설명 기준이에요.
       </p>
     </div>
   );

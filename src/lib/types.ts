@@ -183,6 +183,21 @@ export interface ComparisonRow {
   readonly evidence: string | null;
 }
 
+/**
+ * 특허 청구항 1의 구성 하나가 내 기술 설명에 있는지 (구성요소 대비표 한 줄).
+ * present: 같은 구성, modified: 같은 역할을 다른 수단으로, absent: 그 역할 자체가 설명에 없음, unconfirmed: 판단 근거 부족
+ */
+export type ClaimElementStatus = "present" | "modified" | "absent" | "unconfirmed";
+
+export interface ClaimElementRow {
+  /** 청구항 1 원문에 그대로 있는 것을 확인한 구성 문구 */
+  readonly element: string;
+  readonly status: ClaimElementStatus;
+  /** 내 기술 설명에 그대로 있는 것을 확인한 대응 문구. present·modified일 때만 */
+  readonly mine: string | null;
+  readonly note: string;
+}
+
 export type ProximityLevel = "cool" | "warm" | "hot" | "insufficient";
 
 /** 화면에서 특허별 비교 요청 상태 */
@@ -200,11 +215,25 @@ export interface SearchResponse {
   readonly elements?: string[];
 }
 
-/** 기술 근접도. 비교표에서 계산하며 법적 위험도나 침해 확률이 아니다. */
+/**
+ * 대비표가 청구항 1을 끝까지 담았는지. 둘 중 하나라도 걸리면 '모든 구성이 있다'고 말할 수 없어 뜨거움·따뜻으로 올리지 않는다.
+ */
+export interface ClaimCompleteness {
+  /** 모델에 보낸 청구항 1이 글자 수 제한에 걸려 뒷부분이 잘렸는지 */
+  readonly truncated: boolean;
+  /** 청구항 1 원문 중 대비표의 어느 구성에도 들어가지 않은 문구(연결 문구·전제부·종결 주어 제외) */
+  readonly uncovered: string[];
+}
+
+/** 기술 근접도. 청구항 1 구성요소 대비표에서 규칙으로 정하며 법적 위험도나 침해 확률이 아니다. */
 export interface Proximity {
   readonly level: ProximityLevel;
   readonly reason: string;
+  /** 내 설명에 같은 구성이 있는 청구항 1 구성 문구 */
   readonly commonElements: string[];
+  /** 청구항 1 구성별 판정 개수(중복 제거 뒤). total은 원문 확인에 실패한 구성까지 포함한다 */
+  readonly counts: Readonly<Record<ClaimElementStatus, number>> & { readonly total: number };
+  readonly completeness: ClaimCompleteness;
 }
 
 export interface PatentComparison {
@@ -212,6 +241,8 @@ export interface PatentComparison {
   /** 관련 이유 한 줄 */
   readonly summary: string;
   readonly rows: ComparisonRow[];
+  /** 청구항 1 구성요소 대비표. 근접도는 이 표로만 정한다 */
+  readonly claimChart: ClaimElementRow[];
   readonly proximity: Proximity;
   readonly claimsReviewed: number;
   readonly claimsTotal: number;
