@@ -10,12 +10,11 @@ export function normalizeQuote(value: string): string {
   return value.normalize("NFKC").replace(/[\s"'“”‘’「」『』…]+/g, "").toLowerCase();
 }
 
-/** 같은 구성이 두 행이면 더 보수적인 상태가 남는다 */
-const STATUS_CAUTION: Record<ClaimElementStatus, number> = { absent: 3, unconfirmed: 2, modified: 1, present: 0 };
+const CONFLICT_NOTE = "같은 구성에 대한 판정이 서로 달라 확인이 필요해요.";
 
 /**
  * 정규화한 구성 문구가 같은 행을 하나로 합친다(공백·인용부호만 다른 중복 포함).
- * 상태가 다르면 absent > unconfirmed > modified > present 순으로 보수적인 쪽을 남겨, 중복으로 구성 수나 대응 수가 늘지 않게 한다.
+ * 상태가 서로 다르면 어느 쪽도 믿지 않고 '확인 필요'로 남긴다. 중복으로 구성 수나 대응 수가 늘지 않는다.
  */
 export function dedupeClaimRows(chart: readonly ClaimElementRow[]): ClaimElementRow[] {
   const byKey = new Map<string, ClaimElementRow>();
@@ -23,7 +22,7 @@ export function dedupeClaimRows(chart: readonly ClaimElementRow[]): ClaimElement
     const key = normalizeQuote(row.element);
     const kept = byKey.get(key);
     if (!kept) byKey.set(key, row);
-    else if (STATUS_CAUTION[row.status] > STATUS_CAUTION[kept.status]) byKey.set(key, { ...row, element: kept.element });
+    else if (kept.status !== row.status) byKey.set(key, { element: kept.element, status: "unconfirmed", mine: null, note: CONFLICT_NOTE });
   }
   return [...byKey.values()];
 }

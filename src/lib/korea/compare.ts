@@ -17,8 +17,8 @@ const CLAIM_CHARS = 1500;
 /** 청구항 1은 구성요소 대비의 기준이므로 통째로 보낸다. 이 길이를 넘으면 잘렸다고 표시하고 전체 대응을 판정하지 않는다 */
 export const FIRST_CLAIM_CHARS = 6000;
 const MIN_EVIDENCE_CHARS = 6;
-/** 연결 문구를 뺀 뒤 이 길이 이상 남은 청구항 1 문구는 대비표에 빠진 구성으로 본다 */
-const MIN_UNCOVERED_CHARS = 8;
+/** 연결 문구·수량 표현을 뺀 뒤 이 길이 이상 남은 청구항 1 문구는 대비표에 빠진 구성으로 본다("펌프"처럼 짧은 구성도 잡는다) */
+const MIN_UNCOVERED_CHARS = 2;
 const MAX_UNCOVERED = 3;
 /** 내 설명 인용은 "PLGA"처럼 짧을 수 있다 */
 const MIN_MINE_CHARS = 2;
@@ -70,13 +70,16 @@ function tolerantPattern(quote: string): RegExp | null {
   return new RegExp(chars.join("[\\s\"'“”‘’「」『』…]*"), "gi");
 }
 
-/** 구성이 아닌 연결 문구·조사·문장부호. 정규화된(공백 없는) 문구에서 제거한다 */
+/** 구성이 아닌 연결 문구·수량 표현·조사·문장부호. 정규화된(공백 없는) 문구에서 제거한다 */
 const CONNECTIVES = [
   "것을특징으로하는", "특징으로하는", "에있어서", "으로이루어지는", "로이루어지는", "로이루어진", "포함하여구성되는", "포함하여이루어지는",
   "포함하는", "포함하고", "포함하며", "포함하되", "포함한다", "구성되는", "구성된", "구비하는", "구비하고", "구비한", "이루어지는", "이루어진",
-  "또는", "상기", "로서", "로써", "으로", "에서", "에게", "부터", "까지", "및", "와", "과", "를", "을", "는", "은", "이", "가", "에", "의", "로", "도",
+  "적어도하나", "하나이상", "그리고", "각각", "복수", "다수", "소정", "일정", "서로", "또는", "상기", "로서", "로써", "으로", "에서", "에게", "부터", "까지",
+  "및", "와", "과", "를", "을", "는", "은", "이", "가", "에", "의", "로", "도", "제",
 ];
-const CONNECTIVE_PATTERN = new RegExp(`${CONNECTIVES.join("|")}|[0-9]+\\.|[\\p{P}\\p{S}]`, "gu");
+const CONNECTIVE_PATTERN = new RegExp(`${CONNECTIVES.join("|")}|[\\p{P}\\p{S}\\p{N}]`, "gu");
+/** 청구항 번호와 "…에 있어서," / "…로서," 꼴 전제 문구. 첫 구성 앞에서만 지우고, 남는 문구는 다른 구간과 같이 검사한다 */
+const PREAMBLE = /^\s*(?:\d+\s*\.\s*)?(?:[^;,]*?(?:에\s*있어서|에\s*관한\s*것으로|으로서|로서|로써)\s*,?)?\s*/u;
 /** "…를 포함하는 X."처럼 마지막 구성 뒤에 붙는 종결 주어. 쉼표·세미콜론으로 이어지는 추가 한정이 없을 때만 */
 const CLOSING_SUBJECT = /^(?:[을를이가은는]|으로|로)?\s*(?:것을\s*)?(?:특징으로\s*하는|포함하는|포함하여\s*(?:구성되는|이루어지는|된)|구비하는|구성되는|이루어지는|이루어진)\s*[^;,]*$/u;
 
@@ -86,12 +89,13 @@ function substantive(segment: string): string {
 
 /** 화면용: 앞뒤의 문장부호와 "및·또는"을 떼어 낸다 */
 function tidy(segment: string): string {
-  return segment.replace(/^(?:\s*(?:및|또는|[;,.:·]))*\s*/u, "").replace(/(?:\s*(?:및|또는|[;,.:·]))*\s*$/u, "");
+  return segment.replace(/^(?:\s*(?:및|또는|[;,.:·]))*\s*/u, "").replace(/(?:\s*(?:및|또는|제\s*\d+|[;,.:·]))*\s*$/u, "");
 }
 
 /**
  * 청구항 1 원문에서 대비표의 구성 문구와 발명의 명칭을 지운 뒤 남는 문구.
- * 첫 구성 앞의 전제부와 "…를 포함하는 X." 꼴의 종결 주어는 구성으로 세지 않는다.
+ * 첫 구성 앞에서는 청구항 번호와 "…에 있어서," 꼴 전제 문구만 지우고(그 뒤에 남는 구성은 누락으로 본다),
+ * "…를 포함하는 X." 꼴의 종결 주어는 구성으로 세지 않는다.
  * 연결 문구를 빼고도 MIN_UNCOVERED_CHARS 이상 남으면 모델이 빠뜨린 구성일 수 있어 돌려준다(전체 대응 판정을 막는 데 쓴다).
  */
 export function uncoveredClaimText(claim: string, elements: readonly string[], title: string): string[] {
@@ -105,7 +109,7 @@ export function uncoveredClaimText(claim: string, elements: readonly string[], t
   if (titlePattern) text = text.replace(titlePattern, "");
   const segments = text.split(MARK).map((segment) => segment.trim());
   if (segments.length < 2) return [];
-  segments.shift();
+  segments[0] = segments[0].replace(PREAMBLE, "");
   const last = segments[segments.length - 1].replace(/[.。]\s*$/u, "").trim();
   if (CLOSING_SUBJECT.test(last)) segments.pop();
   return segments

@@ -179,6 +179,35 @@ test("uncovered claim text ignores preamble, connectives and the closing subject
     uncoveredClaimText(`1. ${ELECTRODE}; ${PRESSURE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title),
     [PRESSURE],
   );
+  // 첫 구성 앞은 전제 문구만 지우므로, 맨 앞 구성을 빠뜨려도 잡힌다.
+  assert.deepEqual(
+    uncoveredClaimText(`1. ${PRESSURE}; ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title),
+    [PRESSURE],
+  );
+  assert.deepEqual(
+    uncoveredClaimText(`1. 피부 미용 장치에 있어서, ${PRESSURE}; ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 피부 미용 장치.`, [ELECTRODE, CONTROLLER], title),
+    [PRESSURE],
+  );
+  // 제목과 다른 전제부, "~로서," 전제부는 구성으로 세지 않는다.
+  assert.deepEqual(
+    uncoveredClaimText(`1. 피부 미용 장치에 있어서, ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 피부 미용 장치.`, [ELECTRODE, CONTROLLER], title),
+    [],
+  );
+  assert.deepEqual(
+    uncoveredClaimText(`1. 피부 미용을 위한 고주파 장치로서, ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 고주파 장치.`, [ELECTRODE, CONTROLLER], title),
+    [],
+  );
+  // "배터리"처럼 짧은 구성도 빠지면 잡히고, 수량 표현·도면 부호는 구성으로 세지 않는다.
+  assert.deepEqual(uncoveredClaimText(`1. 배터리; ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title), ["배터리"]);
+  assert.deepEqual(
+    uncoveredClaimText(`1. ${ELECTRODE}; 상기 전극부에 전원을 공급하는 배터리; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER, "상기 전극부에 전원을 공급하는"], title),
+    ["배터리"],
+  );
+  assert.deepEqual(
+    uncoveredClaimText(`1. 복수의 ${ELECTRODE}; 각각의 상기 전극부(110)에 연결된 펌프; 및 제 1 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title),
+    ["각각의 상기 전극부(110)에 연결된 펌프"],
+  );
+  assert.deepEqual(uncoveredClaimText(`1. 복수의 ${ELECTRODE}; 및 제 1 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title), []);
   // "포함하되, 상기 …" 뒤의 한정은 종결 주어가 아니라 구성이다.
   const wherein = uncoveredClaimText(
     `1. ${ELECTRODE}; 및 ${CONTROLLER}를 포함하되, 상기 제어부는 피부 온도가 40도를 넘으면 출력을 차단하는 피부 미용 장치.`,
@@ -202,7 +231,7 @@ test("duplicate claim rows collapse to one element and the cautious status wins"
   );
   assert.equal(spaced.claimChart.length, 1);
 
-  // 상태가 다르면 보수적인 쪽(absent)이 남는다.
+  // 같은 구성에 '있음'과 '없음'이 함께 오면 어느 쪽도 확정하지 않고 '확인 필요'로 남긴다.
   const conflicting = finalizeComparison(
     chartDraft([
       electrodeRow,
@@ -210,12 +239,14 @@ test("duplicate claim rows collapse to one element and the cautious status wins"
       { element: PRESSURE, status: "present", mine: "RF 전극", note: "" },
     ]), elements, doc, idea,
   );
-  assert.deepEqual(conflicting.claimChart.map((r) => [r.element, r.status]), [[ELECTRODE, "absent"], [PRESSURE, "present"]]);
-  assert.equal(conflicting.proximity.level, "cool");
+  assert.deepEqual(conflicting.claimChart.map((r) => [r.element, r.status, r.mine]), [[ELECTRODE, "unconfirmed", null], [PRESSURE, "present", "RF 전극"]]);
+  assert.match(conflicting.claimChart[0].note, /판정이 서로 달라/);
+  assert.equal(conflicting.proximity.level, "insufficient");
+  assert.equal(conflicting.proximity.counts.total, 2);
 
   assert.deepEqual(
-    dedupeClaimRows([claim("present", "A"), claim("unconfirmed", "a "), claim("modified", "B"), claim("present", "B")]).map((r) => [r.element, r.status]),
-    [["A", "unconfirmed"], ["B", "modified"]],
+    dedupeClaimRows([claim("present", "A"), claim("unconfirmed", "a "), claim("modified", "B"), claim("present", "B"), claim("absent", "C"), claim("absent", "C")]).map((r) => [r.element, r.status]),
+    [["A", "unconfirmed"], ["B", "unconfirmed"], ["C", "absent"]],
   );
   // 원문에서 찾지 못한 구성도 중복은 한 번만 센다.
   const unverifiedTwice = finalizeComparison(
