@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { POST as compare } from "../src/app/api/compare/route";
 import { finalizeComparison, type DraftComparison } from "../src/lib/korea/compare";
-import { proximityOf } from "../src/lib/proximity";
-import type { ComparisonRow, KoreanPatentDocument } from "../src/lib/types";
+import { coverageOf, proximityOf } from "../src/lib/proximity";
+import type { ClaimElementRow, KoreanPatentDocument } from "../src/lib/types";
 
 const document: KoreanPatentDocument = {
   id: "kipris:1020240000001",
@@ -34,9 +34,10 @@ const document: KoreanPatentDocument = {
 };
 
 const elements = ["고주파 전극", "온도 기반 출력 제어", "앱 연동", "AI 피부 분석"];
+const idea = "RF 전극으로 진피를 가열하고 피부 온도에 따라 출력을 조절하는 탄력 기기";
 
-function row(relation: ComparisonRow["relation"], element = "요소"): ComparisonRow {
-  return { element, mine: "내 기술", theirs: relation === "unconfirmed" ? null : "특허", relation, note: "", evidence: null };
+function claim(status: ClaimElementRow["status"], element = "구성"): ClaimElementRow {
+  return { element, status, mine: status === "present" || status === "modified" ? "내 설명" : null, note: "" };
 }
 
 test("only quotes found verbatim in the text sent to the model confirm a comparison row", () => {
@@ -49,9 +50,10 @@ test("only quotes found verbatim in the text sent to the model confirm a compari
       { mine: "앱으로 강도 조절", theirs: "블루투스 앱 연결", relation: "common", note: "앱 연동", evidence: "스마트폰 앱과 블루투스로 연결되는 통신부" },
       { mine: null, theirs: "AI 분석", relation: "different", note: "추측", evidence: "AI가 피부를 분석" },
     ],
+    claimElements: [],
   };
 
-  const result = finalizeComparison(draft, elements, document);
+  const result = finalizeComparison(draft, elements, document, idea);
 
   assert.deepEqual(result.rows.map((r) => [r.element, r.relation]), [
     ["고주파 전극", "common"],
@@ -65,24 +67,57 @@ test("only quotes found verbatim in the text sent to the model confirm a compari
   assert.equal(result.summary, "고주파 전극과 온도 제어가 겹칩니다.");
   assert.equal(result.claimsReviewed, 5);
   assert.equal(result.claimsTotal, 6);
-  assert.equal(result.proximity.level, "hot");
-  assert.deepEqual(result.proximity.commonElements, ["고주파 전극", "온도 기반 출력 제어"]);
+  // 근접도는 청구항 대비표로만 정하므로 기술 요소 행이 공통이어도 대비표가 비면 자료 부족이다.
+  assert.equal(result.proximity.level, "insufficient");
+});
+
+test("claim chart keeps only claim-1 quotes and my-description quotes found verbatim", () => {
+  const draft: DraftComparison = {
+    summary: "",
+    rows: [],
+    claimElements: [
+      { element: "고주파 에너지를 출력하는 전극부", status: "present", mine: "RF 전극", note: "같은 전극" },
+      { element: "상기 전극부의 출력을 피부 온도에 따라 조절하는 제어부", status: "present", mine: "피부 온도에 따라 출력을 조절", note: "같은 제어" },
+      // 청구항 6 문구는 청구항 1이 아니므로 구성으로 인정하지 않는다.
+      { element: "스마트폰 앱과 블루투스로 연결되는 통신부", status: "absent", mine: null, note: "앱 없음" },
+    ],
+  };
+  const result = finalizeComparison(draft, elements, document, idea);
+  assert.deepEqual(result.claimChart.map((r) => r.status), ["present", "present"]);
+  assert.equal(result.proximity.counts.total, 3);
+  assert.equal(result.proximity.counts.unconfirmed, 1);
+  assert.equal(result.proximity.level, "insufficient");
+
+  const paraphrased = finalizeComparison(
+    { ...draft, claimElements: [draft.claimElements[0], { ...draft.claimElements[1], mine: "온도 기반 자동 출력 제어" }] },
+    elements, document, idea,
+  );
+  assert.deepEqual(paraphrased.claimChart.map((r) => [r.status, r.mine]), [["present", "RF 전극"], ["unconfirmed", null]]);
+
+  const grounded = finalizeComparison({ ...draft, claimElements: draft.claimElements.slice(0, 2) }, elements, document, idea);
+  assert.equal(grounded.proximity.level, "hot");
+  assert.equal(grounded.proximity.commonElements.length, 2);
 });
 
 test("missing model rows become unconfirmed rows for every planned element", () => {
-  const result = finalizeComparison({ summary: "", rows: [] }, elements, document);
+  const result = finalizeComparison({ summary: "", rows: [], claimElements: [] }, elements, document, idea);
   assert.equal(result.rows.length, elements.length);
   assert.ok(result.rows.every((r) => r.relation === "unconfirmed" && r.theirs === null && r.note !== ""));
   assert.equal(result.proximity.level, "insufficient");
 });
 
-test("proximity levels follow the share of grounded common elements and need two confirmed rows", () => {
-  assert.equal(proximityOf([row("common"), row("unconfirmed"), row("unconfirmed")]).level, "insufficient");
-  assert.equal(proximityOf([row("different"), row("different"), row("different")]).level, "cool");
-  assert.equal(proximityOf([row("common"), row("different"), row("different")]).level, "warm");
-  assert.equal(proximityOf([row("common"), row("common"), row("different")]).level, "hot");
-  assert.equal(proximityOf([row("common"), row("common")]).level, "hot");
-  assert.match(proximityOf([row("common", "전극"), row("different")]).reason, /2개 요소 중 1개가 겹쳐요: 전극/);
+test("proximity follows the all-elements rule in order: absent, unconfirmed, modified, all present", () => {
+  assert.equal(proximityOf([claim("present")]).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("present"), claim("absent")]).level, "cool");
+  // 없는 구성이 하나라도 확인되면 나머지가 불확실해도 서늘이다.
+  assert.equal(proximityOf([claim("absent"), claim("unconfirmed"), claim("unconfirmed")]).level, "cool");
+  assert.equal(proximityOf([claim("present"), claim("modified"), claim("unconfirmed")]).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("present")], 1).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("modified")]).level, "warm");
+  assert.equal(proximityOf([claim("present"), claim("present")]).level, "hot");
+  assert.match(proximityOf([claim("present"), claim("present"), claim("absent")]).reason, /구성 3개 중 1개가 내 설명에 없어요/);
+  assert.deepEqual(coverageOf(proximityOf([claim("present"), claim("modified")])), { matched: 2, total: 2 });
+  assert.equal(coverageOf(proximityOf([claim("present"), claim("unconfirmed")])), null);
 });
 
 test("compare API validates input and explains a missing OpenAI key", async (t) => {

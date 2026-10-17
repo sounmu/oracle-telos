@@ -2,6 +2,7 @@
 // 특허 제목·출원인·번호는 모두 예시값이며 실제 특허가 아니다. 클라이언트 전용(서버 모듈을 import하지 않는다).
 import { proximityOf } from "./proximity";
 import type {
+  ClaimElementRow,
   ComparisonRow,
   PatentComparison,
   PatentFull,
@@ -73,6 +74,29 @@ const ROWS: Record<string, ComparisonRow[]> = {
   ],
 };
 
+// 청구항 1 구성요소 대비표 예시. 근접도 단계는 proximityOf가 이 표로만 정한다.
+const CLAIM_CHARTS: Record<string, ClaimElementRow[]> = {
+  "kipris:1020210000001": [
+    { element: "생분해성 고분자로 이루어진 미립구", status: "present", mine: "생분해성 고분자 미립구", note: "같은 구성이에요." },
+    { element: "GLP-1 유사체 또는 이의 약학적으로 허용가능한 염", status: "present", mine: "GLP-1 유사체", note: "같은 약물 계열이에요." },
+    { element: "서방형 약학 조성물", status: "present", mine: "서방형 주사제", note: "서방형 주사제는 서방형 약학 조성물에 해당해요." },
+  ],
+  "kipris:1020200000002": [
+    { element: "생분해성 고분자를 유기용매에 녹이는 단계", status: "present", mine: "생분해성 고분자", note: "같은 고분자 원료를 써요." },
+    { element: "W/O/W 이중 유화로 액적을 형성하는 단계", status: "modified", mine: "미립구", note: "설명은 미립구를 만들지만 유화 방식이 다를 수 있어요." },
+    { element: "용매 증발로 미립구를 경화하는 단계", status: "present", mine: "미립구", note: "미립구를 굳히는 단계가 필요해요." },
+  ],
+  "kipris:1020220000003": [
+    { element: "펩타이드 약물을 봉입한 고분자 미립구", status: "present", mine: "고분자 미립구에 GLP-1 유사체를 담아", note: "GLP-1 유사체는 펩타이드 약물이에요." },
+    { element: "초기 과다 방출을 억제하는 코팅층", status: "absent", mine: null, note: "내 설명에 코팅층이 없어요." },
+  ],
+};
+
+const DEFAULT_CLAIM_CHART: ClaimElementRow[] = [
+  { element: "생분해성 고분자 미세입자", status: "present", mine: "생분해성 고분자", note: "고분자 계열이 같아요." },
+  { element: "피부 진피층에 주입하는 필러", status: "absent", mine: null, note: "내 설명은 주사제이고 필러 용도가 없어요." },
+];
+
 const SUMMARIES: Record<string, string> = {
   "kipris:1020210000001": "같은 약물을 같은 종류의 고분자 미립구에 담는 조성물 특허예요.",
   "kipris:1020200000002": "같은 고분자로 미립구를 만드는 제조방법 특허예요.",
@@ -123,11 +147,13 @@ export function demoSearch(): SearchResponse {
 
 export function demoCompare(id: string): PatentComparison {
   const rows = ROWS[id] ?? DEFAULT_ROWS;
+  const claimChart = CLAIM_CHARTS[id] ?? DEFAULT_CLAIM_CHART;
   return {
     patentId: id,
     summary: SUMMARIES[id] ?? "인접 기술 영역의 특허예요.",
     rows,
-    proximity: proximityOf(rows),
+    claimChart,
+    proximity: proximityOf(claimChart),
     claimsReviewed: 5,
     claimsTotal: 12,
     sourceUrl: "https://www.kipris.or.kr",

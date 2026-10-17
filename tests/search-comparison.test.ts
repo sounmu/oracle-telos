@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { rankBaselines, rerankElements, evaluateRanking } from "../scripts/experiments/search-comparison-core";
 import { rankResearch } from "../src/lib/korea/index";
+import { proximityOf } from "../src/lib/proximity";
 import type { PatentComparison, ResearchIndex, SearchExperimentRank } from "../src/lib/types";
 
 const ranking: SearchExperimentRank[] = ["a", "b", "c", "d"].map((id, i) => ({ id, title: id, score: 1 - i / 10 }));
 function comparison(id: string, relations: readonly ("common" | "different" | "unconfirmed")[]): PatentComparison {
   return {
     patentId: id, summary: "", claimsReviewed: 1, claimsTotal: 1, sourceUrl: "",
-    proximity: { level: "cool", reason: "", commonElements: [] },
+    claimChart: [], proximity: proximityOf([]),
     rows: relations.map((relation) => ({ element: "요소", mine: "기술", theirs: "원문", relation, note: "", evidence: "원문 인용" })),
   };
 }
