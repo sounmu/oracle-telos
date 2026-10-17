@@ -301,10 +301,6 @@ export default function PatentMap({
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 0.9;
-        ctx.strokeStyle = "#191f28";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
       }
     }
 
