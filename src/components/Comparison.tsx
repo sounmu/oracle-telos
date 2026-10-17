@@ -302,6 +302,14 @@ function ClaimChart({ chart, proximity }: { chart: readonly ClaimElementRow[]; p
       {unverified > 0 && (
         <p className="text-[13px] text-muted">모델이 낸 구성 {unverified}개는 청구항 1 원문에서 찾지 못해 &lsquo;확인 필요&rsquo;로 셌어요.</p>
       )}
+      {proximity.completeness.truncated && (
+        <p className="text-[13px] text-muted">청구항 1이 길어 앞부분만 확인했어요. 뒤쪽 구성은 이 표에 없을 수 있어요.</p>
+      )}
+      {proximity.completeness.uncovered.length > 0 && (
+        <p className="text-[13px] text-muted">
+          청구항 1 원문 중 이 표에 담기지 않은 문구: {proximity.completeness.uncovered.map((text) => `“${text}”`).join(", ")}
+        </p>
+      )}
     </>
   );
 }

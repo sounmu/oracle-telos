@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { POST as compare } from "../src/app/api/compare/route";
-import { finalizeComparison, type DraftComparison } from "../src/lib/korea/compare";
-import { coverageOf, proximityOf } from "../src/lib/proximity";
+import { comparisonSource, finalizeComparison, FIRST_CLAIM_CHARS, uncoveredClaimText, type DraftComparison } from "../src/lib/korea/compare";
+import { coverageOf, dedupeClaimRows, proximityOf } from "../src/lib/proximity";
 import type { ClaimElementRow, KoreanPatentDocument } from "../src/lib/types";
 
 const document: KoreanPatentDocument = {
@@ -99,6 +99,132 @@ test("claim chart keeps only claim-1 quotes and my-description quotes found verb
   assert.equal(grounded.proximity.commonElements.length, 2);
 });
 
+const ELECTRODE = "고주파 에너지를 출력하는 전극부";
+const CONTROLLER = "상기 전극부의 출력을 피부 온도에 따라 조절하는 제어부";
+const PRESSURE = "상기 전극부에 가해지는 압력을 측정하는 압력 센서";
+
+function withFirstClaim(first: string): KoreanPatentDocument {
+  return { ...document, patent: { ...document.patent, claims: [first, ...document.patent.claims.slice(1)] } };
+}
+
+function chartDraft(claimElements: DraftComparison["claimElements"]): DraftComparison {
+  return { summary: "", rows: [], claimElements };
+}
+
+const electrodeRow = { element: ELECTRODE, status: "present", mine: "RF 전극", note: "같은 전극" } as const;
+const controllerRow = { element: CONTROLLER, status: "present", mine: "피부 온도에 따라 출력을 조절", note: "같은 제어" } as const;
+
+test("claim 1 is sent whole past the dependent-claim cut, so a late element is verifiable", () => {
+  // 1,500자 뒤에 압력 센서를 둔 1,800자 안팎의 청구항 1
+  const padding = "상기 전극부는 복수의 전극 핀으로 이루어지고 ".repeat(60);
+  const first = `1. ${ELECTRODE}; ${CONTROLLER}; ${padding}및 ${PRESSURE}를 포함하는 기기.`;
+  assert.ok(first.length > 1500 && first.length < FIRST_CLAIM_CHARS);
+  const doc = withFirstClaim(first);
+  assert.ok(comparisonSource(doc).includes(PRESSURE));
+
+  // 모델이 압력 센서를 빼고 앞의 두 구성만 돌려주면 전체 대응으로 보지 않는다.
+  const partial = finalizeComparison(chartDraft([electrodeRow, controllerRow]), elements, doc, idea);
+  assert.equal(partial.claimChart.length, 2);
+  assert.equal(partial.proximity.completeness.truncated, false);
+  // 담기지 않은 문구는 긴 구간의 앞 80자만 보여 준다.
+  assert.equal(partial.proximity.completeness.uncovered.length, 1);
+  assert.match(partial.proximity.completeness.uncovered[0], /^상기 전극부는 복수의 전극 핀으로/);
+  assert.ok(partial.proximity.completeness.uncovered[0].length <= 80);
+  assert.equal(partial.proximity.level, "insufficient");
+  assert.match(partial.proximity.reason, /대비표에 담기지 않은 문구/);
+  assert.equal(coverageOf(partial.proximity), null);
+
+  // 압력 센서를 '설명에 없음'으로 넣으면 원문에서 확인되어 서늘이 된다.
+  const complete = finalizeComparison(
+    chartDraft([electrodeRow, controllerRow, { element: PRESSURE, status: "absent", mine: null, note: "압력 센서 없음" }]),
+    elements, doc, idea,
+  );
+  assert.equal(complete.proximity.level, "cool");
+  assert.equal(complete.proximity.counts.total, 3);
+});
+
+test("a claim 1 longer than the limit is marked truncated and never reaches hot or warm", () => {
+  const padding = "상기 전극부는 복수의 전극 핀으로 이루어지고 ".repeat(260);
+  const first = `1. ${ELECTRODE}; ${CONTROLLER}; ${padding}및 ${PRESSURE}를 포함하는 기기.`;
+  assert.ok(first.length > FIRST_CLAIM_CHARS);
+  const doc = withFirstClaim(first);
+  assert.ok(!comparisonSource(doc).includes(PRESSURE));
+
+  const result = finalizeComparison(chartDraft([electrodeRow, controllerRow]), elements, doc, idea);
+  assert.equal(result.proximity.completeness.truncated, true);
+  assert.equal(result.proximity.level, "insufficient");
+  assert.match(result.proximity.reason, /앞부분만 확인/);
+  assert.equal(coverageOf(result.proximity), null);
+
+  // 잘렸어도 설명에 없는 구성이 확인되면 서늘이다(완비 원칙은 구성 하나로 충분).
+  const absent = finalizeComparison(
+    chartDraft([electrodeRow, { ...controllerRow, status: "absent", mine: null }]), elements, doc, idea,
+  );
+  assert.equal(absent.proximity.level, "cool");
+});
+
+test("uncovered claim text ignores preamble, connectives and the closing subject but keeps skipped limitations", () => {
+  const title = document.title;
+  assert.deepEqual(uncoveredClaimText(`1. ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title), []);
+  assert.deepEqual(
+    uncoveredClaimText(`1. 고주파 피부 탄력 기기에 있어서, ${ELECTRODE}; 및 ${CONTROLLER}를 포함하는 것을 특징으로 하는 고주파 피부 탄력 기기.`, [ELECTRODE, CONTROLLER], title),
+    [],
+  );
+  // 공백·인용부호만 다른 구성 문구도 원문에서 지워진다.
+  assert.deepEqual(
+    uncoveredClaimText(`1. “고주파 에너지를  출력하는 전극부”; 및 ${CONTROLLER}를 포함하는 휴대용 피부 관리 장치.`, ["고주파에너지를출력하는전극부", CONTROLLER], title),
+    [],
+  );
+  assert.deepEqual(
+    uncoveredClaimText(`1. ${ELECTRODE}; ${PRESSURE}; 및 ${CONTROLLER}를 포함하는 기기.`, [ELECTRODE, CONTROLLER], title),
+    [PRESSURE],
+  );
+  // "포함하되, 상기 …" 뒤의 한정은 종결 주어가 아니라 구성이다.
+  const wherein = uncoveredClaimText(
+    `1. ${ELECTRODE}; 및 ${CONTROLLER}를 포함하되, 상기 제어부는 피부 온도가 40도를 넘으면 출력을 차단하는 피부 미용 장치.`,
+    [ELECTRODE, CONTROLLER], title,
+  );
+  assert.equal(wherein.length, 1);
+  assert.match(wherein[0], /40도를 넘으면 출력을 차단/);
+});
+
+test("duplicate claim rows collapse to one element and the cautious status wins", () => {
+  const doc = withFirstClaim(`1. ${ELECTRODE}; 및 ${PRESSURE}를 포함하는 기기.`);
+  // 같은 행을 두 번 넣어도 고유 구성은 하나라 뜨거움·2/2가 되지 않는다.
+  const twice = finalizeComparison(chartDraft([electrodeRow, electrodeRow]), elements, doc, idea);
+  assert.equal(twice.claimChart.length, 1);
+  assert.equal(twice.proximity.counts.total, 1);
+  assert.equal(twice.proximity.level, "insufficient");
+
+  // 공백·인용부호만 다른 중복도 하나로 합친다.
+  const spaced = finalizeComparison(
+    chartDraft([electrodeRow, { ...electrodeRow, element: "“고주파 에너지를  출력하는 전극부”" }]), elements, doc, idea,
+  );
+  assert.equal(spaced.claimChart.length, 1);
+
+  // 상태가 다르면 보수적인 쪽(absent)이 남는다.
+  const conflicting = finalizeComparison(
+    chartDraft([
+      electrodeRow,
+      { element: ELECTRODE, status: "absent", mine: null, note: "전극 없음" },
+      { element: PRESSURE, status: "present", mine: "RF 전극", note: "" },
+    ]), elements, doc, idea,
+  );
+  assert.deepEqual(conflicting.claimChart.map((r) => [r.element, r.status]), [[ELECTRODE, "absent"], [PRESSURE, "present"]]);
+  assert.equal(conflicting.proximity.level, "cool");
+
+  assert.deepEqual(
+    dedupeClaimRows([claim("present", "A"), claim("unconfirmed", "a "), claim("modified", "B"), claim("present", "B")]).map((r) => [r.element, r.status]),
+    [["A", "unconfirmed"], ["B", "modified"]],
+  );
+  // 원문에서 찾지 못한 구성도 중복은 한 번만 센다.
+  const unverifiedTwice = finalizeComparison(
+    chartDraft([electrodeRow, { element: "스마트폰 앱과 블루투스로 연결되는 통신부", status: "absent", mine: null, note: "" }, { element: "스마트폰 앱과 블루투스로 연결되는 통신부", status: "absent", mine: null, note: "" }]),
+    elements, doc, idea,
+  );
+  assert.equal(unverifiedTwice.proximity.counts.unconfirmed, 1);
+});
+
 test("missing model rows become unconfirmed rows for every planned element", () => {
   const result = finalizeComparison({ summary: "", rows: [], claimElements: [] }, elements, document, idea);
   assert.equal(result.rows.length, elements.length);
@@ -106,18 +232,25 @@ test("missing model rows become unconfirmed rows for every planned element", () 
   assert.equal(result.proximity.level, "insufficient");
 });
 
-test("proximity follows the all-elements rule in order: absent, unconfirmed, modified, all present", () => {
+test("proximity follows the all-elements rule in order: absent, insufficient evidence, modified, all present", () => {
   assert.equal(proximityOf([claim("present")]).level, "insufficient");
-  assert.equal(proximityOf([claim("present"), claim("present"), claim("absent")]).level, "cool");
+  // 설명에 없는 구성은 화면 규칙 순서대로 최소 구성 수보다 먼저 본다.
+  assert.equal(proximityOf([claim("absent")]).level, "cool");
+  assert.equal(proximityOf([claim("present"), claim("present", "A"), claim("absent", "B")]).level, "cool");
   // 없는 구성이 하나라도 확인되면 나머지가 불확실해도 서늘이다.
-  assert.equal(proximityOf([claim("absent"), claim("unconfirmed"), claim("unconfirmed")]).level, "cool");
-  assert.equal(proximityOf([claim("present"), claim("modified"), claim("unconfirmed")]).level, "insufficient");
-  assert.equal(proximityOf([claim("present"), claim("present")], 1).level, "insufficient");
-  assert.equal(proximityOf([claim("present"), claim("modified")]).level, "warm");
-  assert.equal(proximityOf([claim("present"), claim("present")]).level, "hot");
-  assert.match(proximityOf([claim("present"), claim("present"), claim("absent")]).reason, /구성 3개 중 1개가 내 설명에 없어요/);
-  assert.deepEqual(coverageOf(proximityOf([claim("present"), claim("modified")])), { matched: 2, total: 2 });
-  assert.equal(coverageOf(proximityOf([claim("present"), claim("unconfirmed")])), null);
+  assert.equal(proximityOf([claim("absent"), claim("unconfirmed", "A"), claim("unconfirmed", "B")]).level, "cool");
+  assert.equal(proximityOf([claim("present"), claim("modified", "A"), claim("unconfirmed", "B")]).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("present", "A")], { unverified: 1 }).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("present", "A")], { completeness: { truncated: true, uncovered: [] } }).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("modified", "A")], { completeness: { truncated: false, uncovered: ["압력 센서"] } }).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("modified", "A")]).level, "warm");
+  assert.equal(proximityOf([claim("present"), claim("present", "A")]).level, "hot");
+  // 같은 구성 문구는 하나로 센다.
+  assert.equal(proximityOf([claim("present"), claim("present")]).level, "insufficient");
+  assert.equal(proximityOf([claim("present"), claim("present")]).counts.total, 1);
+  assert.match(proximityOf([claim("present"), claim("present", "A"), claim("absent", "B")]).reason, /구성 3개 중 1개가 내 설명에 없어요/);
+  assert.deepEqual(coverageOf(proximityOf([claim("present"), claim("modified", "A")])), { matched: 2, total: 2 });
+  assert.equal(coverageOf(proximityOf([claim("present"), claim("unconfirmed", "A")])), null);
 });
 
 test("compare API validates input and explains a missing OpenAI key", async (t) => {
