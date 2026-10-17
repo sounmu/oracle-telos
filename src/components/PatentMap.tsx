@@ -237,7 +237,10 @@ export default function PatentMap({
     const baseR = 2.2 * Math.min(2.2, Math.sqrt(k));
     const dim = highlights !== null || group !== null;
 
-    // 0) 분쟁 위험도 배경: 셀마다 밀집도 × 사례 수에 따라 옅은 색을 물들인다
+    // 0) 배경 격자 (비네트가 destination-in이라 다른 레이어보다 먼저 그린다)
+    drawGrid(ctx, t, size.w, size.h, insetTop);
+
+    // 0-0) 분쟁 위험도 배경: 셀마다 밀집도 × 사례 수에 따라 옅은 색을 물들인다
     if (riskOn) {
       // 셀마다 부드러운 방사형 그라데이션을 겹쳐 물감이 번진 모양으로 그린다
       const reach = 36 * k;
@@ -392,7 +395,7 @@ export default function PatentMap({
       }
     }
     ctx.globalAlpha = 1;
-  }, [nodes, byId, size, visible, highlights, selectedId, riskOn, risk, edgesOn, edges, points, markerBase, group]);
+  }, [nodes, byId, size, visible, highlights, selectedId, riskOn, risk, edgesOn, edges, points, markerBase, group, insetTop]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(draw);
