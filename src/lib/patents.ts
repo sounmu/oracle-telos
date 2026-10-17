@@ -3,7 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { DatasetMeta, PatentFull, SearchHit } from "./types";
 
-const MASTER_SAMPLE_DIR = path.join(process.cwd(), "data", "master", "sample");
+// TELOS_DEMO=1이면 시연 마스터(실제 4건 + 더미)를 읽는다
+const MASTER_SAMPLE_DIR = path.join(process.cwd(), "data", "master", process.env.TELOS_DEMO === "1" ? "demo" : "sample");
 
 export interface PatentIndex {
   meta: DatasetMeta;

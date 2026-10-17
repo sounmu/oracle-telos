@@ -25,8 +25,8 @@ export async function GET(request: Request) {
     const index = await getPatentIndex();
     return Response.json({
       dataset,
-      points: index?.patents.map(({ id, title, decision, cpc, filed, x, y, abstract }) => ({
-        id, title, decision, cpc, filed, x, y, abstract: abstract.slice(0, 300),
+      points: index?.patents.map(({ id, title, decision, cpc, filed, x, y, abstract, source }) => ({
+        id, title, decision, cpc, filed, x, y, source, abstract: abstract.slice(0, 300),
       })) ?? [],
       builtAt: index?.meta.builtAt ?? null,
       status,

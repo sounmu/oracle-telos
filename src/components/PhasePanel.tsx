@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { DISPUTE_CASES } from "@/lib/cases";
+import { ACTIVE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import {
   compareTerms,
@@ -261,7 +261,7 @@ function RiskBlock({
   location: Location | null;
   points: PatentPoint[];
 }) {
-  const cases = linkedCases(hits, DISPUTE_CASES);
+  const cases = linkedCases(hits, ACTIVE_CASES);
   const origin = location ?? (selected ? { x: selected.x, y: selected.y } : null);
   const density = origin ? countWithin(points, origin, radiusOf(points)) : null;
   return (

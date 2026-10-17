@@ -2506,5 +2506,40 @@ export const DISPUTE_CASES: readonly DisputeCase[] = [
       "url": "https://kyodonewsprwire.jp/release/202507242623"
     }
   ]
-}
+},
+  {
+    "id": "vaim-regenbio",
+    "source": "real",
+    "kind": "tech",
+    "title": "PLA·PLGA 미세입자 제조공법 특허 무효·정정 분쟁 (리젠바이오텍 vs 바임)",
+    "plaintiff": "리젠바이오텍",
+    "defendant": "바임",
+    "domain": "생분해성 미세입자 (의료용 필러)",
+    "tech": "생분해성 고분자 미세입자의 냉동 분사 제조공법 (EC·DMSO 혼합 용매, 망상 구조 입자)",
+    "keywords": ["미세입자", "PLA", "폴리락트산", "망상구조", "EC", "DMSO", "에틸렌카보네이트", "냉동", "분사", "필러", "microparticle", "polylactic", "network structure"],
+    "relation": "경쟁사 간 분쟁",
+    "procedures": ["특허 무효심판", "심결취소소송", "정정무효심판", "상고"],
+    "period": { "start": "2017.08", "end": "2026.09" },
+    "steps": [
+      { "date": "2017.08.25", "text": "리젠바이오텍이 바임의 특허 1481441 무효심판을 청구했다." },
+      { "date": "2021.03.04", "text": "대법원 확정: 특허 1481441의 청구항 1·3 무효, 청구항 4는 심판청구 각하." },
+      { "date": "2024.07.31", "text": "특허 1725279 정정(망상구조, 20~150㎛, 수율 80% 이상 한정)이 확정됐다." },
+      { "date": "2025.01.23", "text": "닥터브로스가 정정 무효심판(2025당227)을 청구했다." },
+      { "date": "2025.11.25", "text": "특허심판원이 2024년 정정을 무효로 하는 심결을 내렸다." },
+      { "date": "2026.08.26", "text": "특허법원이 심결을 취소하고 리젠바이오텍 승소로 판결했다 (2025허10641)." }
+    ],
+    "result": "2026.09 현재 대법원 상고 단계. 특허 1481441은 청구항 1·3이 무효 확정. 특허 1725279의 정정 유효성은 특허법원에서 뒤집혀 상고 중.",
+    "reason": "심결과 판결의 쟁점은 '망상구조'의 기준과 수율 수치의 뒷받침 여부였다. 특허심판원은 명세서가 망상구조의 판단 기준을 정의하지 않아 수율 한정이 뒷받침되지 않는다고 봤고, 특허법원은 심결을 취소했다.",
+    "techImpact": "EC 단독 공법(1481441)과 DMSO 단독 공법은 입자 내부가 비는 결함이 있고, EC·DMSO 혼합 용매로 망상 구조를 얻는 것이 차별점으로 주장됐다.",
+    "bizImpact": "바임 제품의 판매 정당성과 해외 패밀리(중국, 미국, WIPO)의 효력이 쟁점이다. 한국 무효가 해외 특허에 자동으로 영향을 주지는 않는다.",
+    "ids": { "patents": ["10-1481441", "10-1725279", "10-2013-0006379", "10-2587872"], "cases": ["2017당2698", "2021당2382", "2023허13896", "2025당227", "2025허10641", "2025허10505", "2025후10156"] },
+    "sources": [
+      { "label": "KIPRIS 원자료 정리 (2026.10.05, 드라이브 공식자료)", "url": "https://drive.google.com/file/d/1Dv7EYSaOgf_Txkl5mBhxe3NExh5tbxKP/view" },
+      { "label": "특허심판원 2025당227 심결문 (케이스노트 원문)", "url": "https://www.scourt.go.kr" }
+    ]
+  },
 ];
+
+/** 시연 모드(NEXT_PUBLIC_TELOS_DEMO=1)에서는 실제 자료로 표시된 사례만 쓴다 */
+export const ACTIVE_CASES: readonly DisputeCase[] =
+  process.env.NEXT_PUBLIC_TELOS_DEMO === "1" ? DISPUTE_CASES.filter((c) => c.source === "real") : DISPUTE_CASES;

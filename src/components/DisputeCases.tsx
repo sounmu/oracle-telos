@@ -1,6 +1,6 @@
 "use client";
 
-import { DISPUTE_CASES } from "@/lib/cases";
+import { ACTIVE_CASES } from "@/lib/cases";
 import type { DisputeCase } from "@/lib/types";
 
 export interface CaseMatch {
@@ -13,7 +13,7 @@ export interface CaseMatch {
 export function matchCases(texts: readonly string[], limit = 5): CaseMatch[] {
   const hay = texts.filter(Boolean).join(" ").toLowerCase();
   if (!hay.trim()) return [];
-  return DISPUTE_CASES.map((item) => ({
+  return ACTIVE_CASES.map((item) => ({
     item,
     matched: item.keywords.filter((k) => k && hay.includes(k.toLowerCase())),
   }))
