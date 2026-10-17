@@ -19,13 +19,15 @@ export interface PatentFull {
   fetchedAt?: string;
   rawStatus?: string;
   applicants?: string[];
+  /** 시연 마스터에서만 쓴다. real=실제 자료, dummy=더미 (화면에서 구분 표시) */
+  source?: "real" | "dummy";
   claims?: string[];
 }
 
 /** 클라이언트가 받는 가벼운 점 (public/data/sample/embedding.json) */
 export type PatentPoint = Pick<
   PatentFull,
-  "id" | "title" | "decision" | "cpc" | "filed" | "x" | "y"
+  "id" | "title" | "decision" | "cpc" | "filed" | "x" | "y" | "source"
 > & { abstract: string /* 300자 내외 */ };
 
 export interface SearchHit {
@@ -298,6 +300,8 @@ export interface PatentMapResponse {
 /** 분쟁 사례 (src/lib/cases.ts). 조사 자료에서 뽑은 정적 데이터이며, 분쟁 사례 API가 생기면 같은 형태로 내려준다 */
 export interface DisputeCase {
   readonly id: string;
+  /** 시연에서 보여 줄 실제 자료인지 */
+  readonly source?: "real";
   readonly kind: "tech" | "idea";
   readonly title: string;
   readonly plaintiff: string;

@@ -5,7 +5,7 @@ import { quadtree, type Quadtree } from "d3-quadtree";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import "d3-transition";
-import { DISPUTE_CASES } from "@/lib/cases";
+import { ACTIVE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
 import { caseHits, riskField } from "@/lib/riskField";
 import { sameCpcEdges } from "@/lib/relations";
@@ -191,7 +191,7 @@ export default function PatentMap({
   // 분쟁 사례와 연결된 점, 그 위에 깔 위험도 격자, 관계선 쌍 (모두 점 목록에서만 계산)
   const risk = useMemo(() => {
     if (!riskOn || !nodes.length) return [];
-    return riskField(nodes, caseHits(points, DISPUTE_CASES));
+    return riskField(nodes, caseHits(points, ACTIVE_CASES));
   }, [riskOn, nodes, points]);
 
   const edges = useMemo(() => (edgesOn ? sameCpcEdges(points) : []), [edgesOn, points]);
@@ -275,7 +275,8 @@ export default function PatentMap({
       const x = t.applyX(n.bx);
       const y = t.applyY(n.by);
       if (x < -10 || y < -10 || x > size.w + 10 || y > size.h + 10) continue;
-      ctx.globalAlpha = dim ? 0.12 : 0.75;
+      // 더미 점은 흐리게 그려서 실제 자료와 시각적으로 구분한다
+      ctx.globalAlpha = dim ? 0.12 : n.p.source === "dummy" ? 0.4 : 0.75;
       ctx.fillStyle = DECISION_COLORS[n.p.decision];
       ctx.beginPath();
       ctx.arc(x, y, baseR, 0, Math.PI * 2);
@@ -428,6 +429,7 @@ export default function PatentMap({
               {DECISION_LABELS[hover.p.decision]} · {hover.p.cpc || "CPC 없음"} · {hover.p.filed}
             </span>
           </div>
+          {hover.p.source === "dummy" && <div className="mb-1 text-[11px] font-bold text-[#8a5a00]">더미 데이터 · 시연용</div>}
           <div className="line-clamp-3 font-medium leading-snug">{hover.p.title}</div>
         </div>
       )}

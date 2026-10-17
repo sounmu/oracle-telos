@@ -167,6 +167,9 @@ export default function PatentDetail({
 
       <header className="rounded-3xl bg-panel p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
+          {point.source === "dummy" && (
+            <span className="rounded-md bg-[#fff4d6] px-2 py-0.5 font-bold text-[#8a5a00]">더미 데이터 · 시연용</span>
+          )}
           <span className="rounded-md px-2 py-0.5 font-bold" style={{ background: tag.bg, color: tag.ink }}>
             {DECISION_LABELS[decision]}
           </span>
