@@ -34,7 +34,7 @@ export function formatCoverage(proximity: Proximity): string {
   return c ? `${c.matched}/${c.total}` : "--";
 }
 
-/** 근접도 온도계 캐릭터. 서늘=웃음, 따뜻=무덤덤, 뜨거움=걱정, 자료 부족=갸웃. 눈금 높이는 단계만 나타낸다 */
+/** 근접도 캐릭터. 빠진 구성 있음=웃음, 다른 수단 포함=무덤덤, 모두 대응=걱정, 자료 부족=갸웃. 표정은 단계만 나타낸다 */
 export function ProximityFace({
   level,
   size = 28,
@@ -44,32 +44,28 @@ export function ProximityFace({
 }) {
   const style = level === "loading" || level === "idle" ? null : PROXIMITY_STYLE[level];
   const fill = style ? style.fill : "#d1d6db";
-  const ratio = level === "hot" ? 0.8 : level === "warm" ? 0.55 : level === "cool" ? 0.25 : 0.1;
-  const h = Math.round(14 + ratio * 80);
   const mouth =
     level === "cool"
-      ? "M41 125q7 6 14 0"
+      ? "M25 40q7 6 14 0"
       : level === "hot"
-        ? "M41 128q7 -6 14 0"
-        : "M41 126h14";
+        ? "M25 43q7 -6 14 0"
+        : "M25 41h14";
   return (
     <svg
-      viewBox="0 0 96 150"
-      width={Math.round(size * 0.64)}
+      viewBox="0 0 64 64"
+      width={size}
       height={size}
       aria-hidden="true"
       className={level === "loading" ? "shrink-0 animate-pulse" : "shrink-0"}
     >
-      <rect x="33" y="8" width="30" height="100" rx="15" fill="#fff" stroke={INK} strokeWidth="4" />
-      <rect x="42" y={104 - h} width="12" height={h} rx="6" fill={fill} />
-      <circle cx="48" cy="118" r="24" fill={fill} stroke={INK} strokeWidth="4" />
-      <circle cx="40" cy="115" r="3.5" fill={INK} />
-      <circle cx="56" cy="115" r="3.5" fill={INK} />
+      <circle cx="32" cy="34" r="26" fill={fill} stroke={INK} strokeWidth="4" />
+      <circle cx="24" cy="30" r="3.5" fill={INK} />
+      <circle cx="40" cy="30" r="3.5" fill={INK} />
       <path d={mouth} fill="none" stroke={INK} strokeWidth="3.5" strokeLinecap="round" />
-      <circle cx="33" cy="123" r="3.6" fill="#ffb4a2" />
-      <circle cx="63" cy="123" r="3.6" fill="#ffb4a2" />
+      <circle cx="17" cy="38" r="3.6" fill="#ffb4a2" />
+      <circle cx="47" cy="38" r="3.6" fill="#ffb4a2" />
       {level === "insufficient" && (
-        <text x="70" y="40" fontSize="30" fontWeight="800" fill={INK}>?</text>
+        <text x="50" y="18" fontSize="20" fontWeight="800" fill={INK}>?</text>
       )}
     </svg>
   );
