@@ -1,3 +1,4 @@
+import { mockEnabled, mockSearchHits, MOCK_NOTICE } from "@/lib/mockApi";
 import { embedTexts } from "@/lib/embeddings";
 import { getPatentIndex, MISSING_DATA_MESSAGE, toHit } from "@/lib/patents";
 import { topK } from "@/lib/similarity";
@@ -5,12 +6,15 @@ import { z } from "zod";
 import { searchKoreanPatents } from "@/lib/korea/search";
 import { planPatentSearch } from "@/lib/agent";
 import { SourceError } from "@/lib/korea/http";
+import { lookupByCompany, lookupByNumber, parsePatentNumber } from "@/lib/patentLookup";
 
 const searchInput = z.object({
   query: z.string().trim().min(1).max(4000),
   k: z.number().int().min(1).max(50).default(10),
   dataset: z.enum(["korea", "sample"]).default("sample"),
   decision: z.enum(["ACCEPTED", "REJECTED", "PENDING", "UNKNOWN"]).optional(),
+  /** lookup이면 특허번호 또는 회사명으로 찾는다. 생략하면 기술 설명 검색 */
+  intent: z.enum(["idea", "lookup"]).optional(),
 });
 
 /**
@@ -29,7 +33,21 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return Response.json({ error: "검색어와 검색 조건을 확인하세요." }, { status: 400 });
   }
-  const { query, k, decision, dataset } = parsed.data;
+  const { query, k, decision, dataset, intent } = parsed.data;
+  if (intent === "lookup") {
+    const number = parsePatentNumber(query);
+    const found = number ? await lookupByNumber(number, dataset, k) : await lookupByCompany(query, dataset, k);
+    return Response.json({ hits: found.hits, addedPoints: [], warnings: found.warnings, coverage: null, elements: [] });
+  }
+  if (mockEnabled()) {
+    return Response.json({
+      hits: await mockSearchHits(k, decision),
+      addedPoints: [],
+      warnings: [MOCK_NOTICE],
+      coverage: { queries: [query], candidates: 0, detailed: 0 },
+      elements: [],
+    });
+  }
   try {
     if (dataset === "korea") {
       try {

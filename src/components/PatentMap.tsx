@@ -5,7 +5,10 @@ import { quadtree, type Quadtree } from "d3-quadtree";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import "d3-transition";
+import { DISPUTE_CASES } from "@/lib/cases";
 import { DECISION_COLORS, DECISION_LABELS } from "@/lib/colors";
+import { caseHits, riskField } from "@/lib/riskField";
+import { sameCpcEdges } from "@/lib/relations";
 import type { Decision, PatentPoint } from "@/lib/types";
 
 interface Props {
@@ -19,6 +22,12 @@ interface Props {
   onSelect: (id: string | null) => void;
   /** 지도 위를 덮는 헤더·범례 높이(px). 점을 그 아래 영역에 맞춘다 */
   insetTop?: number;
+  /** 분쟁 위험도 배경(밀집도 × 사례 수) 표시 */
+  riskOn?: boolean;
+  /** 같은 CPC 하위 분류끼리 잇는 관계선 표시 */
+  edgesOn?: boolean;
+  /** 내 아이디어의 위치 (데이터 좌표). null이면 표시하지 않음 */
+  marker?: { x: number; y: number } | null;
 }
 
 interface Node {
@@ -134,6 +143,9 @@ export default function PatentMap({
   focus,
   onSelect,
   insetTop = PAD,
+  riskOn = false,
+  edgesOn = false,
+  marker = null,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -142,9 +154,9 @@ export default function PatentMap({
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [hover, setHover] = useState<{ p: PatentPoint; x: number; y: number } | null>(null);
 
-  // 데이터 → 기본 캔버스 좌표 (크기에 맞춰 fit)
-  const nodes = useMemo<Node[]>(() => {
-    if (!points.length || !size.w || !size.h) return [];
+  // 데이터 좌표 → 기본 캔버스 좌표 변환 (크기에 맞춰 fit). 점과 마커가 같은 변환을 쓴다
+  const frame = useMemo(() => {
+    if (!points.length || !size.w || !size.h) return null;
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const p of points) {
       if (p.x < minX) minX = p.x;
@@ -159,14 +171,30 @@ export default function PatentMap({
     const scale = Math.min((size.w - PAD * 2) / spanX, usableH / spanY);
     const offX = (size.w - spanX * scale) / 2;
     const offY = top + (usableH - spanY * scale) / 2;
-    return points.map((p) => ({
-      p,
-      bx: offX + (p.x - minX) * scale,
-      by: offY + (maxY - p.y) * scale,
-    }));
+    return {
+      toBase: (x: number, y: number): [number, number] => [offX + (x - minX) * scale, offY + (maxY - y) * scale],
+    };
   }, [points, size, insetTop]);
 
+  const nodes = useMemo<Node[]>(() => {
+    if (!frame) return [];
+    return points.map((p) => {
+      const [bx, by] = frame.toBase(p.x, p.y);
+      return { p, bx, by };
+    });
+  }, [points, frame]);
+
+  const markerBase = useMemo(() => (marker && frame ? frame.toBase(marker.x, marker.y) : null), [marker, frame]);
+
   const byId = useMemo(() => new Map(nodes.map((n) => [n.p.id, n])), [nodes]);
+
+  // 분쟁 사례와 연결된 점, 그 위에 깔 위험도 격자, 관계선 쌍 (모두 점 목록에서만 계산)
+  const risk = useMemo(() => {
+    if (!riskOn || !nodes.length) return [];
+    return riskField(nodes, caseHits(points, DISPUTE_CASES));
+  }, [riskOn, nodes, points]);
+
+  const edges = useMemo(() => (edgesOn ? sameCpcEdges(points) : []), [edgesOn, points]);
 
   const tree = useMemo<Quadtree<Node> | null>(() => {
     if (!nodes.length) return null;
@@ -206,8 +234,38 @@ export default function PatentMap({
     const baseR = 2.2 * Math.min(2.2, Math.sqrt(k));
     const dim = highlights !== null;
 
-    // 0) 배경 격자
-    drawGrid(ctx, t, size.w, size.h, insetTop);
+    // 0) 분쟁 위험도 배경: 셀마다 밀집도 × 사례 수에 따라 옅은 색을 물들인다
+    if (riskOn) {
+      // 셀마다 부드러운 방사형 그라데이션을 겹쳐 물감이 번진 모양으로 그린다
+      const reach = 36 * k;
+      for (const c of risk) {
+        const x = t.applyX(c.x);
+        const y = t.applyY(c.y);
+        if (x + reach < 0 || y + reach < 0 || x - reach > size.w || y - reach > size.h) continue;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, reach);
+        g.addColorStop(0, `rgba(240, 68, 82, ${0.32 * c.value})`);
+        g.addColorStop(1, "rgba(240, 68, 82, 0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(x - reach, y - reach, reach * 2, reach * 2);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // 0-1) 관계선: 같은 CPC 하위 분류끼리
+    if (edgesOn && nodes.length === points.length) {
+      ctx.lineWidth = 0.6;
+      ctx.strokeStyle = "#4e5968";
+      ctx.globalAlpha = 0.12;
+      ctx.beginPath();
+      for (const [i, j] of edges) {
+        const a = nodes[i], b = nodes[j];
+        if (!visible.has(a.p.decision) || !visible.has(b.p.decision)) continue;
+        ctx.moveTo(t.applyX(a.bx), t.applyY(a.by));
+        ctx.lineTo(t.applyX(b.bx), t.applyY(b.by));
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
 
     // 1) 일반 점
     for (const n of nodes) {
@@ -244,6 +302,23 @@ export default function PatentMap({
       }
     }
 
+    // 3-1) 내 아이디어 위치
+    if (markerBase) {
+      const x = t.applyX(markerBase[0]);
+      const y = t.applyY(markerBase[1]);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#191f28";
+      ctx.beginPath();
+      ctx.arc(x, y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = "#191f28";
+      ctx.font = "600 12px system-ui, sans-serif";
+      ctx.fillText("내 아이디어", x + 10, y + 4);
+    }
+
     // 3) 선택 링
     if (selectedId) {
       const n = byId.get(selectedId);
@@ -259,7 +334,7 @@ export default function PatentMap({
       }
     }
     ctx.globalAlpha = 1;
-  }, [nodes, byId, size, visible, highlights, selectedId, insetTop]);
+  }, [nodes, byId, size, visible, highlights, selectedId, riskOn, risk, edgesOn, edges, points, markerBase]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(draw);

@@ -2,7 +2,7 @@ export type Decision = "ACCEPTED" | "REJECTED" | "PENDING" | "UNKNOWN";
 
 export const DECISIONS: Decision[] = ["ACCEPTED", "REJECTED", "PENDING", "UNKNOWN"];
 
-/** 서버 전용 전체 레코드 (data/patents.full.json) */
+/** 서버 전용 전체 레코드 (data/master/sample/embedding.json) */
 export interface PatentFull {
   id: string; // application_number
   publication: string;
@@ -22,7 +22,7 @@ export interface PatentFull {
   claims?: string[];
 }
 
-/** 클라이언트가 받는 가벼운 점 (public/data/patents.json) */
+/** 클라이언트가 받는 가벼운 점 (public/data/sample/embedding.json) */
 export type PatentPoint = Pick<
   PatentFull,
   "id" | "title" | "decision" | "cpc" | "filed" | "x" | "y"
@@ -147,7 +147,7 @@ export interface DetailResult {
   readonly warnings: string[];
 }
 
-/** data/korea/queries.json: 정규화한 검색어 → KIPRIS 검색 목록 */
+/** data/raw/kipris/queries.json: 정규화한 검색어 → KIPRIS 검색 목록 */
 export interface QueryCacheEntry {
   readonly candidates: SearchCandidate[];
   readonly fetchedAt: string;

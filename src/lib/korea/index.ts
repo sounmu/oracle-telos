@@ -21,7 +21,7 @@ import { SourceError } from "./http";
 import { researchIndexSchema } from "./schema";
 
 export function researchPath(): string {
-  return path.join(process.env.TELOS_RESEARCH_DIR ?? path.join(process.cwd(), "data", "korea"), "index.json");
+  return path.join(process.env.TELOS_RESEARCH_DIR ?? path.join(process.cwd(), "data", "raw", "kipris"), "index.json");
 }
 
 let cached: { path: string; mtime: number; index: ResearchIndex } | null = null;

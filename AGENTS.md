@@ -26,7 +26,7 @@
 - **AI 에이전트: `openai`** (OpenAI Responses API + function calling). 자세한 규칙은 §5.
 - **데이터: HUPD (Harvard USPTO Patent Dataset)** 2016년 1월 샘플. §4.
 - **한국 데이터:** KIPRIS Plus, 국가법령정보 공동활용, Open DART. Node 런타임 XML 파싱은 `fast-xml-parser`, ZIP 파싱은 `fflate`, 스크립트 환경변수 로딩은 `@next/env`.
-- **한국 색인:** 비공개 파일 기반 MVP (`data/korea/index.json`), 키워드·벡터 순위 결합. PostgreSQL/pgvector는 아직 도입하지 않았다.
+- **한국 색인:** 비공개 파일 기반 MVP (`data/raw/kipris/index.json`), 키워드·벡터 순위 결합. PostgreSQL/pgvector는 아직 도입하지 않았다.
 - **한국 검색은 하이브리드:** 검색할 때 KIPRIS를 키워드로 실시간 조회 → 색인에 없는 특허만 상세 수신(질의당 최대 20건, 에이전트는 2~3회 검색) → 로컬 색인에 캐시 → 임베딩+키워드 재정렬. `pnpm sync:korea`는 기본 지도 시드와 `--reindex` 전체 재배치용이다.
 
 Next.js는 학습 데이터와 다른 부분이 많다. **코드를 쓰기 전에 `node_modules/next/dist/docs/`의 관련 문서를 읽는다** (아래 자동 생성 블록 참고).
@@ -43,10 +43,10 @@ scripts/
 public/data/
   patents.json              ← 클라이언트가 받는 가벼운 특허 목록 (좌표, 제목, 결정, 요약 일부)
 data/
-  embeddings.f32            ← N×384 float32 (서버 전용, 유사도 검색용)
-  patents.full.json         ← 청구항/상세 설명 포함 전체 레코드 (서버 전용)
-  korea/index.json          ← 한국 문서·벡터·지도 (비공개, Git 제외)
-  korea/queries.json        ← 질의 캐시: 정규화한 질의 → KIPRIS 출원번호 (비공개, 7일 유효)
+  master/sample/vectors.f32 ← N×384 float32 (서버 전용, 유사도 검색용)
+  master/sample/embedding.json ← 청구항/상세 설명 포함 전체 레코드 (서버 전용)
+  raw/kipris/index.json     ← 한국 문서·벡터·지도 (비공개, Git 제외)
+  raw/kipris/queries.json   ← 질의 캐시: 정규화한 질의 → KIPRIS 출원번호 (비공개, 7일 유효)
 src/
   app/
     page.tsx                ← 메인: <TelosApp/> (지도 + 우측 검색 패널)
@@ -85,11 +85,11 @@ tests/                     ← 합성 출처 응답, 버전/검색, 하이브리
 - 사용하는 필드: `application_number`, `title`, `abstract`, `decision` (`ACCEPTED` | `REJECTED` | `PENDING`), `main_cpc_label`, `cpc_labels`, `filing_date`, `claims` (첫 청구항만 상세 패널/에이전트용으로 보관).
 - 임베딩 입력 텍스트: `title + "\n" + abstract` (청구항 제외 — 길이·노이즈 문제).
 - 임베딩은 **L2 정규화**해서 저장한다. 그래야 코사인 유사도 = 내적.
-- `public/data/patents.json`의 점 타입:
+- `public/data/sample/embedding.json`의 점 타입:
   ```ts
   type PatentPoint = { id: string; title: string; decision: "ACCEPTED"|"REJECTED"|"PENDING"|"UNKNOWN"; cpc: string; x: number; y: number; filed: string; abstract: string /* 300자 내외 */ };
   ```
-- HUPD 기본 건수는 3,000건. 환경변수 `PATENT_COUNT`로 조절. HUPD 산출물(`public/data/patents.json`, `data/embeddings.f32`, `data/patents.full.json`, `data/meta.json`)은 **커밋한다**. **한국 수집물 `data/korea/`는 예외이며 커밋/공개 정적 배포하지 않는다.**
+- HUPD 기본 건수는 3,000건. 환경변수 `PATENT_COUNT`로 조절. HUPD 산출물(`public/data/sample/embedding.json`, `data/master/sample/vectors.f32`, `data/master/sample/embedding.json`, `data/master/sample/manifest.json`)은 **커밋한다**. **한국 수집물 `data/korea/`는 예외이며 커밋/공개 정적 배포하지 않는다.**
 - 색상 규칙(지도·범례·에이전트 설명 모두 동일): ACCEPTED = 초록 계열, REJECTED = 빨강/코랄 계열, PENDING = 회색.
 - UNKNOWN은 별도 회색·"상태 미확인" 라벨이다. KIPRIS `공개`를 심사 중으로 간주하지 않는다.
 - 한국 문서는 `ResearchDocument` 출처별 타입으로 보존하고, 법령 버전 시행일과 조문 시행일을 분리한다. 변경된 청크만 재임베딩하며 모델/차원이 바뀌면 재색인한다. `--remove`는 문서와 파생 청크·지도 점을 함께 제거한다.
@@ -97,7 +97,7 @@ tests/                     ← 합성 출처 응답, 버전/검색, 하이브리
 - KIPRIS 수집은 출원일 최신순(`sortSpec=AD`, `descSort=true`)이며 기본 최대 100건이다. `--limit`으로 변경할 수 있고, 법령·공시의 기본 제한은 20건이다.
 - **검색 시 실시간 캐시** (`searchKoreanPatents`): `KIPRIS_API_KEY`가 있으면 `searchKiprisLive`가 출원번호 최대 20건을 받고, 색인에 없는 번호만 상세를 받는다. 상세는 1건당 2회 호출이므로 **질의당 최대 20건(`LIVE_DETAIL_LIMIT`, 호출 최대 40회)**으로 제한한다. 전체 20초 제한이며, 상세 수신 중 시간이 다하면 받은 만큼만 캐시하고 경고를 남긴다(다음 검색이 나머지를 받는다).
 - 검색 요청은 `{ description, queries }`다. 빠른 검색은 `planPatentSearch`가 기술 설명을 기술 요소 3~5개와 KIPRIS 검색어 2~4개로 나누고(OPENAI_API_KEY가 없거나 실패하면 입력 문장 하나), 에이전트 도구는 자기 키워드를 그대로 쓴다. 검색어마다 후보를 받아 출원번호로 중복 제거하고, 상세 조회 전에 검색 목록의 제목·초록을 기술 설명과 임베딩 유사도로 정렬해 색인에 없는 상위 `LIVE_DETAIL_LIMIT`건만 상세를 받는다. 최종 순위는 기술 설명(의미)과 검색어 묶음(키워드)으로 매기며, 확보한 후보 안의 순위다. 결과의 `coverage`에 검색어·후보 수·상세 수를 담는다.
-- 검색 목록은 `data/korea/queries.json`에 검색어 단위로 캐시한다(NFKC·소문자·공백 정규화, **7일 유효**, 제목·초록·출원인 포함). 유효한 캐시가 있으면 `getAdvancedSearch`를 호출하지 않는다. 따라서 같은 검색어를 7일 안에 다시 실행하고 후보가 모두 색인에 있으면 KIPRIS 호출은 0회다. 파일에 쓸 수 없으면 프로세스 메모리에만 남긴다.
+- 검색 목록은 `data/raw/kipris/queries.json`에 검색어 단위로 캐시한다(NFKC·소문자·공백 정규화, **7일 유효**, 제목·초록·출원인 포함). 유효한 캐시가 있으면 `getAdvancedSearch`를 호출하지 않는다. 따라서 같은 검색어를 7일 안에 다시 실행하고 후보가 모두 색인에 있으면 KIPRIS 호출은 0회다. 파일에 쓸 수 없으면 프로세스 메모리에만 남긴다.
 - KIPRIS 실패는 인증·호출 한도·네트워크·시간 초과로 나눠 warning으로 안내한다(`describeKiprisFailure`).
 - **기술 요소별 비교**(`comparePatent`, `POST /api/compare`)는 검색과 같은 기술 요소를 쓰고, 모델에는 제목·초록·청구항 처음 5개(각 1,500자)만 보낸다. 모델이 낸 인용이 그 원문에 그대로 있을 때만 공통/차이로 인정하고, 아니면 '확인되지 않음'으로 내린다. 내 기술에 없는 요소는 '미기재'.
 - **기술 근접도**(`proximityOf`)는 임베딩 점수가 아니라 근거가 확인된 비교 행의 공통 비율로 정한다: 확인된 행 2개 미만이면 자료 부족, 공통 ⅓ 미만 서늘, ⅔ 미만 따뜻, 그 이상 뜨거움. 법적 위험도·침해 확률이 아니며, 색은 특허 상태 색(초록·빨강·회색)과 겹치지 않게 둔다. 화면은 검색 후 상위 3건을 자동 비교한다.
@@ -135,7 +135,7 @@ pnpm lint
 ## 7. 작업 원칙
 
 1. **끝까지 통하는 흐름 먼저.** 지도 → 점 클릭 → 상세, 아이디어 입력 → 에이전트 응답 → 지도 하이라이트. 이 두 흐름이 깨지면 다른 작업을 멈추고 먼저 고친다.
-2. **데이터 산출물 없이도 앱이 떠야 한다.** `public/data/patents.json`이 없으면 빈 지도 + "pnpm build:data를 실행하세요" 안내를 보여준다. 크래시 금지.
+2. **데이터 산출물 없이도 앱이 떠야 한다.** `public/data/sample/embedding.json`이 없으면 빈 지도 + "pnpm build:data를 실행하세요" 안내를 보여준다. 크래시 금지.
 3. **서버 전용 모듈**(`src/lib/patents.ts`, `embeddings.ts`, `agent.ts`, `similarity.ts`, `korea/*`)은 서버 모듈·route handler·`scripts/`·테스트에서만 import한다. `src/components/`에서 절대 import하지 않는다 (transformers.js·fs가 클라이언트 번들에 들어가면 빌드가 깨진다). `server-only` 패키지는 쓰지 않는다 — `tsx` 스크립트에서 import하면 예외가 나기 때문.
 4. 타입은 `src/lib/types.ts`에 모은다. `any` 금지. SDK 타입(`OpenAI.Responses.Tool`, `ResponseInput` 등)은 재정의하지 않고 그대로 쓴다.
 5. 새 라이브러리는 꼭 필요할 때만. 추가하면 이 문서 §2를 갱신한다.

@@ -5,26 +5,26 @@
  *   PATENT_COUNT=1000 pnpm build:data
  *
  * 산출물
- *   public/data/patents.json   클라이언트용 점 목록
- *   data/patents.full.json     서버용 전체 레코드 (첫 청구항 포함)
- *   data/embeddings.f32        N×384 float32 (L2 정규화)
- *   data/meta.json
+ *   public/data/sample/embedding.json   클라이언트용 점 목록
+ *   data/master/sample/embedding.json   서버용 전체 레코드 (첫 청구항 포함)
+ *   data/master/sample/vectors.f32     N×384 float32 (L2 정규화)
+ *   data/master/sample/manifest.json
  *
- * 중간 캐시: .cache/hupd-compact.jsonl (다운로드 재사용)
+ * 중간 캐시: data/raw/hupd/hupd-compact.jsonl (다운로드 재사용)
  */
 import fs from "node:fs/promises";
 import path from "node:path";
 import { once } from "node:events";
 import { Parser, type ReadEntry } from "tar";
 import { UMAP } from "umap-js";
-import { EMBEDDING_DIM, EMBEDDING_MODEL, embedTexts } from "../src/lib/embeddings";
-import type { Decision, DatasetMeta, PatentFull, PatentPoint } from "../src/lib/types";
+import { EMBEDDING_DIM, EMBEDDING_MODEL, embedTexts } from "../../src/lib/embeddings";
+import type { Decision, DatasetMeta, PatentFull, PatentPoint } from "../../src/lib/types";
 
 const SOURCE_URL =
   "https://huggingface.co/datasets/HUPD/hupd/resolve/main/data/sample-jan-2016.tar.gz";
 const COUNT = Number(process.env.PATENT_COUNT ?? 3000);
 const ROOT = process.cwd();
-const CACHE_FILE = path.join(ROOT, ".cache", "hupd-compact.jsonl");
+const CACHE_FILE = path.join(ROOT, "data", "raw", "hupd", "hupd-compact.jsonl");
 const EMBED_BATCH = 32;
 
 /** HUPD 원본에서 우리가 쓰는 필드만 */
@@ -215,13 +215,13 @@ async function main() {
     source: SOURCE_URL,
   };
 
-  await fs.mkdir(path.join(ROOT, "public", "data"), { recursive: true });
-  await fs.mkdir(path.join(ROOT, "data"), { recursive: true });
+  await fs.mkdir(path.join(ROOT, "public", "data", "sample"), { recursive: true });
+  await fs.mkdir(path.join(ROOT, "data", "master", "sample"), { recursive: true });
   await Promise.all([
-    fs.writeFile(path.join(ROOT, "public", "data", "patents.json"), JSON.stringify(points)),
-    fs.writeFile(path.join(ROOT, "data", "patents.full.json"), JSON.stringify(full)),
-    fs.writeFile(path.join(ROOT, "data", "embeddings.f32"), Buffer.from(vectors.buffer)),
-    fs.writeFile(path.join(ROOT, "data", "meta.json"), JSON.stringify(meta, null, 2)),
+    fs.writeFile(path.join(ROOT, "public", "data", "sample", "embedding.json"), JSON.stringify(points)),
+    fs.writeFile(path.join(ROOT, "data", "master", "sample", "embedding.json"), JSON.stringify(full)),
+    fs.writeFile(path.join(ROOT, "data", "master", "sample", "vectors.f32"), Buffer.from(vectors.buffer)),
+    fs.writeFile(path.join(ROOT, "data", "master", "sample", "manifest.json"), JSON.stringify(meta, null, 2)),
   ]);
 
   const counts = full.reduce<Record<string, number>>((acc, p) => {

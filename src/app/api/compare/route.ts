@@ -1,3 +1,4 @@
+import { mockComparison, mockEnabled } from "@/lib/mockApi";
 import OpenAI from "openai";
 import { z } from "zod";
 import { comparePatent } from "@/lib/agent";
@@ -15,6 +16,11 @@ export async function POST(request: Request) {
     body = await request.json();
   } catch {
     return Response.json({ error: "JSON body가 필요합니다." }, { status: 400 });
+  }
+  // 목업 모드에서는 샘플 특허 번호도 받아서 비교 카드 모양을 확인할 수 있게 한다
+  if (mockEnabled()) {
+    const id = typeof (body as { id?: unknown })?.id === "string" ? (body as { id: string }).id : "mock";
+    return Response.json(mockComparison(id));
   }
   const parsed = compareInput.safeParse(body);
   if (!parsed.success) {
