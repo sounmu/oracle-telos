@@ -75,42 +75,6 @@ export function ProximityFace({
   );
 }
 
-/** 결과 목록용 작은 근접도 표시. 상태 색 점과 구분되도록 이름과 청구항 구성 대응 수를 함께 쓴다 */
-export function ProximityBadge({ state }: { state: ComparisonState | undefined }) {
-  if (!state) return null;
-  if (state.status === "loading") {
-    return (
-      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-surface px-2.5 py-1 text-[13px] font-semibold text-muted">
-        <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-border border-t-accent" />
-        비교 중
-      </span>
-    );
-  }
-  if (state.status === "error") {
-    return <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[13px] font-semibold text-red-600">비교 실패</span>;
-  }
-  const { level } = state.data.proximity;
-  const s = PROXIMITY_STYLE[level];
-  const coverage = coverageOf(state.data.proximity);
-  return (
-    <span className="inline-flex shrink-0 items-center gap-2" title={state.data.proximity.reason}>
-      <span
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] font-bold"
-        style={{ background: s.bg, color: s.ink }}
-      >
-        <span className="inline-block h-2 w-2 rounded-full" style={{ background: s.fill }} />
-        {PROXIMITY_LABELS[level].title}
-      </span>
-      {coverage && (
-        <span className="text-[13px] font-bold tabular-nums text-foreground" title="청구항 1 구성 중 내 설명에 대응되는 수">
-          구성 {coverage.matched}/{coverage.total}
-        </span>
-      )}
-    </span>
-  );
-}
-
-/** 서버에 OPENAI_API_KEY가 없을 때 비교 자리에 보여 주는 안내 */
 export const AI_KEY_HINT = "OpenAI 키가 없어서 기술 요소 비교를 쓸 수 없어요. .env에 OPENAI_API_KEY를 넣으면 켜져요.";
 
 interface ViewProps {
